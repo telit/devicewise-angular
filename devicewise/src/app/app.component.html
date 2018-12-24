@@ -1,0 +1,128 @@
+<mat-toolbar color="primary" class="toolbar">
+  <button mat-icon-button (click)="snav.toggle()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <app-nav-bar></app-nav-bar>
+</mat-toolbar>
+
+<mat-sidenav-container class="example-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
+  <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'" [fixedInViewport]="true" [fixedTopGap]="64"
+    [fixedBottomGap]="0">
+    <mat-nav-list>
+
+      <a pageScroll mat-list-item href="#home">
+        <h4 mat-line>Home</h4>
+      </a>
+
+      <mat-divider></mat-divider>
+      <h2 class="mat-title"><i class="material-icons">security</i>Authentication</h2>
+      <a pageScroll mat-list-item href="#login">
+        <h4 mat-line>Login</h4>
+      </a>
+      <a pageScroll mat-list-item href="#logout">
+        <h4 mat-line>Logout</h4>
+      </a>
+
+      <mat-divider></mat-divider>
+      <h2 class="mat-title"><i class="material-icons">compare_arrows</i>Variable</h2>
+      <a pageScroll mat-list-item href="#read">
+        <h4 mat-line>Read</h4>
+      </a>
+      <a pageScroll mat-list-item href="#write">
+        <h4 mat-line>Write</h4>
+      </a>
+      <a pageScroll mat-list-item href="#subscribe">
+        <h4 mat-line>Subscribe</h4>
+      </a>
+      <a pageScroll mat-list-item href="#unsubscribe">
+        <h4 mat-line>Unsubscribe</h4>
+      </a>
+      <a pageScroll mat-list-item href="#unsubscribeAll">
+        <h4 mat-line>Unsubscribe All</h4>
+      </a>
+
+      <mat-divider></mat-divider>
+      <h2 class="mat-title"><i class="material-icons">router</i>Device</h2>
+      <a pageScroll mat-list-item href="#deviceList">
+        <h4 mat-line>Device List</h4>
+      </a>
+      <a pageScroll mat-list-item href="#deviceInfo">
+        <h4 mat-line>Device Info</h4>
+      </a>
+      <a pageScroll mat-list-item href="#deviceDataType">
+        <h4 mat-line>Device Data Type</h4>
+      </a>
+      <a pageScroll mat-list-item href="#deviceStart">
+        <h4 mat-line>Device Start</h4>
+      </a>
+      <a pageScroll mat-list-item href="#deviceStop">
+        <h4 mat-line>Device Stop</h4>
+      </a>
+
+      <mat-divider></mat-divider>
+      <h2 class="mat-title"><i class="material-icons">device_hub</i>Trigger</h2>
+      <a pageScroll mat-list-item href="#triggerList">
+        <h4 mat-line>Trigger List</h4>
+      </a>
+      <a pageScroll mat-list-item href="#triggerStart">
+        <h4 mat-line>Trigger Start</h4>
+      </a>
+      <a pageScroll mat-list-item href="#triggerStop">
+        <h4 mat-line>Trigger Stop</h4>
+      </a>
+      <a pageScroll mat-list-item href="#triggerFire">
+        <h4 mat-line>Trigger Fire</h4>
+      </a>
+      <a pageScroll mat-list-item href="#subTriggerFire">
+        <h4 mat-line>SubTrigger Fire</h4>
+      </a>
+
+      <mat-divider></mat-divider>
+      <h2 class="mat-title"><i class="material-icons">folder</i>Project</h2>
+      <a pageScroll mat-list-item href="#projectList">
+        <h4 mat-line>Project List</h4>
+      </a>
+      <a pageScroll mat-list-item href="#projectStart">
+        <h4 mat-line>Project Start</h4>
+      </a>
+      <a pageScroll mat-list-item href="#projectStop">
+        <h4 mat-line>Project Stop</h4>
+      </a>
+
+      <mat-divider></mat-divider>
+      <h2 class="mat-title"><i class="material-icons">live_tv</i>Channel</h2>
+      <a pageScroll mat-list-item href="#channelSubscribe">
+        <h4 mat-line>Channel Subscribe</h4>
+      </a>
+      <a pageScroll mat-list-item href="#channelUnsubscribe">
+        <h4 mat-line>Channel Unsubscribe</h4>
+      </a>
+      <a pageScroll mat-list-item href="#channelUnsubscribeAll">
+        <h4 mat-line>Channel Unsubscribe All</h4>
+      </a>
+
+      <mat-divider></mat-divider>
+      <h2 class="mat-title"><i class="material-icons">settings_input_component</i>Diagnostics</h2>
+      <a pageScroll mat-list-item href="#ping">
+        <h4 mat-line>Ping</h4>
+      </a>
+
+      <mat-divider></mat-divider>
+      <h2 class="mat-title"><i class="material-icons">developer_board</i>System</h2>
+      <a pageScroll mat-list-item href="#referenceList">
+        <h4 mat-line>Reference List</h4>
+      </a>
+
+      <mat-divider></mat-divider>
+      <h2 class="mat-title"><i class="material-icons">storage</i>SQLite</h2>
+      <a pageScroll mat-list-item href="#sql">
+        <h4 mat-line>SQL Query</h4>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <app-devicewise-test></app-devicewise-test>
+    <app-footer></app-footer>
+  </mat-sidenav-content>
+</mat-sidenav-container>

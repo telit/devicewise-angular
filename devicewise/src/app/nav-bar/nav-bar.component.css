@@ -1,0 +1,16 @@
+:host {
+  height: 100%;
+}
+
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 8px 16px;
+  box-sizing: border-box;
+  height: 100%;
+}
+
+nav img {
+  max-height: 70%;
+}
