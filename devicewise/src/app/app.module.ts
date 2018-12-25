@@ -4,7 +4,6 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 
-import { CookieService } from 'ngx-cookie-service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
   MatInputModule,
@@ -34,11 +33,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SubTriggerPipe } from './devicewise-test/custom-pipes.pipe';
 import { FooterComponent } from './footer/footer.component';
 import { NgxPageScrollModule } from 'ngx-page-scroll';
+import { DevicewiseAngularModule } from 'devicewise-angular';
 
 @NgModule({
   declarations: [AppComponent, DevicewiseTestComponent, NavBarComponent, SubTriggerPipe, SettingsComponent, FooterComponent],
   entryComponents: [SettingsComponent],
   imports: [
+    DevicewiseAngularModule,
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
@@ -66,7 +67,7 @@ import { NgxPageScrollModule } from 'ngx-page-scroll';
     MatSidenavModule,
     MatToolbarModule
   ],
-  providers: [CookieService, SubTriggerPipe, DevicewiseTestComponent, NgxPageScrollModule],
+  providers: [SubTriggerPipe, DevicewiseTestComponent, NgxPageScrollModule],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

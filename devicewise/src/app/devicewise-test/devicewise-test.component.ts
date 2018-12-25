@@ -1,8 +1,8 @@
 import { Component, OnInit, Inject, Input, ElementRef, ViewChild } from '@angular/core';
-import { DevicewiseAngularService } from './../../../projects/devicewise-angular/src/lib/devicewise-angular.service';
+import { DevicewiseAngularService } from 'devicewise-angular';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import * as DwResponse from './../../../projects/devicewise-angular/src/lib/models/dwresponse';
-import * as DwSubscription from './../../../projects/devicewise-angular/src/lib/models/dwsubscription';
+import * as DwResponse from 'devicewise-angular/lib/models/dwresponse';
+import * as DwSubscription from 'devicewise-angular/lib/models/dwsubscription';
 import { BehaviorSubject, Subject } from 'rxjs';
 import {
   MatBottomSheet,
@@ -110,7 +110,7 @@ export class DevicewiseTestComponent implements OnInit {
         }
         this.loggedIn = true;
         this.loaded = true;
-        this.openSnackBar("Welcome. You're already logged in!", 'DISMISS');
+        this.openSnackBar('Welcome. You\'re already logged in!', 'DISMISS');
 
         this.refreshLists();
       },
@@ -148,7 +148,7 @@ export class DevicewiseTestComponent implements OnInit {
         this.loginResponse = data;
         if (data.success) {
           this.loggedIn = true;
-          this.openSnackBar("Welcome. You're logged in as " + username + '!', 'DISMISS');
+          this.openSnackBar('Welcome. You\'re logged in as ' + username + '!', 'DISMISS');
           this.refreshLists();
         }
       },
@@ -561,8 +561,11 @@ export class DevicewiseTestComponent implements OnInit {
   openSnackError(error: any) {
     let message = '';
 
+    console.log(error);
     if (error.error.errorMessages) {
       message = 'ERROR: ' + error.error.errorMessages;
+    } else if (error.message) {
+      message = 'ERROR: ' + error.message;
     } else {
       message = 'ERROR: Unknown';
     }
