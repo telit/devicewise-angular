@@ -3,5 +3,8 @@
   "dest": "../../dist/devicewise-angular",
   "lib": {
     "entryFile": "src/public_api.ts"
-  }
+  },
+  "whitelistedNonPeerDependencies": [
+    "ngx-cookie-service"
+  ]
 }

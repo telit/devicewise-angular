@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { CookieService } from 'ngx-cookie-service';
 import * as DwResponse from './models/dwresponse';
 import * as DwRequest from './models/dwrequest';
 import * as DwSubscription from './models/dwsubscription';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 const httpOptions = {
   headers: new HttpHeaders({}),

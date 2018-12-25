@@ -1,8 +1,34 @@
 {
   "name": "devicewise-angular",
-  "version": "0.0.1",
+  "description": "Angular6 library to communicate with deviceWISE.",
+  "version": "1.1.1",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build_lib": "ng build devicewise-angular",
+    "copy-license": "copy .\\LICENSE .\\..\\..\\dist\\devicewise-angular",
+    "copy-readme": "copy .\\README.md .\\..\\..\\dist\\devicewise-angular",
+    "copy-files": "npm run copy-license && npm run copy-readme",
+    "npm_pack": "cd .\\..\\..\\dist\\devicewise-angular && npm pack",
+    "npm_publish": "cd .\\..\\..\\dist\\devicewise-angular && npm publish",
+    "package": "npm run build_lib && npm run copy-files && npm run npm_pack",
+    "publish": "npm run package && npm run npm_publish"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": ["Iot", "DeviceWISE", "Telit"],
+  "author": "Telit IoT Platforms",
+  "license": "ISC",
+  "bugs": {
+    "url": ""
+  },
+  "homepage": "https:/telit.com",
   "peerDependencies": {
     "@angular/common": "^7.1.0",
     "@angular/core": "^7.1.0"
+  },
+  "dependencies": {
+    "ngx-cookie-service": "^2.1.0"
   }
 }
