@@ -33,7 +33,6 @@ import { DevicewiseAngularModule } from 'devicewise-angular';
   bootstrap: [AppComponent]
 })
 export class AppModule { }
-
 ```
 
 Then, import and inject the devicewise angular service into a component:
@@ -49,7 +48,6 @@ import { DevicewiseAngularService } from 'devicewise-angular';
 })
 export class AppComponent implements OnInit {
   constructor(private devicewise: DevicewiseAngularService) {}
-  title = 'dwtest';
 
   ngOnInit() {
     this.devicewise.login(location.origin, 'admin', 'admin').subscribe(loginResponse => {
@@ -66,8 +64,8 @@ That's it!
 
 # What to do now?
 
-* Run `npm run test` to run the tests for the devicewise service (located in the `demo-app` folder)
-* Have a look at and play around with the `demo-app` to get to know the devicewise service with `ng serve --open`
+* Run `npm run test` to run the tests for the devicewise service (located in the `app` folder)
+* Have a look at and play around with the `app` to get to know the devicewise service with `ng serve --open`
 * Set up other users in deviceWISE (default credentials are admin/admin)
 
 # FAQ
@@ -76,11 +74,13 @@ That's it!
 
 Checking out the following resources usually solves most of the problems people seem to have with this devicewise service:
 
-* [DeviceWISE HELP @MDN](https://docs-engr.devicewise.com/)
+* [DeviceWISE HELP](https://docs-engr.devicewise.com/)
+* [DeviceWISE Javascript Library](http://help.devicewise.com/display/M2MOpen/JavaScript+API+Library)
+* [DeviceWISE Postman Collection](https://web.postman.co/collections/4197967-d416fb5a-b10d-47fb-9bd4-b740c4842503?workspace=0a806903-4bd9-4c42-8f6a-a4cecdf162d1)
 
 The following general steps are usually very helpful when debugging problems with this service:
 
-* check out if there are any [open](https://github.com/issues) or [closed](https://github.com/issues?q=is%3Aissue+is%3Aclosed) issues that answer your question
+* check out if there are any [open](https://github.com/astone2014/devicewise-angular/issues) or [closed](https://github.com/astone2014/devicewise-angular/issues?q=is%3Aissue+is%3Aclosed) issues that answer your question
 * ensure you have a valid sessionID cookie.
 * [explain to your local rubber duck why your code should work and why it (probably) does not](https://en.wikipedia.org/wiki/Rubber_duck_debugging)
 
@@ -94,7 +94,7 @@ We are happy to accept pull requests or test cases for things that do not work. 
 
 However, we will only accept pull requests that pass all tests and include some new ones (as long as it makes sense to add them, of course).
 
-* [Open a new pull request](https://github.com/compare)
+* [Open a new pull request](https://github.com/astone2014/devicewise-angular/compare)
 
 # Author
 
@@ -102,4 +102,4 @@ This service is provided to you free by [Telit IoT Platforms](https://telit.com/
 
 # License
 
-[MIT](https://github.com/master/LICENSE)
+[MIT](https://github.com/astone2014/devicewise-angular/master/LICENSE)

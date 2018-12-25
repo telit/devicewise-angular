@@ -33,7 +33,6 @@ import { DevicewiseAngularModule } from 'devicewise-angular';
   bootstrap: [AppComponent]
 })
 export class AppModule { }
-
 ```
 
 Then, import and inject the devicewise angular service into a component:
@@ -49,7 +48,6 @@ import { DevicewiseAngularService } from 'devicewise-angular';
 })
 export class AppComponent implements OnInit {
   constructor(private devicewise: DevicewiseAngularService) {}
-  title = 'dwtest';
 
   ngOnInit() {
     this.devicewise.login(location.origin, 'admin', 'admin').subscribe(loginResponse => {
@@ -66,8 +64,8 @@ That's it!
 
 # What to do now?
 
-* Run `npm run test` to run the tests for the devicewise service (located in the `demo-app` folder)
-* Have a look at and play around with the `demo-app` to get to know the devicewise service with `ng serve --open`
+* Run `npm run test` to run the tests for the devicewise service (located in the `app` folder)
+* Have a look at and play around with the `app` to get to know the devicewise service with `ng serve --open`
 * Set up other users in deviceWISE (default credentials are admin/admin)
 
 # FAQ
