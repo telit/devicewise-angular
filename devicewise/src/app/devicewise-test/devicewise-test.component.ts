@@ -42,10 +42,12 @@ export class DevicewiseTestComponent implements OnInit {
   projects: BehaviorSubject<DwResponse.ProjectListProject[]> = new BehaviorSubject([]);
   variables: BehaviorSubject<DwResponse.DeviceInfoVariable[]> = new BehaviorSubject([]);
   selectedVariable: DwResponse.DeviceInfoVariable;
-  subscriptionResponses: DwSubscription.Subscription[] = [];
-  subscriptionResponsesSubject: BehaviorSubject<DwSubscription.Subscription[]> = new BehaviorSubject([]);
+  // subscriptionResponses: DwSubscription.Subscription[] = [];
+  // subscriptionResponsesSubject: BehaviorSubject<DwSubscription.Subscription[]> = new BehaviorSubject([]);
   subTriggerVariables: any[] = [];
   subTriggerVariablesSubject: BehaviorSubject<any[]> = new BehaviorSubject([]);
+  subscriptions = {};
+  subscriptionsSubject: BehaviorSubject<{}> = new BehaviorSubject({});
   loginResponse;
   logoutResponse;
   readResponse;
@@ -213,8 +215,6 @@ export class DevicewiseTestComponent implements OnInit {
   }
 
   subscribe(device, variable, rate?, type?, count?, length?) {
-    const subscription: Subject<DwResponse.Subscription> = new Subject();
-
     if (!type) {
       type = this.dwTypeToNumber(this.selectedVariable.type);
     }
@@ -228,35 +228,63 @@ export class DevicewiseTestComponent implements OnInit {
       rate = 1;
     }
 
-    this.devicewise.subscribe(device, variable, rate, type, count, length).subscribe(
+    const newSubscription = new DwSubscription.Subscription(device, variable, type, count, length);
+    this.devicewise.getSubscription(newSubscription).subscribe(
       data => {
         this.subscribeResponse = data;
         if (!data.success) {
           return;
         }
-        this.subscriptionResponses.push({
-          request: {
-            command: 'variable.subscribe',
-            params: {
-              device: device,
-              variable: variable,
-              type: type,
-              count: count,
-              length: length
-            }
-          },
-          response: data,
-          subscription: subscription
-        });
-        this.subscriptionResponsesSubject.next(this.subscriptionResponses);
+
+        this.subscriptions[data.params.id] = newSubscription;
+
+        // this.subscriptionResponses.push(newSubscription);
+        // this.subscriptionResponsesSubject.next(this.subscriptionResponses);
+        this.subscriptionsSubject.next(this.subscriptions);
         this.openSnackBar('Subscription to ' + variable + ' successful!', 'DISMISS');
+        newSubscription.subscription.subscribe((subscriptionData) => {
+          console.log('received:');
+          if (subscriptionData) {
+            console.log(subscriptionData.params);
+          }
+        });
       },
       error => this.openSnackError(error)
     );
+
+    // this.devicewise.subscribe(device, variable, rate, type, count, length).subscribe(
+    //   data => {
+    //     this.subscribeResponse = data;
+    //     if (!data.success) {
+    //       return;
+    //     }
+    //     this.subscriptionResponses.push({
+    //       request: {
+    //         command: 'variable.subscribe',
+    //         params: {
+    //           device: device,
+    //           variable: variable,
+    //           type: type,
+    //           count: count,
+    //           length: length
+    //         }
+    //       },
+    //       response: data,
+    //       subscription: subscription
+    //     });
+    //     this.subscriptionResponsesSubject.next(this.subscriptionResponses);
+    //     this.openSnackBar('Subscription to ' + variable + ' successful!', 'DISMISS');
+    //   },
+    //   error => this.openSnackError(error)
+    // );
   }
 
   startSubscriptions() {
     this.devicewise.getNotifications();
+  }
+
+  stopSubscriptions() {
+    this.devicewise.abortNotifications();
   }
 
   unsubscribe(id) {
@@ -267,17 +295,9 @@ export class DevicewiseTestComponent implements OnInit {
           return;
         }
 
-        let removeIndex = 0;
-        if (
-          this.subscriptionResponses.find((subscription, subscriptionResponseIndex) => {
-            if (subscription.response.params.id === id) {
-              removeIndex = subscriptionResponseIndex;
-              return true;
-            }
-          })
-        ) {
-          this.subscriptionResponses.splice(removeIndex, 1);
-          this.subscriptionResponsesSubject.next(this.subscriptionResponses);
+        if (this.subscriptions[id]) {
+          delete this.subscriptions[id];
+          this.subscriptionsSubject.next(this.subscriptions);
         }
       },
       error => this.openSnackError(error)
@@ -291,8 +311,8 @@ export class DevicewiseTestComponent implements OnInit {
         if (!data.success) {
           return;
         }
-        this.subscriptionResponses = [];
-        this.subscriptionResponsesSubject.next(this.subscriptionResponses);
+        this.subscriptions = {};
+        this.subscriptionsSubject.next(this.subscriptions);
       },
       error => this.openSnackError(error)
     );
@@ -602,13 +622,6 @@ export class DevicewiseTestComponent implements OnInit {
       default:
         return 0;
     }
-  }
-}
-
-export class MyErrorStateMatcher implements ErrorStateMatcher {
-  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
-    const isSubmitted = form && form.submitted;
-    return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
   }
 }
 

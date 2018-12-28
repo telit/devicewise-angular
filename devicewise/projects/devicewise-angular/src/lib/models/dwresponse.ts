@@ -43,8 +43,15 @@ export class Subscription {
   errorCodes?: number[];
   errorMessages?: string[];
 }
-export interface SubscriptionParams {
-  success: boolean;
+
+interface SubscriptionParams {
+  variable: string;
+  length: number;
+  count: number;
+  status: number;
+  type: number;
+  data: any[];
+  id: number;
 }
 
 export class Subscribe {

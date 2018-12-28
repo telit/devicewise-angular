@@ -35,9 +35,9 @@ export class Subscribe {
 export interface SubscribeParams {
   device: string;
   variable: string;
-  type: string;
-  count: string;
-  length: string;
+  type: number;
+  count: number;
+  length: number;
 }
 export class Unubscribe {}
 

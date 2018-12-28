@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject, ReplaySubject, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { CookieService } from 'ngx-cookie-service';
+import fetchStream from 'fetch-readablestream';
 import * as DwResponse from './models/dwresponse';
 import * as DwRequest from './models/dwrequest';
 import * as DwSubscription from './models/dwsubscription';
@@ -17,6 +18,8 @@ const httpOptions = {
 })
 export class DevicewiseAngularService {
   private url = location.origin;
+  private activeSubscriptions: { [key: string]: Subject<DwResponse.Subscription> } = {};
+  private notificationsController;
 
   constructor(private cookieService: CookieService, private http: HttpClient) {}
 
@@ -93,7 +96,7 @@ export class DevicewiseAngularService {
   }
 
   // Variables
-  // TODO
+
   subscribe(
     device: string,
     variable: string,
@@ -157,6 +160,189 @@ export class DevicewiseAngularService {
       },
       httpOptions
     );
+  }
+
+  getSubscription(variable: DwSubscription.Subscription): Observable<DwResponse.Subscribe> {
+    const newSubscription: BehaviorSubject<DwResponse.Subscription> = new BehaviorSubject(null);
+    variable.subscription = newSubscription.asObservable();
+
+    return this.http.post<DwResponse.Subscribe>(this.url + '/api', variable.request, httpOptions).pipe(
+      tap(
+        response => {
+          variable.response = response;
+          if (response.success) {
+            this.activeSubscriptions[response.params.id] = newSubscription;
+
+            this.read(
+              variable.request.params.device,
+              variable.request.params.variable,
+              variable.request.params.type,
+              variable.request.params.count,
+              variable.request.params.length
+            ).subscribe(readResponse => {
+              if (readResponse.success) {
+                newSubscription.next({
+                  success: true,
+                  params: {
+                    variable: readResponse.params.variable,
+                    length: readResponse.params.length,
+                    count: readResponse.params.count,
+                    status: readResponse.params.status,
+                    type: readResponse.params.type,
+                    data: readResponse.params.data,
+                    id: response.params.id
+                  }
+                });
+              } else {
+                // newSubscription.error(error => readResponse);
+              }
+            });
+          } else {
+            console.log(variable.request.params);
+            if (response.errorCodes[0] === -6428) {
+              console.warn('DeviceWISE subscription error. Subscription Already Exists.');
+              // this.unsubscribeAll().subscribe(() => {
+              //   this.router.navigateByUrl(this.router.url);
+              // });
+            } else {
+              console.warn('Variable name: ' + variable.request.params.variable);
+              console.warn(response);
+            }
+            // newSubscription.error(error => response);
+            // newSubscription.complete();
+          }
+        },
+        error => {
+          if (error.status === 401) {
+            this.logout().subscribe();
+          }
+          // newSubscription.error(error);
+        }
+      )
+    );
+  }
+
+  getNotifications() {
+    console.log('getting notifications...');
+    this.notificationsController = new AbortController();
+
+    fetchStream(this.url + '/api', {
+      signal: this.notificationsController.signal,
+      method: 'POST',
+      body: JSON.stringify({
+        command: 'notification.get'
+      }),
+      credentials: 'include'
+    })
+      .then(response => {
+        // const reader = response.body.getReader();
+        // const chunks = [];
+        console.log('reading all chunks!');
+        this.readAllChunks(response.body);
+        // const chunks = '';
+        // this.pump(reader, chunks);
+      })
+      .catch(error => {
+        console.warn('FETCH STREAM ERROR');
+        this.getNotifications();
+      });
+  }
+
+  readAllChunks(readableStream) {
+    const reader = readableStream.getReader();
+    const chunks = [];
+
+    function pump() {
+      return reader.read().then(({ value, done }) => {
+        if (done) {
+          return chunks;
+        }
+        chunks.push(value);
+        console.log(chunks);
+        return pump();
+      });
+    }
+
+    return pump();
+  }
+
+  pump(reader, chunks) {
+    let charactersToRead = 0;
+    let lengthOfCharactersToRead = 0;
+    let oldcharactersToRead = charactersToRead;
+
+    console.log('pump: ' + chunks);
+    oldcharactersToRead = charactersToRead;
+    if (isNaN((charactersToRead = parseInt(chunks, 10)))) {
+      console.warn('Pump parseInt failure when reading chunk length.');
+      charactersToRead = oldcharactersToRead;
+      lengthOfCharactersToRead = 0;
+      // break;
+    } else {
+      lengthOfCharactersToRead = charactersToRead.toString().length;
+    }
+
+    const subString = chunks.substring(lengthOfCharactersToRead, charactersToRead + lengthOfCharactersToRead);
+    try {
+      const subObj = JSON.parse(subString);
+      console.log(subObj);
+      if (subObj.success === false) {
+        console.error(subObj);
+        // this.activeSubscriptions[subObj.params.id].error(subObj);
+        console.warn('DeviceWISE subscription error. Abort notifications');
+        console.warn(subObj);
+        this.abortNotifications();
+        if (subObj.errorCodes[0] === -1451) {
+          console.warn('LOGOUT DeviceWISE subscription error. Logging out');
+          this.logout();
+        } else if (subObj.errorCodes[0] === -1108) {
+          console.log('aborting notifications');
+          setTimeout(() => {
+            this.getNotifications();
+          }, 1000);
+        } else {
+          this.getNotifications();
+        }
+        return;
+      } else {
+        if (this.activeSubscriptions[subObj.params.id]) {
+          console.log('received:');
+          console.log(subObj);
+          this.activeSubscriptions[subObj.params.id].next(subObj);
+          const readLength = charactersToRead + charactersToRead.toString().length;
+          chunks = chunks.substr(readLength);
+        }
+      }
+    } catch {
+      console.log('Need more data. Pump again.');
+      // break; // If parsing fails just get more data and try again.
+    }
+
+    if (chunks.length >= 65536) {
+      console.warn(
+        `Chunk too long! Resetting Chunk. You may be receving data faster than the system can process it.
+ Aborting the stream. The data was lost.`
+      );
+      chunks = '';
+      this.abortNotifications();
+      this.getNotifications();
+      return;
+    }
+
+    reader.read().then(({ value, done }) => {
+      chunks = chunks.concat(new TextDecoder('utf-8').decode(value));
+      if (done) {
+        console.warn('ALL DONE!!!');
+        return;
+      }
+      return this.pump(reader, chunks);
+    });
+  }
+
+  abortNotifications() {
+    if (this.notificationsController) {
+      this.notificationsController.abort();
+    }
   }
 
   // Device
@@ -227,12 +413,7 @@ export class DevicewiseAngularService {
     );
   }
 
-  subTriggerFire(
-    project: string,
-    trigger: string,
-    reporting: boolean,
-    input: any[]
-  ): Observable<DwResponse.SubTriggerFire> {
+  subTriggerFire(project: string, trigger: string, reporting: boolean, input: any[]): Observable<DwResponse.SubTriggerFire> {
     return this.http.post<DwResponse.SubTriggerFire>(
       this.url + '/api',
       { command: 'subtrigger.fire', params: { name: trigger, project: project, reportingEnabled: reporting, input: input } },

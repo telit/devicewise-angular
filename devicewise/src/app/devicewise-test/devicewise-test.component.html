@@ -469,13 +469,13 @@
           </ng-template>
         </mat-expansion-panel>
 
-        <ng-container *ngIf="subscriptionResponsesSubject | async; let responses">
-          <div [hidden]="responses.length <= 0" >
+        <ng-container *ngIf="subscriptionsSubject | async; let subscriptions">
+          <div [hidden]="subscriptions.length <= 0" >
 
           <mat-form-field class="form-field-fullwidth" style="margin:15px 0px 0px 0px;">
               <mat-chip-list #chipList>
-                <mat-chip *ngFor="let subscription of responses" selectable="true" removable="true" (removed)="unsubscribe(subscription.response.params.id)">
-                  {{subscription.request.params.variable}}
+                <mat-chip *ngFor="let subscription of objectKeys(subscriptions)" selectable="true" removable="true" (removed)="unsubscribe(subscription)">
+                  {{ subscriptions[subscription].request.params.variable}}
                   <mat-icon matChipRemove>cancel</mat-icon>
                 </mat-chip>
                 <input placeholder="New Subscriptions..." #subscriptionInput [matAutocomplete]="auto" [matChipInputFor]="chipList"
@@ -488,6 +488,22 @@
               </mat-autocomplete>
             </mat-form-field>
             <button mat-button color="primary" (click)="startSubscriptions()">Start Subscriptions</button>
+            <button mat-button color="primary" (click)="stopSubscriptions()">Stop Subscriptions</button>
+          </div>
+          <div>
+            <mat-card class="example-card" *ngFor="let subscription of objectKeys(subscriptions)">
+              <p>{{subscriptions[subscription].request | json}}</p>
+              <mat-card-header>
+                <div mat-card-avatar class="example-header-image"></div>
+                <mat-card-title>{{ subscriptions[subscription].request.params.variable}}</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <p *ngIf="(subscriptions[subscription].subscription | async).params.data; let data">Data: {{ data }}</p>
+              </mat-card-content>
+              <mat-card-actions>
+                <button mat-button>Unsubscribe</button>
+              </mat-card-actions>
+            </mat-card>
           </div>
         </ng-container>
 
@@ -500,9 +516,11 @@
           <ng-container *ngIf="(subscriptionSelection | async); else unsubscribeManual">
             <mat-form-field>
               <mat-select #unsubscribeId matNativeControl id="apiReadType" placeholder="Subscription">
-                <mat-option *ngFor="let subscription of (subscriptionResponsesSubject | async)" [value]="subscription.response.params.id">
-                  {{subscription.request.params.variable}}
-                </mat-option>
+                <!-- <mat-option *ngFor="let subscription of objectKeys(subscriptionResponsesSubject | async)" [value]=subscription">
+                  {{ (subscriptions[subscription]).request.params.variable}}
+                </mat-option> -->
+                <mat-option *ngFor="let device of (devices | async)" [value]="device.name">{{ device.name }}</mat-option>
+
               </mat-select>
             </mat-form-field>
             <ngx-json-viewer [expanded]="false" *ngIf="unsubscribeResponse" [json]="unsubscribeResponse"></ngx-json-viewer>
