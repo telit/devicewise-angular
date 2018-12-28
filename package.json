@@ -17,7 +17,11 @@
     "type": "git",
     "url": ""
   },
-  "keywords": ["Iot", "DeviceWISE", "Telit"],
+  "keywords": [
+    "Iot",
+    "DeviceWISE",
+    "Telit"
+  ],
   "author": "Telit IoT Platforms",
   "license": "ISC",
   "bugs": {

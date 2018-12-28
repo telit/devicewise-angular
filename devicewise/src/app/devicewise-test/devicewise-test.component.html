@@ -4,20 +4,20 @@
   <h4 class="custom-sub-header mat-subheading-2">DeviceWISE API Specification & Service Information</h4>
   <p class="custom-body body-1">The DeviceWISE API allows users to leverage the power of
     deviceWISE from a simple RESTFUL interface.</p>
-    <div class="highlights">
-        <a target="_blank" href="https://documenter.getpostman.com/view/4197967/RzZDgvoy">
-          <button mat-button color="primary">Postman Collection</button>
-        </a>
-        <a target="_blank" href="https://www.npmjs.com/package/devicewise">
-          <button mat-button color="primary">Angular Library</button>
-        </a>
-        <a target="_blank" href="https://docs-engr.devicewise.com/Content/home.htm">
-          <button mat-button color="primary">DeviceWISE Help</button>
-        </a>
-        <a target="_blank" href="http://telit.com">
-          <button mat-button color="primary">Telit</button>
-        </a>
-      </div>
+  <div class="highlights">
+    <a target="_blank" href="https://documenter.getpostman.com/view/4197967/RzZDgvoy">
+      <button mat-button color="primary">Postman Collection</button>
+    </a>
+    <a target="_blank" href="https://www.npmjs.com/package/devicewise">
+      <button mat-button color="primary">Angular Library</button>
+    </a>
+    <a target="_blank" href="https://docs-engr.devicewise.com/Content/home.htm">
+      <button mat-button color="primary">DeviceWISE Help</button>
+    </a>
+    <a target="_blank" href="http://telit.com">
+      <button mat-button color="primary">Telit</button>
+    </a>
+  </div>
 
   <mat-accordion>
     <mat-expansion-panel id="prerequisites">
@@ -54,7 +54,6 @@
     <mat-card-header>
       <i mat-card-avatar class="material-icons">security</i>
       <mat-card-title>Authentication</mat-card-title>
-      <!--<mat-card-subtitle>Dog Breed</mat-card-subtitle>-->
     </mat-card-header>
     <mat-card-content>
       <mat-accordion>
@@ -67,10 +66,10 @@
             <input matInput #endpoint [disabled]="loggedIn" placeholder="Endpoint" [value]="url" />
           </mat-form-field>
           <mat-form-field>
-            <input matInput #username [disabled]="loggedIn" placeholder="Username" value="admin" />
+            <input matInput #username [disabled]="loggedIn" placeholder="Username" value="" />
           </mat-form-field>
           <mat-form-field>
-            <input matInput #password [disabled]="loggedIn" placeholder="Password" value="admin" />
+            <input matInput #password [disabled]="loggedIn" placeholder="Password" value="" />
           </mat-form-field>
           <ngx-json-viewer [expanded]="false" *ngIf="loginResponse" [json]="loginResponse"></ngx-json-viewer>
           <mat-action-row>
@@ -90,11 +89,10 @@
     </mat-card-content>
   </mat-card>
 
-  <mat-card class="card">
+  <mat-card class="card" id="variable">
     <mat-card-header>
       <i mat-card-avatar class="material-icons">compare_arrows</i>
       <mat-card-title>Variable</mat-card-title>
-      <!--<mat-card-subtitle>Dog Breed</mat-card-subtitle>-->
     </mat-card-header>
     <mat-card-content>
       <mat-accordion multi="true">
@@ -120,17 +118,12 @@
                 </mat-select>
               </mat-form-field>
               <mat-list role="list" *ngIf="readResponse?.params?.variable">
-                <mat-list-item role="listitem">Type: {{readResponse.params.type}}, Count: {{readResponse.params.count}}, Length: {{readResponse.params.length}}</mat-list-item>
-                <mat-list-item role="listitem">Status: {{readResponse.params.status}}</mat-list-item>
-                <mat-list-item role="listitem"><h3 mat-line>Data</h3><p mat-line *ngFor="let data of readResponse.params.data">{{data}}</p></mat-list-item>
+                <mat-list-item role="listitem">Data: {{readResponse.params.data}}</mat-list-item>
               </mat-list>
               <ngx-json-viewer [expanded]="false" *ngIf="readResponse" [json]="readResponse"></ngx-json-viewer>
               <mat-action-row>
                 <button mat-button color="primary" (click)="
-                  readCurrentVariable(
-                      readDevice.value,
-                      readVariable.value
-                    )">
+                read(readDevice.value, readVariable.value)">
                   Read
                 </button>
               </mat-action-row>
@@ -164,11 +157,7 @@
               </mat-form-field>
               <ngx-json-viewer [expanded]="false" *ngIf="readResponse" [json]="readResponse"></ngx-json-viewer>
               <mat-action-row>
-                <button mat-button color="primary" (click)="read(readDevice.value,
-                                readVariable.value,
-                                readType.value,
-                                readCount.value,
-                                readLength.value)">Read</button>
+                <button mat-button color="primary" (click)="read(readDevice.value, readVariable.value, readType.value, readCount.value, readLength.value)">Read</button>
               </mat-action-row>
             </ng-template>
 
@@ -205,7 +194,7 @@
             </mat-form-field>
             <ngx-json-viewer [expanded]="false" *ngIf="readResponse" [json]="readResponse"></ngx-json-viewer>
             <mat-action-row>
-              <button mat-button color="primary" (click)="read(readDevice.value, readVariable.value, readType.value, readCount.value, readLength)">
+              <button mat-button color="primary" (click)="read(readDevice.value, readVariable.value, readType.value, readCount.value, readLength.value)">
                 Read
               </button>
             </mat-action-row>
@@ -215,59 +204,93 @@
         <mat-expansion-panel id="write" [disabled]="!loggedIn">
           <mat-expansion-panel-header>
             <mat-panel-title>Write</mat-panel-title>
-            <mat-panel-description>Write to a device variable.</mat-panel-description>
+            <mat-panel-description>Write a device variable.</mat-panel-description>
           </mat-expansion-panel-header>
 
           <ng-container *ngIf="(deviceSelection | async); else writeManual">
             <mat-form-field>
-              <mat-select #writeDevice matNativeControl id="apiReadType" placeholder="Device" (selectionChange)="changeDevice($event)">
+              <mat-select #writeDevice matNativeControl id="apiwriteType" placeholder="Device" (selectionChange)="changeDevice($event)">
                 <mat-option *ngFor="let device of (devices | async)" [value]="device.name">{{ device.name }}</mat-option>
               </mat-select>
             </mat-form-field>
-            <mat-form-field>
-              <input matInput #writeVariable placeholder="Variable" value="" />
-            </mat-form-field>
-            <mat-form-field>
-              <mat-select #writeType matNativeControl id="apiwriteType" placeholder="Type">
-                <mat-option value="1">INT1</mat-option>
-                <mat-option value="2">INT2</mat-option>
-                <mat-option value="3">INT4</mat-option>
-                <mat-option value="4">INT8</mat-option>
-                <mat-option value="5">UINT1</mat-option>
-                <mat-option value="6">UINT2</mat-option>
-                <mat-option value="7">UINT4</mat-option>
-                <mat-option value="8">UINT8</mat-option>
-                <mat-option value="9">FLOAT4</mat-option>
-                <mat-option value="10">FLOAT8</mat-option>
-                <mat-option value="11">BOOL</mat-option>
-                <mat-option value="16">STRING</mat-option>
-              </mat-select>
-            </mat-form-field>
-            <mat-form-field>
-              <input matInput #writeCount placeholder="Count" value="" />
-            </mat-form-field>
-            <mat-form-field>
-              <input matInput #writeLength placeholder="Length" value="" />
-            </mat-form-field>
-            <mat-form-field>
-              <input matInput #writeData placeholder="Data" value="" />
-              <mat-hint>Arrays are comma delimitted</mat-hint>
-            </mat-form-field>
-            <ngx-json-viewer [expanded]="false" *ngIf="writeResponse" [json]="writeResponse"></ngx-json-viewer>
-            <mat-action-row>
-              <button mat-button color="primary" (click)="
-                            write(
-                              writeDevice.value,
-                              writeVariable.value,
-                              writeType.value,
-                              writeCount.value,
-                              writeLength.value,
-                              writeData.value
-                            )
-                          ">
-                Write
-              </button>
-            </mat-action-row>
+
+
+            <ng-container *ngIf="(variableSelection | async); else writeManualManual">
+              <mat-form-field>
+                <mat-select #writeVariable matNativeControl id="apiwriteType" placeholder="Variable" (selectionChange)="changeVariable($event)">
+                  <mat-option *ngFor="let variable of (variables | async)" [value]="variable.name">{{ variable.name
+                    }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field>
+                <input matInput #writeData placeholder="Data" value="" />
+                <mat-hint>Arrays are comma delimitted</mat-hint>
+              </mat-form-field>
+              <mat-list role="list" *ngIf="writeResponse?.params?.variable">
+                <mat-list-item role="listitem">Type: {{writeResponse.params.type}}, Count:
+                  {{writeResponse.params.count}}, Length: {{writeResponse.params.length}}</mat-list-item>
+                <mat-list-item role="listitem">Status: {{writeResponse.params.status}}</mat-list-item>
+                <mat-list-item role="listitem">
+                  <h3 mat-line>Data</h3>
+                  <p mat-line *ngFor="let data of writeResponse.params.data">{{data}}</p>
+                </mat-list-item>
+              </mat-list>
+              <ngx-json-viewer [expanded]="false" *ngIf="writeResponse" [json]="writeResponse"></ngx-json-viewer>
+              <mat-action-row>
+                <button mat-button color="primary" (click)="
+                  write(
+                      writeDevice.value,
+                      writeVariable.value,
+                      null,
+                      null,
+                      null,
+                      writeData.value
+                    )">
+                  write
+                </button>
+              </mat-action-row>
+            </ng-container>
+
+            <ng-template #writeManualManual>
+              <mat-form-field>
+                <input matInput #writeVariable placeholder="Variable" value="" />
+              </mat-form-field>
+              <mat-form-field>
+                <mat-select #writeType matNativeControl id="apiwriteType" placeholder="Type">
+                  <mat-option value="1">INT1</mat-option>
+                  <mat-option value="2">INT2</mat-option>
+                  <mat-option value="3">INT4</mat-option>
+                  <mat-option value="4">INT8</mat-option>
+                  <mat-option value="5">UINT1</mat-option>
+                  <mat-option value="6">UINT2</mat-option>
+                  <mat-option value="7">UINT4</mat-option>
+                  <mat-option value="8">UINT8</mat-option>
+                  <mat-option value="9">FLOAT4</mat-option>
+                  <mat-option value="10">FLOAT8</mat-option>
+                  <mat-option value="11">BOOL</mat-option>
+                  <mat-option value="16">STRING</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field>
+                <input matInput #writeCount placeholder="Count" value="1" />
+              </mat-form-field>
+              <mat-form-field>
+                <input matInput #writeLength placeholder="Length" value="-1" />
+              </mat-form-field>
+              <mat-form-field>
+                <input matInput #writeData placeholder="Data" value="" />
+                <mat-hint>Arrays are comma delimitted</mat-hint>
+              </mat-form-field>
+              <ngx-json-viewer [expanded]="false" *ngIf="writeResponse" [json]="writeResponse"></ngx-json-viewer>
+              <mat-action-row>
+                <button mat-button color="primary" (click)="write(writeDevice.value,
+                                writeVariable.value,
+                                writeType.value,
+                                writeCount.value,
+                                writeLength.value,
+                                writeData.value)">Write</button>
+              </mat-action-row>
+            </ng-template>
           </ng-container>
 
           <ng-template #writeManual>
@@ -294,10 +317,10 @@
               </mat-select>
             </mat-form-field>
             <mat-form-field>
-              <input matInput #writeCount placeholder="Count" value="" />
+              <input matInput #writeCount placeholder="Count" value="1" />
             </mat-form-field>
             <mat-form-field>
-              <input matInput #writeLength placeholder="Length" value="" />
+              <input matInput #writeLength placeholder="Length" value="-1" />
             </mat-form-field>
             <mat-form-field>
               <input matInput #writeData placeholder="Data" value="" />
@@ -305,17 +328,8 @@
             </mat-form-field>
             <ngx-json-viewer [expanded]="false" *ngIf="writeResponse" [json]="writeResponse"></ngx-json-viewer>
             <mat-action-row>
-              <button mat-button color="primary" (click)="
-                            write(
-                              writeDevice.value,
-                              writeVariable.value,
-                              writeType.value,
-                              writeCount.value,
-                              writeLength.value,
-                              writeData.value
-                            )
-                          ">
-                Write
+              <button mat-button color="primary" (click)="write(writeDevice.value, writeVariable.value, writeType.value, writeCount.value, writeLength.value, writeData.value)">
+                write
               </button>
             </mat-action-row>
           </ng-template>
@@ -345,7 +359,7 @@
               <ngx-json-viewer [expanded]="false" *ngIf="subscribeResponse" [json]="subscribeResponse"></ngx-json-viewer>
               <mat-action-row>
                 <button mat-button color="primary" (click)="
-                subscribeCurrentVariable(
+                subscribe(
                     subscribeDevice.value,
                     subscribeVariable.value
                   )">
@@ -518,15 +532,14 @@
     </mat-card-content>
   </mat-card>
 
-  <mat-card class="card">
+  <mat-card class="card" id="device">
     <mat-card-header>
       <i mat-card-avatar class="material-icons">router</i>
       <mat-card-title>Device</mat-card-title>
-      <!--<mat-card-subtitle>Dog Breed</mat-card-subtitle>-->
     </mat-card-header>
     <mat-card-content>
       <mat-accordion multi="true">
-        <mat-expansion-panel  id="deviceList" [disabled]="!loggedIn">
+        <mat-expansion-panel id="deviceList" [disabled]="!loggedIn">
           <mat-expansion-panel-header>
             <mat-panel-title>List Devices</mat-panel-title>
             <mat-panel-description>List all devices.</mat-panel-description>
@@ -675,11 +688,10 @@
     </mat-card-content>
   </mat-card>
 
-  <mat-card class="card">
+  <mat-card class="card" id="trigger">
     <mat-card-header>
       <i mat-card-avatar class="material-icons">device_hub</i>
       <mat-card-title>Trigger</mat-card-title>
-      <!--<mat-card-subtitle>Dog Breed</mat-card-subtitle>-->
     </mat-card-header>
     <mat-card-content>
       <mat-accordion multi="true">
@@ -821,8 +833,7 @@
             </mat-form-field>
             <ngx-json-viewer [expanded]="false" *ngIf="triggerStopResponse" [json]="triggerStopResponse"></ngx-json-viewer>
             <mat-action-row>
-              <button mat-button color="primary" (click)="triggerStop(triggerStopProject.value, triggerStopTrigger.value)">Stop
-                Trigger</button>
+              <button mat-button color="primary" (click)="triggerStop(triggerStopProject.value, triggerStopTrigger.value)">Stop Trigger</button>
             </mat-action-row>
           </ng-template>
         </mat-expansion-panel>
@@ -910,10 +921,42 @@
                   No triggers.
                 </mat-error>
               </mat-form-field>
+              <br>
+              <mat-form-field>
+                <input matInput #subTriggerFireVariable placeholder="Variable" />
+              </mat-form-field>
+              <mat-form-field>
+                <input matInput #subTriggerFireVariableData placeholder="Data" />
+                <mat-hint>Arrays are comma delimitted</mat-hint>
+              </mat-form-field>
+              <button mat-button color="primary" (click)="subTriggerAddVariable(subTriggerFireVariable.value, subTriggerFireVariableData.value)">Add Variable</button>
+              <!-- <mat-form-field class="form-field-fullwidth">
+                <mat-chip-list #chipList>
+                  <mat-chip *ngFor="let variable of (subTriggerVariablesSubject | async)" selectable="true" removable="true"
+                    (removed)="unsubscribe(variable.response.params.id)">
+                    {{variable.request.params.variable}}
+                    <mat-icon matChipRemove>cancel</mat-icon>
+                  </mat-chip>
+                  <input #subTriggerInputs  placeholder="New Variables..." [matAutocomplete]="auto" [matChipInputFor]="#chipList"
+                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="true" />
+                </mat-chip-list>
+                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="subVariableSelected($event)">
+                  <mat-option *ngFor="let variable of variables | async" [value]="variable.name">
+                    {{variable.name}}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field> -->
+        <mat-form-field class="form-field-fullwidth" *ngIf="(subTriggerVariablesSubject | async); let variablesSubject"  [hidden]="variablesSubject?.length <= 0">
+          <mat-chip-list #chipList>
+            <mat-chip *ngFor="let variable of variablesSubject" selectable="true" removable="true" (removed)="subTriggerRemoveVariable(variable.response.params.id)">
+              {{variable.request.params.variable}}
+              <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+          </mat-chip-list>
+        </mat-form-field>
               <ngx-json-viewer [expanded]="false" *ngIf="subTriggerFireResponse" [json]="subTriggerFireResponse"></ngx-json-viewer>
               <mat-action-row>
-                <button mat-button color="primary" (click)="subTriggerFire(subTriggerFireProject.value, subTriggerFireTrigger.value)">Fire
-                  Trigger</button>
+                <button mat-button color="primary" (click)="subTriggerFire(subTriggerFireProject.value, subTriggerFireTrigger.value, subTriggerInputs.value)">Fire SubTrigger</button>
               </mat-action-row>
             </ng-container>
 
@@ -923,8 +966,7 @@
               </mat-form-field>
               <ngx-json-viewer [expanded]="false" *ngIf="subTriggerFireResponse" [json]="subTriggerFireResponse"></ngx-json-viewer>
               <mat-action-row>
-                <button mat-button color="primary" (click)="subTriggerFire(subTriggerFireProject.value, subTriggerFireTrigger.value)">Fire
-                  Trigger</button>
+                <button mat-button color="primary" (click)="subTriggerFire(subTriggerFireProject.value, subTriggerFireTrigger.value)">Fire Trigger</button>
               </mat-action-row>
             </ng-template>
 
@@ -948,11 +990,10 @@
     </mat-card-content>
   </mat-card>
 
-  <mat-card class="card">
+  <mat-card class="card" id="project">
     <mat-card-header>
       <i mat-card-avatar class="material-icons">folder</i>
       <mat-card-title>Project</mat-card-title>
-      <!--<mat-card-subtitle>Dog Breed</mat-card-subtitle>-->
     </mat-card-header>
     <mat-card-content>
       <mat-accordion multi="true">
@@ -1034,11 +1075,10 @@
     </mat-card-content>
   </mat-card>
 
-  <mat-card class="card">
+  <mat-card class="card" id="channel">
     <mat-card-header>
       <i mat-card-avatar class="material-icons">live_tv</i>
       <mat-card-title>Channel</mat-card-title>
-      <!--<mat-card-subtitle>Dog Breed</mat-card-subtitle>-->
     </mat-card-header>
     <mat-card-content>
       <mat-accordion multi="true">
@@ -1090,11 +1130,10 @@
     </mat-card-content>
   </mat-card>
 
-  <mat-card class="card">
+  <mat-card class="card" id="diagnostic">
     <mat-card-header>
       <i mat-card-avatar class="material-icons">settings_input_component</i>
       <mat-card-title>Diagnostic</mat-card-title>
-      <!--<mat-card-subtitle>Dog Breed</mat-card-subtitle>-->
     </mat-card-header>
     <mat-card-content>
       <mat-accordion multi="true">
@@ -1124,11 +1163,10 @@
     </mat-card-content>
   </mat-card>
 
-  <mat-card class="card">
+  <mat-card class="card" id="system">
     <mat-card-header>
       <i mat-card-avatar class="material-icons">developer_board</i>
       <mat-card-title>System</mat-card-title>
-      <!--<mat-card-subtitle>Dog Breed</mat-card-subtitle>-->
     </mat-card-header>
     <mat-card-content>
       <mat-accordion multi="true">
@@ -1183,15 +1221,14 @@
     </mat-card-content>
   </mat-card>
 
-  <mat-card class="card">
+  <mat-card class="card" id="sql">
     <mat-card-header>
       <i mat-card-avatar class="material-icons">storage</i>
       <mat-card-title>SQLLite</mat-card-title>
-      <!--<mat-card-subtitle>Dog Breed</mat-card-subtitle>-->
     </mat-card-header>
     <mat-card-content>
       <mat-accordion multi="true">
-        <mat-expansion-panel id="sql" [disabled]="!loggedIn">
+        <mat-expansion-panel id="sql-query" [disabled]="!loggedIn">
           <mat-expansion-panel-header>
             <mat-panel-title>SQL Query</mat-panel-title>
             <mat-panel-description>Perform an SQL Query.</mat-panel-description>
