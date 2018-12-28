@@ -2,6 +2,7 @@ import { Component, OnInit, Inject, Input, ElementRef, ViewChild } from '@angula
 import { DevicewiseAngularService } from 'devicewise-angular';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import * as DwResponse from 'devicewise-angular/lib/models/dwresponse';
+import * as DwRequest from 'devicewise-angular/lib/models/dwresponse';
 import * as DwSubscription from 'devicewise-angular/lib/models/dwsubscription';
 import { BehaviorSubject, Subject } from 'rxjs';
 import {
@@ -16,6 +17,7 @@ import {
 import { SubTriggerPipe } from './custom-pipes.pipe';
 import { FormControl, FormGroupDirective, NgForm, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
+import { variable } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-devicewise-test',
@@ -45,6 +47,8 @@ export class DevicewiseTestComponent implements OnInit {
   selectedVariable: DwResponse.DeviceInfoVariable;
   subscriptionResponses: DwSubscription.Subscription[] = [];
   subscriptionResponsesSubject: BehaviorSubject<DwSubscription.Subscription[]> = new BehaviorSubject([]);
+  subTriggerVariables: DwRequest.SubTriggerVariable[] = [];
+  subTriggerVariablesSubject: BehaviorSubject<DwRequest.SubTriggerVariable[]> = new BehaviorSubject([]);
   loginResponse;
   logoutResponse;
   readResponse;
@@ -170,7 +174,17 @@ export class DevicewiseTestComponent implements OnInit {
     );
   }
 
-  read(device, variable, type, count, length) {
+  read(device, variable, type?, count?, length?) {
+    if (!type) {
+      type = this.dwTypeToNumber(this.selectedVariable.type);
+    }
+    if (!count) {
+      count = this.selectedVariable.xdim ? this.selectedVariable.xdim : 1;
+    }
+    if (!length) {
+      length = this.selectedVariable.length ? this.selectedVariable.length : -1;
+    }
+
     this.devicewise.read(device, variable, type, count, length).subscribe(
       data => {
         this.readResponse = data;
@@ -179,19 +193,20 @@ export class DevicewiseTestComponent implements OnInit {
     );
   }
 
-  readCurrentVariable(device?, variable?) {
-    const type = this.dwTypeToNumber(this.selectedVariable.type);
-    const count = this.selectedVariable.xdim ? this.selectedVariable.xdim : 1;
-    const length = this.selectedVariable.length ? this.selectedVariable.length : -1;
-    this.devicewise.read(device, variable, type, count, length).subscribe(
-      data => {
-        this.readResponse = data;
-      },
-      error => this.openSnackError(error)
-    );
-  }
+  write(device, variable, type?, count?, length?, varData?) {
+    if (!type) {
+      type = this.dwTypeToNumber(this.selectedVariable.type);
+    }
+    if (!count) {
+      count = this.selectedVariable.xdim ? this.selectedVariable.xdim : 1;
+    }
+    if (!length) {
+      length = this.selectedVariable.length ? this.selectedVariable.length : -1;
+    }
+    if (!varData) {
+      return -1;
+    }
 
-  write(device, variable, type, count, length, varData) {
     this.devicewise.write(device, variable, type, count, length, varData).subscribe(
       data => {
         this.writeResponse = data;
@@ -217,8 +232,22 @@ export class DevicewiseTestComponent implements OnInit {
     this.subscriptionInput.nativeElement.value = '';
   }
 
-  subscribe(device, variable, rate, type, count, length) {
+  subscribe(device, variable, rate?, type?, count?, length?) {
     const subscription: Subject<DwResponse.Subscription> = new Subject();
+
+    if (!type) {
+      type = this.dwTypeToNumber(this.selectedVariable.type);
+    }
+    if (!count) {
+      count = this.selectedVariable.xdim ? this.selectedVariable.xdim : 1;
+    }
+    if (!length) {
+      length = this.selectedVariable.length ? this.selectedVariable.length : -1;
+    }
+    if (!rate) {
+      rate = 1;
+    }
+
     this.devicewise.subscribe(device, variable, rate, type, count, length).subscribe(
       data => {
         this.subscribeResponse = data;
@@ -240,41 +269,42 @@ export class DevicewiseTestComponent implements OnInit {
           subscription: subscription
         });
         this.subscriptionResponsesSubject.next(this.subscriptionResponses);
+        this.openSnackBar('Subscription to ' + variable + ' successful!', 'DISMISS');
       },
       error => this.openSnackError(error)
     );
   }
 
-  subscribeCurrentVariable(device?, variable?) {
-    const subscription: Subject<DwResponse.Subscription> = new Subject();
-    const type = this.dwTypeToNumber(this.selectedVariable.type);
-    const count = this.selectedVariable.xdim ? this.selectedVariable.xdim : 1;
-    const length = this.selectedVariable.length ? this.selectedVariable.length : -1;
-    this.devicewise.subscribe(device, variable, 1, type, count, length).subscribe(
-      data => {
-        this.subscribeResponse = data;
-        if (!data.success) {
-          return;
-        }
-        this.subscriptionResponses.push({
-          request: {
-            command: 'variable.subscribe',
-            params: {
-              device: device,
-              variable: variable,
-              type: String(type),
-              count: String(count),
-              length: String(length)
-            }
-          },
-          response: data,
-          subscription: subscription
-        });
-        this.subscriptionResponsesSubject.next(this.subscriptionResponses);
-      },
-      error => this.openSnackError(error)
-    );
-  }
+  // subscribeCurrentVariable(device?, variable?) {
+  //   const subscription: Subject<DwResponse.Subscription> = new Subject();
+  //   const type = this.dwTypeToNumber(this.selectedVariable.type);
+  //   const count = this.selectedVariable.xdim ? this.selectedVariable.xdim : 1;
+  //   const length = this.selectedVariable.length ? this.selectedVariable.length : -1;
+  //   this.devicewise.subscribe(device, variable, 1, type, count, length).subscribe(
+  //     data => {
+  //       this.subscribeResponse = data;
+  //       if (!data.success) {
+  //         return;
+  //       }
+  //       this.subscriptionResponses.push({
+  //         request: {
+  //           command: 'variable.subscribe',
+  //           params: {
+  //             device: device,
+  //             variable: variable,
+  //             type: String(type),
+  //             count: String(count),
+  //             length: String(length)
+  //           }
+  //         },
+  //         response: data,
+  //         subscription: subscription
+  //       });
+  //       this.subscriptionResponsesSubject.next(this.subscriptionResponses);
+  //     },
+  //     error => this.openSnackError(error)
+  //   );
+  // }
 
   unsubscribe(id) {
     this.devicewise.unsubscribe(id).subscribe(
@@ -406,12 +436,19 @@ export class DevicewiseTestComponent implements OnInit {
   }
 
   subTriggerFire(project: string, trigger: string, reporting: boolean, input: { name: string; value: string }[]) {
+    console.log(project, trigger, reporting, input);
     return this.devicewise.subTriggerFire(project, trigger, reporting, input).subscribe(
       data => {
         this.subTriggerFireResponse = data;
       },
       error => this.openSnackError(error)
     );
+  }
+
+  subTriggerAddVariable(variableName: string, variableData: any) {
+    console.log(variableName, variableData);
+    this.subTriggerVariables.push({name: variableName, data: variableData});
+    this.subTriggerVariablesSubject.next(this.subTriggerVariables);
   }
 
   projectList() {
@@ -534,6 +571,7 @@ export class DevicewiseTestComponent implements OnInit {
 
     this.devicewise.deviceInfo(this.currentDevice, 2).subscribe(
       data => {
+        console.log(data.params);
         this.variables.next(data.params.variableInfo);
       },
       error => this.openSnackError(error)
