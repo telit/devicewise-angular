@@ -92,7 +92,6 @@ export class DevicewiseAngularService {
     );
   }
 
-
   // Variables
   // TODO
   subscribe(
@@ -160,7 +159,6 @@ export class DevicewiseAngularService {
     );
   }
 
-
   // Device
 
   deviceList(): Observable<DwResponse.DeviceList> {
@@ -194,7 +192,6 @@ export class DevicewiseAngularService {
       httpOptions
     );
   }
-
 
   // Trigger
 
@@ -234,7 +231,7 @@ export class DevicewiseAngularService {
     project: string,
     trigger: string,
     reporting: boolean,
-    input: { name: string, value: string }[]
+    input: any[]
   ): Observable<DwResponse.SubTriggerFire> {
     return this.http.post<DwResponse.SubTriggerFire>(
       this.url + '/api',
@@ -243,7 +240,6 @@ export class DevicewiseAngularService {
     );
   }
 
-
   // Project
 
   projectList(): Observable<DwResponse.ProjectList> {
@@ -251,20 +247,25 @@ export class DevicewiseAngularService {
   }
 
   projectStart(name): Observable<DwResponse.ProjectStart> {
-    return this.http.post<DwResponse.ProjectStart>(this.url + '/api', { command: 'project.start', params: { name: name } }, httpOptions);
+    return this.http.post<DwResponse.ProjectStart>(
+      this.url + '/api',
+      { command: 'project.start', params: { name: name } },
+      httpOptions
+    );
   }
 
   projectStop(name): Observable<DwResponse.ProjectStop> {
-    return this.http.post<DwResponse.ProjectStop>(this.url + '/api', { command: 'project.stop', params: { name: name } }, httpOptions);
+    return this.http.post<DwResponse.ProjectStop>(
+      this.url + '/api',
+      { command: 'project.stop', params: { name: name } },
+      httpOptions
+    );
   }
-
 
   // Channel
 
   // TODO
-  channelSubscribe(
-    channel: string,
-  ): Observable<DwResponse.ChannelSubscribe> {
+  channelSubscribe(channel: string): Observable<DwResponse.ChannelSubscribe> {
     return this.http.post<DwResponse.ChannelSubscribe>(
       this.url + '/api',
       {
@@ -298,7 +299,6 @@ export class DevicewiseAngularService {
     );
   }
 
-
   // SQLite
 
   sql(query): Observable<DwResponse.Sql> {
@@ -312,7 +312,6 @@ export class DevicewiseAngularService {
     );
   }
 
-
   // System
 
   referenceList(type: string, key: string, flag: string): Observable<DwResponse.ReferenceList> {
@@ -325,7 +324,6 @@ export class DevicewiseAngularService {
       httpOptions
     );
   }
-
 
   // Diagnostics
 

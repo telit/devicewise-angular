@@ -1,9 +1,7 @@
 import { Component, OnInit, Inject, Input, ElementRef, ViewChild } from '@angular/core';
 import { DevicewiseAngularService } from 'devicewise-angular';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import * as DwResponse from 'devicewise-angular/lib/models/dwresponse';
-import * as DwRequest from 'devicewise-angular/lib/models/dwresponse';
-import * as DwSubscription from 'devicewise-angular/lib/models/dwsubscription';
+import { DwRequest, DwResponse, DwSubscription } from 'devicewise-angular';
 import { BehaviorSubject, Subject } from 'rxjs';
 import {
   MatBottomSheet,
@@ -17,7 +15,6 @@ import {
 import { SubTriggerPipe } from './custom-pipes.pipe';
 import { FormControl, FormGroupDirective, NgForm, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
-import { variable } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-devicewise-test',
@@ -47,8 +44,8 @@ export class DevicewiseTestComponent implements OnInit {
   selectedVariable: DwResponse.DeviceInfoVariable;
   subscriptionResponses: DwSubscription.Subscription[] = [];
   subscriptionResponsesSubject: BehaviorSubject<DwSubscription.Subscription[]> = new BehaviorSubject([]);
-  subTriggerVariables: DwRequest.SubTriggerVariable[] = [];
-  subTriggerVariablesSubject: BehaviorSubject<DwRequest.SubTriggerVariable[]> = new BehaviorSubject([]);
+  subTriggerVariables: any[] = [];
+  subTriggerVariablesSubject: BehaviorSubject<any[]> = new BehaviorSubject([]);
   loginResponse;
   logoutResponse;
   readResponse;
@@ -93,13 +90,6 @@ export class DevicewiseTestComponent implements OnInit {
     private bottomSheet: MatBottomSheet
   ) {}
 
-  forbiddenNameValidator(nameRe: RegExp): ValidatorFn {
-    return (control: AbstractControl): { [key: string]: any } | null => {
-      const forbidden = nameRe.test(control.value);
-      return forbidden ? { forbiddenName: { value: control.value } } : null;
-    };
-  }
-
   ngOnInit() {
     this.dataSource.paginator = this.paginator;
     this.url = this.devicewise.getEndpoint();
@@ -114,7 +104,7 @@ export class DevicewiseTestComponent implements OnInit {
         }
         this.loggedIn = true;
         this.loaded = true;
-        this.openSnackBar('Welcome. You\'re already logged in!', 'DISMISS');
+        this.openSnackBar("Welcome. You're already logged in!", 'DISMISS');
 
         this.refreshLists();
       },
@@ -130,19 +120,9 @@ export class DevicewiseTestComponent implements OnInit {
       this.projects.next(data2.params.projects);
     });
 
-    // this.devicewise.triggerList(this.currentProject).subscribe((data2) => {
-    //   this.triggers.next(data2.params.triggers);
-    // });
-
     this.devicewise.deviceList().subscribe(data2 => {
       this.devices.next(data2.params.devices);
     });
-
-    // setInterval(() => {
-    //   this.devicewise.deviceList().subscribe(data2 => {
-    //     this.devices.next(data2.params.devices);
-    //   });
-    // }, 10000);
   }
 
   login(endpoint: string, username: string, password: string) {
@@ -152,7 +132,7 @@ export class DevicewiseTestComponent implements OnInit {
         this.loginResponse = data;
         if (data.success) {
           this.loggedIn = true;
-          this.openSnackBar('Welcome. You\'re logged in as ' + username + '!', 'DISMISS');
+          this.openSnackBar("Welcome. You're logged in as " + username + '!', 'DISMISS');
           this.refreshLists();
         }
       },
@@ -275,36 +255,9 @@ export class DevicewiseTestComponent implements OnInit {
     );
   }
 
-  // subscribeCurrentVariable(device?, variable?) {
-  //   const subscription: Subject<DwResponse.Subscription> = new Subject();
-  //   const type = this.dwTypeToNumber(this.selectedVariable.type);
-  //   const count = this.selectedVariable.xdim ? this.selectedVariable.xdim : 1;
-  //   const length = this.selectedVariable.length ? this.selectedVariable.length : -1;
-  //   this.devicewise.subscribe(device, variable, 1, type, count, length).subscribe(
-  //     data => {
-  //       this.subscribeResponse = data;
-  //       if (!data.success) {
-  //         return;
-  //       }
-  //       this.subscriptionResponses.push({
-  //         request: {
-  //           command: 'variable.subscribe',
-  //           params: {
-  //             device: device,
-  //             variable: variable,
-  //             type: String(type),
-  //             count: String(count),
-  //             length: String(length)
-  //           }
-  //         },
-  //         response: data,
-  //         subscription: subscription
-  //       });
-  //       this.subscriptionResponsesSubject.next(this.subscriptionResponses);
-  //     },
-  //     error => this.openSnackError(error)
-  //   );
-  // }
+  startSubscriptions() {
+    this.devicewise.getNotifications();
+  }
 
   unsubscribe(id) {
     this.devicewise.unsubscribe(id).subscribe(
@@ -435,8 +388,10 @@ export class DevicewiseTestComponent implements OnInit {
     );
   }
 
-  subTriggerFire(project: string, trigger: string, reporting: boolean, input: { name: string; value: string }[]) {
-    console.log(project, trigger, reporting, input);
+  subTriggerFire(project: string, trigger: string, reporting: boolean, input?: any[]) {
+    if (!input) {
+      input = this.subTriggerVariables;
+    }
     return this.devicewise.subTriggerFire(project, trigger, reporting, input).subscribe(
       data => {
         this.subTriggerFireResponse = data;
@@ -446,8 +401,19 @@ export class DevicewiseTestComponent implements OnInit {
   }
 
   subTriggerAddVariable(variableName: string, variableData: any) {
-    console.log(variableName, variableData);
-    this.subTriggerVariables.push({name: variableName, data: variableData});
+    const newVariable = {};
+    newVariable[variableName] = variableData;
+    this.subTriggerVariables.push(newVariable);
+    this.subTriggerVariablesSubject.next(this.subTriggerVariables);
+  }
+
+  subTriggerRemoveVariable(variableName: string) {
+    this.subTriggerVariables.splice(
+      this.subTriggerVariables.findIndex(variable => {
+        return Object.keys(variable)[0] === variableName;
+      }),
+      1
+    );
     this.subTriggerVariablesSubject.next(this.subTriggerVariables);
   }
 
@@ -553,9 +519,6 @@ export class DevicewiseTestComponent implements OnInit {
   // Other
 
   openSettings(): void {
-    console.log('selection!');
-    this.deviceSelection.subscribe(data => console.log(data));
-    this.variableSelection.subscribe(data => console.log(data));
     this.bottomSheet.open(SettingsComponent, {
       data: {
         deviceSelection: this.deviceSelection,
@@ -571,7 +534,6 @@ export class DevicewiseTestComponent implements OnInit {
 
     this.devicewise.deviceInfo(this.currentDevice, 2).subscribe(
       data => {
-        console.log(data.params);
         this.variables.next(data.params.variableInfo);
       },
       error => this.openSnackError(error)
@@ -599,7 +561,6 @@ export class DevicewiseTestComponent implements OnInit {
   openSnackError(error: any) {
     let message = '';
 
-    console.log(error);
     if (error.error.errorMessages) {
       message = 'ERROR: ' + error.error.errorMessages;
     } else if (error.message) {
@@ -661,10 +622,7 @@ export class SettingsComponent {
     @Inject(MAT_BOTTOM_SHEET_DATA) public data: any,
     private devicewiseTestComponent: DevicewiseTestComponent,
     private bottomSheetRef: MatBottomSheetRef<SettingsComponent>
-  ) {
-    console.log(data.deviceSelection.getValue());
-    console.log(data.variableSelection.getValue());
-  }
+  ) {}
 
   openLink(event: MouseEvent): void {
     this.bottomSheetRef.dismiss();

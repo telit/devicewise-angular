@@ -69,13 +69,9 @@ export class SubTriggerFireParams {
   name: string;
   project: string;
   reportingEnabled: boolean;
-  input: SubTriggerFireParams[];
+  input: any[];
 }
 
-export interface SubTriggerVariable {
-  name: string;
-  value: string;
-}
 
 // Project
 

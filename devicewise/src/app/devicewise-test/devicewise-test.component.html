@@ -469,22 +469,27 @@
           </ng-template>
         </mat-expansion-panel>
 
-        <mat-form-field class="form-field-fullwidth" style="margin:15px 0px 0px 0px;" [hidden]="(subscriptionResponsesSubject | async)?.length <= 0">
-          <mat-chip-list #chipList>
-            <mat-chip *ngFor="let subscription of (subscriptionResponsesSubject | async)" selectable="true" removable="true"
-              (removed)="unsubscribe(subscription.response.params.id)">
-              {{subscription.request.params.variable}}
-              <mat-icon matChipRemove>cancel</mat-icon>
-            </mat-chip>
-            <input placeholder="New Subscriptions..." #subscriptionInput [matAutocomplete]="auto" [matChipInputFor]="chipList"
-              [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="true" />
-          </mat-chip-list>
-          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="subVariableSelected($event)">
-            <mat-option *ngFor="let variable of variables | async" [value]="variable.name">
-              {{variable.name}}
-            </mat-option>
-          </mat-autocomplete>
-        </mat-form-field>
+        <ng-container *ngIf="subscriptionResponsesSubject | async; let responses">
+          <div [hidden]="responses.length <= 0" >
+
+          <mat-form-field class="form-field-fullwidth" style="margin:15px 0px 0px 0px;">
+              <mat-chip-list #chipList>
+                <mat-chip *ngFor="let subscription of responses" selectable="true" removable="true" (removed)="unsubscribe(subscription.response.params.id)">
+                  {{subscription.request.params.variable}}
+                  <mat-icon matChipRemove>cancel</mat-icon>
+                </mat-chip>
+                <input placeholder="New Subscriptions..." #subscriptionInput [matAutocomplete]="auto" [matChipInputFor]="chipList"
+                  [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="true" />
+              </mat-chip-list>
+              <mat-autocomplete #auto="matAutocomplete" (optionSelected)="subVariableSelected($event)">
+                <mat-option *ngFor="let variable of variables | async" [value]="variable.name">
+                  {{variable.name}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+            <button mat-button color="primary" (click)="startSubscriptions()">Start Subscriptions</button>
+          </div>
+        </ng-container>
 
         <mat-expansion-panel id="unsubscribe" [disabled]="!loggedIn">
           <mat-expansion-panel-header>
@@ -834,7 +839,8 @@
             </mat-form-field>
             <ngx-json-viewer [expanded]="false" *ngIf="triggerStopResponse" [json]="triggerStopResponse"></ngx-json-viewer>
             <mat-action-row>
-              <button mat-button color="primary" (click)="triggerStop(triggerStopProject.value, triggerStopTrigger.value)">Stop Trigger</button>
+              <button mat-button color="primary" (click)="triggerStop(triggerStopProject.value, triggerStopTrigger.value)">Stop
+                Trigger</button>
             </mat-action-row>
           </ng-template>
         </mat-expansion-panel>
@@ -930,7 +936,8 @@
                 <input matInput #subTriggerFireVariableData placeholder="Data" />
                 <mat-hint>Arrays are comma delimitted</mat-hint>
               </mat-form-field>
-              <button mat-button color="primary" (click)="subTriggerAddVariable(subTriggerFireVariable.value, subTriggerFireVariableData.value)">Add Variable</button>
+              <button mat-button color="primary" (click)="subTriggerAddVariable(subTriggerFireVariable.value, subTriggerFireVariableData.value)">Add
+                Variable</button>
               <!-- <mat-form-field class="form-field-fullwidth">
                 <mat-chip-list #chipList>
                   <mat-chip *ngFor="let variable of (subTriggerVariablesSubject | async)" selectable="true" removable="true"
@@ -947,17 +954,20 @@
                   </mat-option>
                 </mat-autocomplete>
               </mat-form-field> -->
-        <mat-form-field class="form-field-fullwidth" *ngIf="(subTriggerVariablesSubject | async); let variablesSubject"  [hidden]="variablesSubject?.length <= 0">
-          <mat-chip-list #chipList>
-            <mat-chip *ngFor="let variable of variablesSubject" selectable="true" removable="true" (removed)="subTriggerRemoveVariable(variable.response.params.id)">
-              {{variable.request.params.variable}}
-              <mat-icon matChipRemove>cancel</mat-icon>
-            </mat-chip>
-          </mat-chip-list>
-        </mat-form-field>
+              <mat-form-field class="form-field-fullwidth" *ngIf="(subTriggerVariablesSubject | async); let variablesSubject"
+                [hidden]="variablesSubject?.length <= 0">
+                <mat-chip-list #chipList>
+                  <mat-chip *ngFor="let variable of variablesSubject; let variableIndex = index" selectable="true"
+                    removable="true" (removed)="subTriggerRemoveVariable(objectKeys(variable)[0])">
+                    {{objectKeys(variable)[0]}}
+                    <mat-icon matChipRemove>cancel</mat-icon>
+                  </mat-chip>
+                </mat-chip-list>
+              </mat-form-field>
               <ngx-json-viewer [expanded]="false" *ngIf="subTriggerFireResponse" [json]="subTriggerFireResponse"></ngx-json-viewer>
               <mat-action-row>
-                <button mat-button color="primary" (click)="subTriggerFire(subTriggerFireProject.value, subTriggerFireTrigger.value, subTriggerInputs.value)">Fire SubTrigger</button>
+                <button mat-button color="primary" (click)="subTriggerFire(subTriggerFireProject.value, subTriggerFireTrigger.value, null)">Fire
+                  SubTrigger</button>
               </mat-action-row>
             </ng-container>
 
@@ -967,7 +977,8 @@
               </mat-form-field>
               <ngx-json-viewer [expanded]="false" *ngIf="subTriggerFireResponse" [json]="subTriggerFireResponse"></ngx-json-viewer>
               <mat-action-row>
-                <button mat-button color="primary" (click)="subTriggerFire(subTriggerFireProject.value, subTriggerFireTrigger.value)">Fire Trigger</button>
+                <button mat-button color="primary" (click)="subTriggerFire(subTriggerFireProject.value, subTriggerFireTrigger.value)">Fire
+                  Trigger</button>
               </mat-action-row>
             </ng-template>
 
