@@ -35,9 +35,9 @@ export class Subscribe {
 export interface SubscribeParams {
   device: string;
   variable: string;
-  type: string;
-  count: string;
-  length: string;
+  type: number;
+  count: number;
+  length: number;
 }
 export class Unubscribe {}
 
@@ -69,8 +69,9 @@ export class SubTriggerFireParams {
   name: string;
   project: string;
   reportingEnabled: boolean;
-  input: { name: string; value: string }[];
+  input: any[];
 }
+
 
 // Project
 

@@ -1,0 +1,1302 @@
+<div class="devicewise-test-container" id="home" [hidden]="!loaded">
+  <button style="float:right;" mat-raised-button (click)="openSettings()">Settings</button><br>
+  <h1 class="custom-header mat-display-2">DeviceWISE Services</h1>
+  <h4 class="custom-sub-header mat-subheading-2">DeviceWISE API Specification & Service Information</h4>
+  <p class="custom-body body-1">The DeviceWISE API allows users to leverage the power of
+    deviceWISE from a simple RESTFUL interface.</p>
+  <div class="highlights">
+    <a target="_blank" href="https://documenter.getpostman.com/view/4197967/RzZDgvoy">
+      <button mat-button color="primary">Postman Collection</button>
+    </a>
+    <a target="_blank" href="https://www.npmjs.com/package/devicewise">
+      <button mat-button color="primary">Angular Library</button>
+    </a>
+    <a target="_blank" href="https://docs-engr.devicewise.com/Content/home.htm">
+      <button mat-button color="primary">DeviceWISE Help</button>
+    </a>
+    <a target="_blank" href="http://telit.com">
+      <button mat-button color="primary">Telit</button>
+    </a>
+  </div>
+
+  <mat-accordion>
+    <mat-expansion-panel id="prerequisites">
+      <mat-expansion-panel-header>
+        <mat-panel-title>Prerequisites</mat-panel-title>
+        <mat-panel-description>Prerequisites to use the API.</mat-panel-description>
+      </mat-expansion-panel-header>
+      <mat-list>
+        <mat-list-item>
+          <mat-icon mat-list-icon>done</mat-icon>
+          <h4 mat-line>Install deviceWISE</h4>
+          <p mat-line>Update or install the deviceWISE gateway to release 18.2.1 or higher.</p>
+        </mat-list-item>
+        <mat-list-item>
+          <mat-icon mat-list-icon>done</mat-icon>
+          <h4 mat-line>Start the HTTP Server</h4>
+          <p mat-line>The status of the gateway's HTTP Server can be viewed using the Workbench -> Administration ->
+            HTTP
+            Server tab. For more information, see HTTP Server.</p>
+        </mat-list-item>
+        <mat-list-item>
+          <mat-icon mat-list-icon>done</mat-icon>
+          <h4 mat-line>Create a New User</h4>
+          <p mat-line>Before you login, you will need to create a new user in the gateway, using the Workbench. Use the
+            Workbench -> Administration -> Security tab to display the Security panel, then select the Users tab.
+            Create a
+            new User with the following credentials</p>
+        </mat-list-item>
+      </mat-list>
+    </mat-expansion-panel>
+  </mat-accordion>
+
+  <mat-card class="card" id="authentication">
+    <mat-card-header>
+      <i mat-card-avatar class="material-icons">security</i>
+      <mat-card-title>Authentication</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-accordion>
+        <mat-expansion-panel id="login" [disabled]="loggedIn" [expanded]="!loggedIn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Login</mat-panel-title>
+            <mat-panel-description>Login with your username & password.</mat-panel-description>
+          </mat-expansion-panel-header>
+          <mat-form-field>
+            <input matInput #endpoint [disabled]="loggedIn" placeholder="Endpoint" [value]="url" />
+          </mat-form-field>
+          <mat-form-field>
+            <input matInput #username [disabled]="loggedIn" placeholder="Username" value="" />
+          </mat-form-field>
+          <mat-form-field>
+            <input matInput #password [disabled]="loggedIn" placeholder="Password" value="" />
+          </mat-form-field>
+          <ngx-json-viewer [expanded]="false" *ngIf="loginResponse" [json]="loginResponse"></ngx-json-viewer>
+          <mat-action-row>
+            <button mat-button color="primary" (click)="login(endpoint.value, username.value, password.value)">Login</button>
+          </mat-action-row>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel id="logout" [disabled]="!loggedIn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Logout</mat-panel-title>
+            <mat-panel-description>Logout of your session.</mat-panel-description>
+          </mat-expansion-panel-header>
+          <ngx-json-viewer [expanded]="false" *ngIf="logoutResponse" [json]="logoutResponse"></ngx-json-viewer>
+          <mat-action-row><button mat-button color="primary" (click)="logout()">Logout</button></mat-action-row>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="card" id="variable">
+    <mat-card-header>
+      <i mat-card-avatar class="material-icons">compare_arrows</i>
+      <mat-card-title>Variable</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-accordion multi="true">
+        <mat-expansion-panel id="read" [disabled]="!loggedIn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Read</mat-panel-title>
+            <mat-panel-description>Read a device variable.</mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <ng-container *ngIf="(deviceSelection | async); else readManual">
+            <mat-form-field>
+              <mat-select #readDevice matNativeControl id="apiReadType" placeholder="Device" (selectionChange)="changeDevice($event)">
+                <mat-option *ngFor="let device of (devices | async)" [value]="device.name">{{ device.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+
+            <ng-container *ngIf="(variableSelection | async); else readManualManual">
+              <mat-form-field>
+                <mat-select #readVariable matNativeControl id="apiReadType" placeholder="Variable" (selectionChange)="changeVariable($event)">
+                  <mat-option *ngFor="let variable of (variables | async)" [value]="variable.name">{{ variable.name
+                    }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-list role="list" *ngIf="readResponse?.params?.variable">
+                <mat-list-item role="listitem">Data: {{readResponse.params.data}}</mat-list-item>
+              </mat-list>
+              <ngx-json-viewer [expanded]="false" *ngIf="readResponse" [json]="readResponse"></ngx-json-viewer>
+              <mat-action-row>
+                <button mat-button color="primary" (click)="
+                read(readDevice.value, readVariable.value)">
+                  Read
+                </button>
+              </mat-action-row>
+            </ng-container>
+
+            <ng-template #readManualManual>
+              <mat-form-field>
+                <input matInput #readVariable placeholder="Variable" value="" />
+              </mat-form-field>
+              <mat-form-field>
+                <mat-select #readType matNativeControl id="apireadType" placeholder="Type">
+                  <mat-option value="1">INT1</mat-option>
+                  <mat-option value="2">INT2</mat-option>
+                  <mat-option value="3">INT4</mat-option>
+                  <mat-option value="4">INT8</mat-option>
+                  <mat-option value="5">UINT1</mat-option>
+                  <mat-option value="6">UINT2</mat-option>
+                  <mat-option value="7">UINT4</mat-option>
+                  <mat-option value="8">UINT8</mat-option>
+                  <mat-option value="9">FLOAT4</mat-option>
+                  <mat-option value="10">FLOAT8</mat-option>
+                  <mat-option value="11">BOOL</mat-option>
+                  <mat-option value="16">STRING</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field>
+                <input matInput #readCount placeholder="Count" value="1" />
+              </mat-form-field>
+              <mat-form-field>
+                <input matInput #readLength placeholder="Length" value="-1" />
+              </mat-form-field>
+              <ngx-json-viewer [expanded]="false" *ngIf="readResponse" [json]="readResponse"></ngx-json-viewer>
+              <mat-action-row>
+                <button mat-button color="primary" (click)="read(readDevice.value, readVariable.value, readType.value, readCount.value, readLength.value)">Read</button>
+              </mat-action-row>
+            </ng-template>
+
+          </ng-container>
+
+          <ng-template #readManual>
+            <mat-form-field>
+              <input matInput #readDevice placeholder="Device" value="" />
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput #readVariable placeholder="Variable" value="" />
+            </mat-form-field>
+            <mat-form-field>
+              <mat-select #readType matNativeControl id="apiReadType" placeholder="Type">
+                <mat-option value="1">INT1</mat-option>
+                <mat-option value="2">INT2</mat-option>
+                <mat-option value="3">INT4</mat-option>
+                <mat-option value="4">INT8</mat-option>
+                <mat-option value="5">UINT1</mat-option>
+                <mat-option value="6">UINT2</mat-option>
+                <mat-option value="7">UINT4</mat-option>
+                <mat-option value="8">UINT8</mat-option>
+                <mat-option value="9">FLOAT4</mat-option>
+                <mat-option value="10">FLOAT8</mat-option>
+                <mat-option value="11">BOOL</mat-option>
+                <mat-option value="16">STRING</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput #readCount placeholder="Count" value="1" />
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput #readLength placeholder="Length" value="-1" />
+            </mat-form-field>
+            <ngx-json-viewer [expanded]="false" *ngIf="readResponse" [json]="readResponse"></ngx-json-viewer>
+            <mat-action-row>
+              <button mat-button color="primary" (click)="read(readDevice.value, readVariable.value, readType.value, readCount.value, readLength.value)">
+                Read
+              </button>
+            </mat-action-row>
+          </ng-template>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel id="write" [disabled]="!loggedIn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Write</mat-panel-title>
+            <mat-panel-description>Write a device variable.</mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <ng-container *ngIf="(deviceSelection | async); else writeManual">
+            <mat-form-field>
+              <mat-select #writeDevice matNativeControl id="apiwriteType" placeholder="Device" (selectionChange)="changeDevice($event)">
+                <mat-option *ngFor="let device of (devices | async)" [value]="device.name">{{ device.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+
+            <ng-container *ngIf="(variableSelection | async); else writeManualManual">
+              <mat-form-field>
+                <mat-select #writeVariable matNativeControl id="apiwriteType" placeholder="Variable" (selectionChange)="changeVariable($event)">
+                  <mat-option *ngFor="let variable of (variables | async)" [value]="variable.name">{{ variable.name
+                    }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field>
+                <input matInput #writeData placeholder="Data" value="" />
+                <mat-hint>Arrays are comma delimitted</mat-hint>
+              </mat-form-field>
+              <mat-list role="list" *ngIf="writeResponse?.params?.variable">
+                <mat-list-item role="listitem">Type: {{writeResponse.params.type}}, Count:
+                  {{writeResponse.params.count}}, Length: {{writeResponse.params.length}}</mat-list-item>
+                <mat-list-item role="listitem">Status: {{writeResponse.params.status}}</mat-list-item>
+                <mat-list-item role="listitem">
+                  <h3 mat-line>Data</h3>
+                  <p mat-line *ngFor="let data of writeResponse.params.data">{{data}}</p>
+                </mat-list-item>
+              </mat-list>
+              <ngx-json-viewer [expanded]="false" *ngIf="writeResponse" [json]="writeResponse"></ngx-json-viewer>
+              <mat-action-row>
+                <button mat-button color="primary" (click)="
+                  write(
+                      writeDevice.value,
+                      writeVariable.value,
+                      null,
+                      null,
+                      null,
+                      writeData.value
+                    )">
+                  write
+                </button>
+              </mat-action-row>
+            </ng-container>
+
+            <ng-template #writeManualManual>
+              <mat-form-field>
+                <input matInput #writeVariable placeholder="Variable" value="" />
+              </mat-form-field>
+              <mat-form-field>
+                <mat-select #writeType matNativeControl id="apiwriteType" placeholder="Type">
+                  <mat-option value="1">INT1</mat-option>
+                  <mat-option value="2">INT2</mat-option>
+                  <mat-option value="3">INT4</mat-option>
+                  <mat-option value="4">INT8</mat-option>
+                  <mat-option value="5">UINT1</mat-option>
+                  <mat-option value="6">UINT2</mat-option>
+                  <mat-option value="7">UINT4</mat-option>
+                  <mat-option value="8">UINT8</mat-option>
+                  <mat-option value="9">FLOAT4</mat-option>
+                  <mat-option value="10">FLOAT8</mat-option>
+                  <mat-option value="11">BOOL</mat-option>
+                  <mat-option value="16">STRING</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field>
+                <input matInput #writeCount placeholder="Count" value="1" />
+              </mat-form-field>
+              <mat-form-field>
+                <input matInput #writeLength placeholder="Length" value="-1" />
+              </mat-form-field>
+              <mat-form-field>
+                <input matInput #writeData placeholder="Data" value="" />
+                <mat-hint>Arrays are comma delimitted</mat-hint>
+              </mat-form-field>
+              <ngx-json-viewer [expanded]="false" *ngIf="writeResponse" [json]="writeResponse"></ngx-json-viewer>
+              <mat-action-row>
+                <button mat-button color="primary" (click)="write(writeDevice.value,
+                                writeVariable.value,
+                                writeType.value,
+                                writeCount.value,
+                                writeLength.value,
+                                writeData.value)">Write</button>
+              </mat-action-row>
+            </ng-template>
+          </ng-container>
+
+          <ng-template #writeManual>
+            <mat-form-field>
+              <input matInput #writeDevice placeholder="Device" value="" />
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput #writeVariable placeholder="Variable" value="" />
+            </mat-form-field>
+            <mat-form-field>
+              <mat-select #writeType matNativeControl id="apiwriteType" placeholder="Type">
+                <mat-option value="1">INT1</mat-option>
+                <mat-option value="2">INT2</mat-option>
+                <mat-option value="3">INT4</mat-option>
+                <mat-option value="4">INT8</mat-option>
+                <mat-option value="5">UINT1</mat-option>
+                <mat-option value="6">UINT2</mat-option>
+                <mat-option value="7">UINT4</mat-option>
+                <mat-option value="8">UINT8</mat-option>
+                <mat-option value="9">FLOAT4</mat-option>
+                <mat-option value="10">FLOAT8</mat-option>
+                <mat-option value="11">BOOL</mat-option>
+                <mat-option value="16">STRING</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput #writeCount placeholder="Count" value="1" />
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput #writeLength placeholder="Length" value="-1" />
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput #writeData placeholder="Data" value="" />
+              <mat-hint>Arrays are comma delimitted</mat-hint>
+            </mat-form-field>
+            <ngx-json-viewer [expanded]="false" *ngIf="writeResponse" [json]="writeResponse"></ngx-json-viewer>
+            <mat-action-row>
+              <button mat-button color="primary" (click)="write(writeDevice.value, writeVariable.value, writeType.value, writeCount.value, writeLength.value, writeData.value)">
+                write
+              </button>
+            </mat-action-row>
+          </ng-template>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel id="subscribe" [disabled]="!loggedIn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Subscribe</mat-panel-title>
+            <mat-panel-description>Subscribe to a device variable.</mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <ng-container *ngIf="(deviceSelection | async); else subscribeManual">
+            <mat-form-field>
+              <mat-select #subscribeDevice matNativeControl id="apiReadType" placeholder="Device" (selectionChange)="changeDevice($event)">
+                <mat-option *ngFor="let device of (devices | async)" [value]="device.name">{{ device.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <ng-container *ngIf="(variableSelection | async); else subscribeManualManual">
+              <!-- <mat-form-field>
+                <mat-select #subscribeVariable matNativeControl id="apiReadType" placeholder="Variable"
+                  (selectionChange)="changeVariable($event)">
+                  <mat-option *ngFor="let variable of (variables | async)" [value]="variable.name">{{ variable.name
+                    }}</mat-option>
+                </mat-select>
+              </mat-form-field> -->
+              <mat-form-field class="form-field-fullwidth" style="margin:15px 0px 0px 0px;">
+                <mat-chip-list #chipList>
+                  <mat-chip *ngFor="let subscription of objectKeys(subscriptions)" selectable="true" removable="true"
+                    (removed)="unsubscribe(subscription)">
+                    {{ subscriptions[subscription].request.params.variable}}
+                    <mat-icon matChipRemove>cancel</mat-icon>
+                  </mat-chip>
+                  <input placeholder="New Subscriptions..." #subscriptionInput [matAutocomplete]="auto"
+                    [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                    [matChipInputAddOnBlur]="true" />
+                </mat-chip-list>
+                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="subVariableSelected($event)">
+                  <mat-option *ngFor="let variable of variables | async" [value]="variable.name">
+                    {{variable.name}}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+              <ngx-json-viewer [expanded]="false" *ngIf="subscribeResponse" [json]="subscribeResponse"></ngx-json-viewer>
+              <mat-action-row>
+                <button mat-button color="primary" (click)="
+                subscribe(
+                    subscribeDevice.value,
+                    subscribeVariable.value
+                  )">
+                  Subscribe
+                </button>
+              </mat-action-row>
+            </ng-container>
+
+            <ng-template #subscribeManualManual>
+              <mat-form-field>
+                <input matInput #subscribeVariable placeholder="Variable" value="" />
+              </mat-form-field>
+              <mat-form-field>
+                <input matInput #subscribeRate placeholder="Poll Rate" value="1" />
+                <mat-hint>In seconds.</mat-hint>
+              </mat-form-field>
+              <mat-form-field>
+                <mat-select #subscribeType matNativeControl id="apisubscribeType" placeholder="Type">
+                  <mat-option value="1">INT1</mat-option>
+                  <mat-option value="2">INT2</mat-option>
+                  <mat-option value="3">INT4</mat-option>
+                  <mat-option value="4">INT8</mat-option>
+                  <mat-option value="5">UINT1</mat-option>
+                  <mat-option value="6">UINT2</mat-option>
+                  <mat-option value="7">UINT4</mat-option>
+                  <mat-option value="8">UINT8</mat-option>
+                  <mat-option value="9">FLOAT4</mat-option>
+                  <mat-option value="10">FLOAT8</mat-option>
+                  <mat-option value="11">BOOL</mat-option>
+                  <mat-option value="16">STRING</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field>
+                <input matInput #subscribeCount placeholder="Count" value="1" />
+              </mat-form-field>
+              <mat-form-field>
+                <input matInput #subscribeLength placeholder="Length" value="-1" />
+              </mat-form-field>
+              <ngx-json-viewer [expanded]="false" *ngIf="subscribeResponse" [json]="subscribeResponse"></ngx-json-viewer>
+              <mat-action-row>
+                <button mat-button color="primary" (click)="
+                            subscribe(
+                              subscribeDevice.value,
+                              subscribeVariable.value,
+                              subscribeRate.value,
+                              subscribeType.value,
+                              subscribeCount.value,
+                              subscribeLength.value
+                            )
+                          ">
+                  Subscribe
+                </button>
+              </mat-action-row>
+            </ng-template>
+
+          </ng-container>
+
+          <ng-template #subscribeManual>
+            <mat-form-field>
+              <input matInput #subscribeDevice placeholder="Device" value="" />
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput #subscribeVariable placeholder="Variable" value="" />
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput #subscribeRate placeholder="Poll Rate" value="1" />
+              <mat-hint>In seconds.</mat-hint>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-select #subscribeType matNativeControl id="apisubscribeType" placeholder="Type">
+                <mat-option value="1">INT1</mat-option>
+                <mat-option value="2">INT2</mat-option>
+                <mat-option value="3">INT4</mat-option>
+                <mat-option value="4">INT8</mat-option>
+                <mat-option value="5">UINT1</mat-option>
+                <mat-option value="6">UINT2</mat-option>
+                <mat-option value="7">UINT4</mat-option>
+                <mat-option value="8">UINT8</mat-option>
+                <mat-option value="9">FLOAT4</mat-option>
+                <mat-option value="10">FLOAT8</mat-option>
+                <mat-option value="11">BOOL</mat-option>
+                <mat-option value="16">STRING</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput #subscribeCount placeholder="Count" value="1" />
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput #subscribeLength placeholder="Length" value="-1" />
+            </mat-form-field>
+            <ngx-json-viewer [expanded]="false" *ngIf="subscribeResponse" [json]="subscribeResponse"></ngx-json-viewer>
+            <mat-action-row>
+              <button mat-button color="primary" (click)="
+                            subscribe(
+                              subscribeDevice.value,
+                              subscribeVariable.value,
+                              subscribeRate.value,
+                              subscribeType.value,
+                              subscribeCount.value,
+                              subscribeLength.value
+                            )
+                          ">
+                Subscribe
+              </button>
+            </mat-action-row>
+          </ng-template>
+          <ng-container *ngIf="subscriptionsSubject | async; let subscriptions">
+            <mat-card [hidden]="objectKeys(subscriptions).length <= 0">
+              <mat-card-header>
+                <mat-card-title>Subscriptions</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="subscriptions">
+                  <mat-card *ngFor="let subscription of objectKeys(subscriptions)" class="subscription" cdkDragBoundary=".subscriptions"
+                    cdkDrag>
+                    <mat-card-content>
+                      <div *ngIf="subscriptions[subscription].subscription | async; let subscriptionData">
+                        <div class="data-title">
+                          <h1 class="mat-h1 noMargin">{{ subscriptions[subscription].request.params.variable}}</h1>
+                        </div>
+                        <h2 class="mat-h2 noMargin" *ngIf="subscriptionData.params.data; let data">Data: {{ data }}</h2>
+                      </div>
+                    </mat-card-content>
+                  </mat-card>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <button mat-button color="primary" (click)="startSubscriptions()">Start Subscriptions</button>
+                <button mat-button color="primary" (click)="stopSubscriptions()">Stop Subscriptions</button>
+              </mat-card-actions>
+            </mat-card>
+          </ng-container>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel id="unsubscribe" [disabled]="!loggedIn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Unsubscribe</mat-panel-title>
+            <mat-panel-description>Unsubscribe from a device variable.</mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <ng-container *ngIf="(subscriptionSelection | async); else unsubscribeManual">
+            <mat-form-field>
+              <mat-select #unsubscribeId matNativeControl id="apiReadType" placeholder="Subscription">
+                <!-- <mat-option *ngFor="let subscription of objectKeys(subscriptionResponsesSubject | async)" [value]=subscription">
+                  {{ (subscriptions[subscription]).request.params.variable}}
+                </mat-option> -->
+                <mat-option *ngFor="let device of (devices | async)" [value]="device.name">{{ device.name }}</mat-option>
+
+              </mat-select>
+            </mat-form-field>
+            <ngx-json-viewer [expanded]="false" *ngIf="unsubscribeResponse" [json]="unsubscribeResponse"></ngx-json-viewer>
+            <mat-action-row>
+              <button mat-button color="primary" (click)="unsubscribe(unsubscribeId.value)">Unsubscribe</button>
+            </mat-action-row>
+          </ng-container>
+
+          <ng-template #unsubscribeManual>
+            <mat-form-field>
+              <input matInput #unsubscribeId placeholder="Subscription ID" value="" />
+            </mat-form-field>
+            <ngx-json-viewer [expanded]="false" *ngIf="unsubscribeResponse" [json]="unsubscribeResponse"></ngx-json-viewer>
+            <mat-action-row>
+              <button mat-button color="primary" (click)="unsubscribe(unsubscribeId.value)">Unsubscribe</button>
+            </mat-action-row>
+          </ng-template>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel id="unsubscribeAll" [disabled]="!loggedIn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Unsubscribe All</mat-panel-title>
+            <mat-panel-description>Unsubscribe from all device variables.</mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <ngx-json-viewer [expanded]="false" *ngIf="unsubscribeAllResponse" [json]="unsubscribeAllResponse"></ngx-json-viewer>
+          <mat-action-row>
+            <button mat-button color="primary" (click)="unsubscribeAll()">Unsubscribe All</button>
+          </mat-action-row>
+        </mat-expansion-panel>
+
+      </mat-accordion>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="card" id="device">
+    <mat-card-header>
+      <i mat-card-avatar class="material-icons">router</i>
+      <mat-card-title>Device</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-accordion multi="true">
+        <mat-expansion-panel id="deviceList" [disabled]="!loggedIn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>List Devices</mat-panel-title>
+            <mat-panel-description>List all devices.</mat-panel-description>
+          </mat-expansion-panel-header>
+          <ngx-json-viewer [expanded]="false" *ngIf="deviceListResponse" [json]="deviceListResponse"></ngx-json-viewer>
+          <mat-action-row><button mat-button color="primary" (click)="listDevices()">List Devices</button>
+          </mat-action-row>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel id="deviceInfo" [disabled]="!loggedIn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Device Info</mat-panel-title>
+            <mat-panel-description>Get info about a device.</mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <ng-container *ngIf="(deviceSelection | async); else deviceManual">
+            <mat-form-field>
+              <mat-select #deviceInfoName matNativeControl id="apiReadType" placeholder="Device">
+                <mat-option *ngFor="let device of (devices | async)" [value]="device.name">{{ device.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-select #deviceInfoType matNativeControl id="apiwriteType" placeholder="Options">
+                <mat-option value="0">No Options</mat-option>
+                <mat-option value="1">Properties</mat-option>
+                <mat-option value="2">Variables</mat-option>
+                <mat-option value="4">Structures</mat-option>
+                <mat-option value="8">Runtime Status</mat-option>
+                <mat-option value="16">Errors</mat-option>
+                <mat-option value="32">Attributes</mat-option>
+                <mat-option value="64">Mapped Descriptions</mat-option>
+                <mat-option value="128">List Commands</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <ngx-json-viewer [expanded]="false" *ngIf="deviceInfoResponse" [json]="deviceInfoResponse"></ngx-json-viewer>
+            <mat-action-row>
+              <button mat-button color="primary" (click)="deviceInfo(deviceInfoName.value, deviceInfoType.value)">
+                Get Info
+              </button>
+            </mat-action-row>
+          </ng-container>
+          <ng-template #deviceManual>
+            <mat-form-field>
+              <input matInput #deviceInfoName placeholder="Device" value="" />
+            </mat-form-field>
+            <mat-form-field>
+              <mat-select #deviceInfoType matNativeControl id="apiwriteType" placeholder="Options">
+                <mat-option value="1">Properties</mat-option>
+                <mat-option value="2">Variables</mat-option>
+                <mat-option value="4">Structures</mat-option>
+                <mat-option value="8">Runtime Status</mat-option>
+                <mat-option value="16">Commands</mat-option>
+                <mat-option value="32">Map Descriptions</mat-option>
+                <mat-option value="64">RT Status</mat-option>
+                <mat-option value="128">Errors</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <ngx-json-viewer [expanded]="false" *ngIf="deviceInfoResponse" [json]="deviceInfoResponse"></ngx-json-viewer>
+            <mat-action-row>
+              <button mat-button color="primary" (click)="deviceInfo(deviceInfoName.value, deviceInfoType.value)">
+                Get Info
+              </button>
+            </mat-action-row>
+          </ng-template>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel id="deviceDataType" [disabled]="!loggedIn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Device Data Type</mat-panel-title>
+            <mat-panel-description>List all defined device types.</mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <!-- <mat-accordion *ngIf="deviceDataTypeResponse">
+            <mat-expansion-panel *ngFor="let type of deviceDataTypeResponse.params.deviceTypes">
+              <mat-expansion-panel-header>
+                <mat-panel-title>{{type.name}}</mat-panel-title>
+                <mat-panel-description>{{type.familyName}} ({{type.typeId}})</mat-panel-description>
+              </mat-expansion-panel-header>
+              <ngx-json-viewer [expanded]="true" *ngIf="type" [json]="type"></ngx-json-viewer>
+            </mat-expansion-panel>
+          </mat-accordion> -->
+
+          <ngx-json-viewer [expanded]="false" *ngIf="deviceDataTypeResponse" [json]="deviceDataTypeResponse"></ngx-json-viewer>
+          <mat-action-row><button mat-button color="primary" (click)="deviceTypeList()">Get Data Types</button>
+          </mat-action-row>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel id="deviceStart" [disabled]="!loggedIn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Start Device</mat-panel-title>
+            <mat-panel-description>Start a device.</mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <ng-container *ngIf="(deviceSelection | async); else startDeviceManual">
+            <mat-form-field>
+              <mat-select #startDeviceName matNativeControl id="apiReadType" placeholder="Device" (selectionChange)="changeDevice($event)">
+                <mat-option *ngFor="let device of (devices | async)" [value]="device.name">{{ device.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <ngx-json-viewer [expanded]="false" *ngIf="deviceStartResponse" [json]="deviceStartResponse"></ngx-json-viewer>
+            <mat-action-row>
+              <button mat-button color="primary" (click)="startDevice(startDeviceName.value)">Start</button>
+            </mat-action-row>
+          </ng-container>
+
+          <ng-template #startDeviceManual>
+            <mat-form-field>
+              <input matInput #startDeviceName placeholder="Device" />
+            </mat-form-field>
+            <ngx-json-viewer [expanded]="false" *ngIf="deviceStartResponse" [json]="deviceStartResponse"></ngx-json-viewer>
+            <mat-action-row>
+              <button mat-button color="primary" (click)="startDevice(startDeviceName.value)">Start</button>
+            </mat-action-row>
+          </ng-template>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel id="deviceStop" [disabled]="!loggedIn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Stop Device</mat-panel-title>
+            <mat-panel-description>Stop a device.</mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <ng-container *ngIf="(deviceSelection | async); else stopDeviceManual">
+            <mat-form-field>
+              <mat-select #stopDeviceName matNativeControl id="apiReadType" placeholder="Device" (selectionChange)="changeDevice($event)">
+                <mat-option *ngFor="let device of (devices | async)" [value]="device.name">{{ device.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <ngx-json-viewer [expanded]="false" *ngIf="deviceStopResponse" [json]="deviceStopResponse"></ngx-json-viewer>
+            <mat-action-row>
+              <button mat-button color="primary" (click)="stopDevice(stopDeviceName.value)">Stop</button>
+            </mat-action-row>
+          </ng-container>
+
+          <ng-template #stopDeviceManual>
+            <mat-form-field>
+              <input matInput #stopDeviceName placeholder="Device" />
+            </mat-form-field>
+            <ngx-json-viewer [expanded]="false" *ngIf="deviceStopResponse" [json]="deviceStopResponse"></ngx-json-viewer>
+            <mat-action-row>
+              <button mat-button color="primary" (click)="stopDevice(stopDeviceName.value)">Stop</button>
+            </mat-action-row>
+          </ng-template>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="card" id="trigger">
+    <mat-card-header>
+      <i mat-card-avatar class="material-icons">device_hub</i>
+      <mat-card-title>Trigger</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-accordion multi="true">
+        <mat-expansion-panel id="triggerList" [disabled]="!loggedIn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Trigger List</mat-panel-title>
+            <mat-panel-description>List all triggers of a project.</mat-panel-description>
+          </mat-expansion-panel-header>
+          <ng-container *ngIf="(projectSelection | async); else startTriggerManual">
+            <mat-form-field>
+              <mat-select #triggerListProject matNativeControl id="apiReadType" placeholder="Project">
+                <mat-option *ngFor="let project of (projects | async)" [value]="project.name">{{ project.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <ngx-json-viewer [expanded]="false" *ngIf="triggerListResponse" [json]="triggerListResponse"></ngx-json-viewer>
+            <mat-action-row>
+              <button mat-button color="primary" (click)="triggerList(triggerListProject.value)">List Triggers</button>
+            </mat-action-row>
+          </ng-container>
+
+          <ng-template #startTriggerManual>
+            <mat-form-field>
+              <input matInput #triggerListProject placeholder="Project" />
+            </mat-form-field>
+
+            <ngx-json-viewer [expanded]="false" *ngIf="triggerListResponse" [json]="triggerListResponse"></ngx-json-viewer>
+            <mat-action-row>
+              <button mat-button color="primary" (click)="triggerList(triggerListProject.value)">List Triggers</button>
+            </mat-action-row>
+          </ng-template>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel id="triggerStart" [disabled]="!loggedIn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Trigger Start</mat-panel-title>
+            <mat-panel-description>Start a trigger.</mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <ng-container *ngIf="(projectSelection | async); else startTriggerManual">
+            <mat-form-field>
+              <mat-select #triggerStartProject matNativeControl id="apiReadType" placeholder="Project"
+                (selectionChange)="changeProject($event)">
+                <mat-option *ngFor="let project of (projects | async)" [value]="project.name">{{ project.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <ng-container *ngIf="(triggerSelection | async); else startTriggerManualManual">
+              <mat-form-field>
+                <mat-select #triggerStartTrigger matNativeControl id="apiReadType" placeholder="Trigger">
+                  <mat-option *ngFor="let trigger of (triggers | async)" [value]="trigger.name">{{ trigger.name }}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="(triggers | async | subtriggers: 'On-Demand')?.length<= 0">
+                  No triggers.
+                </mat-error>
+              </mat-form-field>
+              <ngx-json-viewer [expanded]="false" *ngIf="triggerStartResponse" [json]="triggerStartResponse"></ngx-json-viewer>
+              <mat-action-row>
+                <button mat-button color="primary" (click)="triggerStart(triggerStartProject.value, triggerStartTrigger.value)">Start
+                  Trigger</button>
+              </mat-action-row>
+            </ng-container>
+
+            <ng-template #startTriggerManualManual>
+              <mat-form-field>
+                <input matInput #triggerStartTrigger placeholder="Trigger" />
+              </mat-form-field>
+              <ngx-json-viewer [expanded]="false" *ngIf="triggerStartResponse" [json]="triggerStartResponse"></ngx-json-viewer>
+              <mat-action-row>
+                <button mat-button color="primary" (click)="triggerStart(triggerStartProject.value, triggerStartTrigger.value)">Start
+                  Trigger</button>
+              </mat-action-row>
+            </ng-template>
+
+          </ng-container>
+
+          <ng-template #startTriggerManual>
+            <mat-form-field>
+              <input matInput #triggerStartProject placeholder="Project" />
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput #triggerStartTrigger placeholder="Trigger" />
+            </mat-form-field>
+            <ngx-json-viewer [expanded]="false" *ngIf="triggerStartResponse" [json]="triggerStartResponse"></ngx-json-viewer>
+            <mat-action-row>
+              <button mat-button color="primary" (click)="triggerStart(triggerStartProject.value, triggerStartTrigger.value)">Start
+                Trigger</button>
+            </mat-action-row>
+          </ng-template>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel id="triggerStop" [disabled]="!loggedIn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Trigger Stop</mat-panel-title>
+            <mat-panel-description>Stop a trigger.</mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <ng-container *ngIf="(projectSelection | async); else stopTriggerManual">
+            <mat-form-field>
+              <mat-select #triggerStopProject matNativeControl id="apiReadType" placeholder="Project" (selectionChange)="changeProject($event)">
+                <mat-option *ngFor="let project of (projects | async)" [value]="project.name">{{ project.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <ng-container *ngIf="(triggerSelection | async); else stopTriggerManualManual">
+              <mat-form-field>
+                <mat-select #triggerStopTrigger matNativeControl id="apiReadType" placeholder="Trigger">
+                  <mat-option *ngFor="let trigger of (triggers | async)" [value]="trigger.name">{{ trigger.name }}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="(triggers | async | subtriggers: 'On-Demand')?.length<= 0">
+                  No triggers.
+                </mat-error>
+              </mat-form-field>
+              <ngx-json-viewer [expanded]="false" *ngIf="triggerStopResponse" [json]="triggerStopResponse"></ngx-json-viewer>
+              <mat-action-row>
+                <button mat-button color="primary" (click)="triggerStop(triggerStopProject.value, triggerStopTrigger.value)">Stop
+                  Trigger</button>
+              </mat-action-row>
+            </ng-container>
+
+            <ng-template #stopTriggerManualManual>
+              <mat-form-field>
+                <input matInput #triggerStopTrigger placeholder="Trigger" />
+              </mat-form-field>
+              <ngx-json-viewer [expanded]="false" *ngIf="triggerStopResponse" [json]="triggerStopResponse"></ngx-json-viewer>
+              <mat-action-row>
+                <button mat-button color="primary" (click)="triggerStop(triggerStopProject.value, triggerStopTrigger.value)">Stop
+                  Trigger</button>
+              </mat-action-row>
+            </ng-template>
+
+          </ng-container>
+
+          <ng-template #stopTriggerManual>
+            <mat-form-field>
+              <input matInput #triggerStopProject placeholder="Project" />
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput #triggerStopTrigger placeholder="Trigger" />
+            </mat-form-field>
+            <ngx-json-viewer [expanded]="false" *ngIf="triggerStopResponse" [json]="triggerStopResponse"></ngx-json-viewer>
+            <mat-action-row>
+              <button mat-button color="primary" (click)="triggerStop(triggerStopProject.value, triggerStopTrigger.value)">Stop
+                Trigger</button>
+            </mat-action-row>
+          </ng-template>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel id="triggerFire" [disabled]="!loggedIn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Trigger Fire</mat-panel-title>
+            <mat-panel-description>Fire an on-demand trigger.</mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <ng-container *ngIf="(projectSelection | async); else fireTriggerManual">
+            <mat-form-field>
+              <mat-select #triggerFireProject matNativeControl id="apiReadType" placeholder="Project" (selectionChange)="changeProject($event)">
+                <mat-option *ngFor="let project of (projects | async)" [value]="project.name">{{ project.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <ng-container *ngIf="(triggerSelection | async); else fireTriggerManualManual">
+              <!--<p>{{ triggers | async | subtriggers: 'On-Demand' | json }}</p>-->
+              <mat-form-field>
+                <mat-select #triggerFireTrigger matNativeControl id="apiReadType" placeholder="Trigger">
+                  <mat-option *ngFor="let trigger of (triggers | async | subtriggers: 'On-Demand')" [value]="trigger.name">{{
+                    trigger.name }}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="(triggers | async | subtriggers: 'On-Demand')?.length<= 0">
+                  No triggers.
+                </mat-error>
+              </mat-form-field>
+              <ngx-json-viewer [expanded]="false" *ngIf="triggerFireResponse" [json]="triggerFireResponse"></ngx-json-viewer>
+              <mat-action-row>
+                <button mat-button color="primary" (click)="triggerFire(triggerFireProject.value, triggerFireTrigger.value)">Fire
+                  Trigger</button>
+              </mat-action-row>
+            </ng-container>
+
+            <ng-template #fireTriggerManualManual>
+              <mat-form-field>
+                <input matInput #triggerFireTrigger placeholder="Trigger" />
+              </mat-form-field>
+              <ngx-json-viewer [expanded]="false" *ngIf="triggerFireResponse" [json]="triggerFireResponse"></ngx-json-viewer>
+              <mat-action-row>
+                <button mat-button color="primary" (click)="triggerFire(triggerFireProject.value, triggerFireTrigger.value)">Fire
+                  Trigger</button>
+              </mat-action-row>
+            </ng-template>
+
+          </ng-container>
+
+          <ng-template #fireTriggerManual>
+            <mat-form-field>
+              <input matInput #triggerFireProject placeholder="Project" />
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput #triggerFireTrigger placeholder="Trigger" />
+            </mat-form-field>
+            <ngx-json-viewer [expanded]="false" *ngIf="triggerFireResponse" [json]="triggerFireResponse"></ngx-json-viewer>
+            <mat-action-row>
+              <button mat-button color="primary" (click)="triggerFire(triggerFireProject.value, triggerFireTrigger.value)">Fire
+                Trigger</button>
+            </mat-action-row>
+          </ng-template>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel id="subTriggerFire" [disabled]="!loggedIn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>SubTrigger Fire</mat-panel-title>
+            <mat-panel-description>Fire a sub trigger.</mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <ng-container *ngIf="(projectSelection | async); else subTriggerFireManual">
+            <mat-form-field>
+              <mat-select #subTriggerFireProject matNativeControl id="apiReadType" placeholder="Project"
+                (selectionChange)="changeProject($event)">
+                <mat-option *ngFor="let project of (projects | async)" [value]="project.name">{{ project.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <ng-container *ngIf="(triggerSelection | async); else subTriggerFireManualManual">
+              <mat-form-field>
+                <mat-select #subTriggerFireTrigger matNativeControl id="apiReadType" placeholder="SubTrigger">
+                  <mat-option *ngFor="let trigger of (triggers | async | subtriggers: 'SubTrigger')" [value]="trigger.name">{{
+                    trigger.name }}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="(triggers | async | subtriggers: 'On-Demand')?.length<= 0">
+                  No triggers.
+                </mat-error>
+              </mat-form-field>
+              <br>
+              <mat-form-field>
+                <input matInput #subTriggerFireVariable placeholder="Variable" />
+              </mat-form-field>
+              <mat-form-field>
+                <input matInput #subTriggerFireVariableData placeholder="Data" />
+                <mat-hint>Arrays are comma delimitted</mat-hint>
+              </mat-form-field>
+              <button mat-button color="primary" (click)="subTriggerAddVariable(subTriggerFireVariable.value, subTriggerFireVariableData.value)">Add
+                Variable</button>
+              <!-- <mat-form-field class="form-field-fullwidth">
+                <mat-chip-list #chipList>
+                  <mat-chip *ngFor="let variable of (subTriggerVariablesSubject | async)" selectable="true" removable="true"
+                    (removed)="unsubscribe(variable.response.params.id)">
+                    {{variable.request.params.variable}}
+                    <mat-icon matChipRemove>cancel</mat-icon>
+                  </mat-chip>
+                  <input #subTriggerInputs  placeholder="New Variables..." [matAutocomplete]="auto" [matChipInputFor]="#chipList"
+                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="true" />
+                </mat-chip-list>
+                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="subVariableSelected($event)">
+                  <mat-option *ngFor="let variable of variables | async" [value]="variable.name">
+                    {{variable.name}}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field> -->
+              <mat-form-field class="form-field-fullwidth" *ngIf="(subTriggerVariablesSubject | async); let variablesSubject"
+                [hidden]="variablesSubject?.length <= 0">
+                <mat-chip-list #chipList>
+                  <mat-chip *ngFor="let variable of variablesSubject; let variableIndex = index" selectable="true"
+                    removable="true" (removed)="subTriggerRemoveVariable(objectKeys(variable)[0])">
+                    {{objectKeys(variable)[0]}}
+                    <mat-icon matChipRemove>cancel</mat-icon>
+                  </mat-chip>
+                </mat-chip-list>
+              </mat-form-field>
+              <ngx-json-viewer [expanded]="false" *ngIf="subTriggerFireResponse" [json]="subTriggerFireResponse"></ngx-json-viewer>
+              <mat-action-row>
+                <button mat-button color="primary" (click)="subTriggerFire(subTriggerFireProject.value, subTriggerFireTrigger.value, null)">Fire
+                  SubTrigger</button>
+              </mat-action-row>
+            </ng-container>
+
+            <ng-template #subTriggerFireManualManual>
+              <mat-form-field>
+                <input matInput #subTriggerFireTrigger placeholder="SubTrigger" />
+              </mat-form-field>
+              <ngx-json-viewer [expanded]="false" *ngIf="subTriggerFireResponse" [json]="subTriggerFireResponse"></ngx-json-viewer>
+              <mat-action-row>
+                <button mat-button color="primary" (click)="subTriggerFire(subTriggerFireProject.value, subTriggerFireTrigger.value)">Fire
+                  Trigger</button>
+              </mat-action-row>
+            </ng-template>
+
+          </ng-container>
+
+          <ng-template #subTriggerFireManual>
+            <mat-form-field>
+              <input matInput #subTriggerFireProject placeholder="Project" />
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput #subTriggerFireTrigger placeholder="SubTrigger" />
+            </mat-form-field>
+            <ngx-json-viewer [expanded]="false" *ngIf="subTriggerFireResponse" [json]="subTriggerFireResponse"></ngx-json-viewer>
+            <mat-action-row>
+              <button mat-button color="primary" (click)="subTriggerFire(subTriggerFireProject.value, subTriggerFireTrigger.value)">Fire
+                Trigger</button>
+            </mat-action-row>
+          </ng-template>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="card" id="project">
+    <mat-card-header>
+      <i mat-card-avatar class="material-icons">folder</i>
+      <mat-card-title>Project</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-accordion multi="true">
+
+        <mat-expansion-panel id="projectList" [disabled]="!loggedIn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Project List</mat-panel-title>
+            <mat-panel-description>List all projects.</mat-panel-description>
+          </mat-expansion-panel-header>
+          <ngx-json-viewer [expanded]="false" *ngIf="projectListResponse" [json]="projectListResponse"></ngx-json-viewer>
+          <mat-action-row>
+            <button mat-button color="primary" (click)="projectList()">List Projects</button>
+          </mat-action-row>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel id="projectStart" [disabled]="!loggedIn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Project Start</mat-panel-title>
+            <mat-panel-description>Start a project.</mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <ng-container *ngIf="(projectSelection | async); else startTriggerManual">
+            <mat-form-field>
+              <mat-select #projectStartProject matNativeControl id="apiReadType" placeholder="Project"
+                (selectionChange)="changeProject($event)">
+                <mat-option *ngFor="let project of (projects | async)" [value]="project.name">{{ project.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <ngx-json-viewer [expanded]="false" *ngIf="projectStartResponse" [json]="projectStartResponse"></ngx-json-viewer>
+            <mat-action-row>
+              <button mat-button color="primary" (click)="projectStart(projectStartProject.value)">Start Project</button>
+            </mat-action-row>
+          </ng-container>
+
+          <ng-template #startTriggerManual>
+            <mat-form-field>
+              <input matInput #projectStartProject placeholder="Project" />
+            </mat-form-field>
+            <ngx-json-viewer [expanded]="false" *ngIf="projectStartResponse" [json]="projectStartResponse"></ngx-json-viewer>
+            <mat-action-row>
+              <button mat-button color="primary" (click)="projectStart(projectStartProject.value)">Start Project</button>
+            </mat-action-row>
+          </ng-template>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel id="projectStop" [disabled]="!loggedIn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Project Stop</mat-panel-title>
+            <mat-panel-description>Stop a project.</mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <ng-container *ngIf="(projectSelection | async); else projectStopManual">
+            <mat-form-field>
+              <mat-select #projectStopProject matNativeControl placeholder="Project" (selectionChange)="changeProject($event)">
+                <mat-option *ngFor="let project of (projects | async)" [value]="project.name">{{ project.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <ngx-json-viewer [expanded]="false" *ngIf="projectStopResponse" [json]="projectStopResponse"></ngx-json-viewer>
+            <mat-action-row>
+              <button mat-button color="primary" (click)="projectStop(projectStopProject.value)">Stop Project</button>
+            </mat-action-row>
+          </ng-container>
+
+          <ng-template #projectStopManual>
+            <mat-form-field>
+              <input matInput #projectStopProject placeholder="Project" />
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput #projectStopTrigger placeholder="Trigger" />
+            </mat-form-field>
+            <ngx-json-viewer [expanded]="false" *ngIf="projectStopResponse" [json]="projectStopResponse"></ngx-json-viewer>
+            <mat-action-row>
+              <button mat-button color="primary" (click)="projectStop(projectStopProject.value)">Stop Project</button>
+            </mat-action-row>
+          </ng-template>
+        </mat-expansion-panel>
+
+      </mat-accordion>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="card" id="channel">
+    <mat-card-header>
+      <i mat-card-avatar class="material-icons">live_tv</i>
+      <mat-card-title>Channel</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-accordion multi="true">
+
+        <mat-expansion-panel id="channelSubscribe" [disabled]="!loggedIn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Channel Subscribe</mat-panel-title>
+            <mat-panel-description>Subscribe to a channel.</mat-panel-description>
+          </mat-expansion-panel-header>
+          <mat-form-field>
+            <input matInput #channelSubscribeChannel placeholder="Channel" value="" />
+          </mat-form-field>
+          <ngx-json-viewer [expanded]="false" *ngIf="channelSubscribeResponse" [json]="channelSubscribeResponse"></ngx-json-viewer>
+          <mat-action-row>
+            <button mat-button color="primary" (click)="channelSubscribe(channelSubscribeChannel.value)">
+              Subscribe
+            </button>
+          </mat-action-row>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel id="channelUnsubscribe" [disabled]="!loggedIn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Channel Unsubscribe</mat-panel-title>
+            <mat-panel-description>Unsubscribe from a channel.</mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <mat-form-field>
+            <input matInput #channelUnsubscribeChannel placeholder="Channel" value="" />
+          </mat-form-field>
+          <ngx-json-viewer [expanded]="false" *ngIf="channelUnsubscribeResponse" [json]="channelUnsubscribeResponse"></ngx-json-viewer>
+          <mat-action-row>
+            <button mat-button color="primary" (click)="channelUnsubscribe(channelUnsubscribeChannel.value)">Unsubscribe</button>
+          </mat-action-row>
+
+        </mat-expansion-panel>
+
+        <mat-expansion-panel id="channelUnsubscribeAll" [disabled]="true || !loggedIn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Channel Unsubscribe All</mat-panel-title>
+            <mat-panel-description>Unsubscribe from all channels.</mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <ngx-json-viewer [expanded]="false" *ngIf="channelUnsubscribeAllResponse" [json]="channelUnsubscribeAllResponse"></ngx-json-viewer>
+          <mat-action-row>
+            <button mat-button color="primary" (click)="channelUnsubscribeAll()">Unsubscribe All</button>
+          </mat-action-row>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="card" id="diagnostic">
+    <mat-card-header>
+      <i mat-card-avatar class="material-icons">settings_input_component</i>
+      <mat-card-title>Diagnostic</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-accordion multi="true">
+        <mat-expansion-panel id="ping" [disabled]="!loggedIn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Ping</mat-panel-title>
+            <mat-panel-description>Ping an address within the network.</mat-panel-description>
+          </mat-expansion-panel-header>
+          <mat-form-field>
+            <input matInput #pingAddress placeholder="Address" value="127.0.0.1" />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-select #pingCount matNativeControl placeholder="Count" value="4">
+              <mat-option value="1">1</mat-option>
+              <mat-option value="2">2</mat-option>
+              <mat-option value="3">3</mat-option>
+              <mat-option value="4">4</mat-option>
+              <mat-option value="5">5</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <ngx-json-viewer [expanded]="false" *ngIf="pingResponse" [json]="pingResponse"></ngx-json-viewer>
+          <mat-action-row>
+            <button mat-button color="primary" (click)="ping(pingAddress.value, pingCount.value)">Ping</button>
+          </mat-action-row>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="card" id="system">
+    <mat-card-header>
+      <i mat-card-avatar class="material-icons">developer_board</i>
+      <mat-card-title>System</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-accordion multi="true">
+        <mat-expansion-panel id="referenceList" [disabled]="!loggedIn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Reference List</mat-panel-title>
+            <mat-panel-description>Get a reference list.</mat-panel-description>
+          </mat-expansion-panel-header>
+          <mat-form-field>
+            <mat-select #referenceType matNativeControl placeholder="Reference Type">
+              <mat-option value="Administration">Administration</mat-option>
+              <mat-option value="CloudLINK Connection">CloudLINK Connection</mat-option>
+              <mat-option value="CloudLINK Tunnels">CloudLINK Tunnels</mat-option>
+              <mat-option value="Local Database">Local Database</mat-option>
+              <mat-option value="Security">Security</mat-option>
+              <mat-option value="TR50 Connection">TR50 Connection</mat-option>
+              <mat-option value="device">Device</mat-option>
+              <mat-option value="alerts">Alerts</mat-option>
+              <mat-option value="attention bit">Attention Bit</mat-option>
+              <mat-option value="dbtable">DbTable</mat-option>
+              <mat-option value="ftp server">FTP Server</mat-option>
+              <mat-option value="os">OS</mat-option>
+              <mat-option value="license">License</mat-option>
+              <mat-option value="policy">Policy</mat-option>
+              <mat-option value="project">Project</mat-option>
+              <mat-option value="report">Report</mat-option>
+              <mat-option value="role">Role</mat-option>
+              <mat-option value="system">System</mat-option>
+              <mat-option value="timesync">Time Sync</mat-option>
+              <mat-option value="transaction">Transaction</mat-option>
+              <mat-option value="transport">Transport</mat-option>
+              <mat-option value="trigger">Trigger</mat-option>
+              <mat-option value="user">User</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field>
+            <input matInput #referenceSource placeholder="Source" />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-select #referenceDirection matNativeControl placeholder="Reference Direction">
+              <mat-option value="0">Forward - Referenced by source</mat-option>
+              <mat-option value="1">Backwards - References of source</mat-option>
+              <mat-option value="2">Both - All references of the source and by the source</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <ngx-json-viewer [expanded]="false" *ngIf="referenceListResponse" [json]="referenceListResponse"></ngx-json-viewer>
+          <mat-action-row>
+            <button mat-button color="primary" (click)="referenceList(referenceType.value, referenceSource.value, referenceDirection.value)">Reference</button>
+          </mat-action-row>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="card" id="sql">
+    <mat-card-header>
+      <i mat-card-avatar class="material-icons">storage</i>
+      <mat-card-title>SQLLite</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-accordion multi="true">
+        <mat-expansion-panel id="sql-query" [disabled]="!loggedIn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>SQL Query</mat-panel-title>
+            <mat-panel-description>Perform an SQL Query.</mat-panel-description>
+          </mat-expansion-panel-header>
+          <mat-form-field class="form-field-fullwidth">
+            <input matInput #sqlQueryString placeholder="Query" value="SELECT name FROM sqlite_master WHERE type='table'" />
+          </mat-form-field>
+
+
+          <div class="mat-elevation-z8" [hidden]="(dataSource.data)?.length<= 0" style="margin: 20px 0px;">
+            <table mat-table [dataSource]="dataSource">
+
+              <ng-container *ngFor="let column of displayedColumns; let i = index" [matColumnDef]="column">
+                <th mat-header-cell *matHeaderCellDef>{{ column }}</th>
+                <td mat-cell *matCellDef="let data">{{ data[objectKeys(data)[i]] }}</td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+
+            <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+          </div>
+
+          <ngx-json-viewer [expanded]="false" *ngIf="sqlResponse" [json]="sqlResponse"></ngx-json-viewer>
+          <mat-action-row>
+            <button mat-button color="primary" (click)="sqlQuery(sqlQueryString.value)">Query</button>
+          </mat-action-row>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<div *ngIf="!loaded" class="loader">
+  <mat-spinner></mat-spinner>
+</div>
