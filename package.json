@@ -1,38 +1,61 @@
 {
-  "name": "devicewise-angular",
-  "description": "Angular6 library to communicate with deviceWISE.",
-  "version": "1.1.1",
+  "name": "devicewise",
+  "version": "0.0.0",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build_lib": "ng build devicewise-angular",
-    "copy-license": "copy .\\LICENSE .\\..\\..\\dist\\devicewise-angular",
-    "copy-readme": "copy .\\README.md .\\..\\..\\dist\\devicewise-angular",
-    "copy-files": "npm run copy-license && npm run copy-readme",
-    "npm_pack": "cd .\\..\\..\\dist\\devicewise-angular && npm pack",
-    "npm_publish": "cd .\\..\\..\\dist\\devicewise-angular && npm publish",
-    "package": "npm run build_lib && npm run copy-files && npm run npm_pack",
-    "publish": "npm run package && npm run npm_publish"
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "test": "ng test",
+    "lint": "ng lint",
+    "e2e": "ng e2e",
+    "publish": "cd projects/devicewise-angular && npm run publish"
   },
-  "repository": {
-    "type": "git",
-    "url": ""
-  },
-  "keywords": [
-    "Iot",
-    "DeviceWISE",
-    "Telit"
-  ],
-  "author": "Telit IoT Platforms",
-  "license": "ISC",
-  "bugs": {
-    "url": ""
-  },
-  "homepage": "https:/telit.com",
-  "peerDependencies": {
-    "@angular/common": "^7.1.0",
-    "@angular/core": "^7.1.0"
-  },
+  "private": true,
   "dependencies": {
-    "ngx-cookie-service": "^2.1.0"
+    "@angular/animations": "~7.1.0",
+    "@angular/cdk": "~7.2.0",
+    "@angular/common": "~7.1.0",
+    "@angular/compiler": "~7.1.0",
+    "@angular/core": "~7.1.0",
+    "@angular/forms": "~7.1.0",
+    "@angular/material": "^7.2.0",
+    "@angular/platform-browser": "~7.1.0",
+    "@angular/platform-browser-dynamic": "~7.1.0",
+    "@angular/router": "~7.1.0",
+    "core-js": "^2.5.4",
+    "devicewise-angular": "^1.1.3",
+    "fetch-readablestream": "^0.2.0",
+    "hammerjs": "^2.0.8",
+    "ngx-cookie-service": "^2.1.0",
+    "ngx-json-viewer": "^2.4.0",
+    "ngx-page-scroll": "^5.0.1",
+    "rxjs": "~6.3.3",
+    "tslib": "^1.9.0",
+    "zone.js": "~0.8.26"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "~0.11.0",
+    "@angular-devkit/build-ng-packagr": "~0.11.0",
+    "@angular/cli": "~7.1.0",
+    "@angular/compiler-cli": "~7.1.0",
+    "@angular/language-service": "~7.1.0",
+    "@types/node": "~8.9.4",
+    "@types/jasmine": "~2.8.8",
+    "@types/jasminewd2": "~2.0.3",
+    "codelyzer": "~4.5.0",
+    "jasmine-core": "~2.99.1",
+    "jasmine-spec-reporter": "~4.2.1",
+    "karma": "~3.1.1",
+    "karma-chrome-launcher": "~2.2.0",
+    "karma-coverage-istanbul-reporter": "~2.0.1",
+    "karma-jasmine": "~1.1.2",
+    "karma-jasmine-html-reporter": "^0.2.2",
+    "ng-packagr": "^4.2.0",
+    "protractor": "~5.4.0",
+    "ts-node": "~7.0.0",
+    "tsickle": ">=0.29.0",
+    "tslib": "^1.9.0",
+    "tslint": "~5.11.0",
+    "typescript": "~3.1.6"
   }
 }

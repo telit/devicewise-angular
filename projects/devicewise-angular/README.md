@@ -64,7 +64,7 @@ That's it!
 
 # What to do now?
 
-* Run `ng test devicewise-service` to run the tests for the devicewise service (located in the `projects/devicewise-angular` folder)
+* Run `npm run test` to run the tests for the devicewise service (located in the `app` folder)
 * Have a look at and play around with the `app` to get to know the devicewise service with `ng serve --open`
 * Set up other users in deviceWISE (default credentials are admin/admin)
 

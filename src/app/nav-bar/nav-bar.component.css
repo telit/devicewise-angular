@@ -1,0 +1,20 @@
+:host {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  /* justify-content: center; */
+}
+
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 8px 16px;
+  box-sizing: border-box;
+  height: 100%;
+}
+
+nav img {
+  max-height: 70%;
+}
