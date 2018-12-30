@@ -1,9 +1,13 @@
 <mat-toolbar color="primary" class="toolbar">
-  <app-nav-bar></app-nav-bar>
+  <app-nav-bar #navbar (snavOpened)="onToggle($event)"></app-nav-bar>
 </mat-toolbar>
 
 <mat-sidenav-container>
-  <app-side-nav></app-side-nav>
+  <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'" [fixedInViewport]="true" [fixedTopGap]="64"
+    [fixedBottomGap]="0">
+
+    <app-side-nav></app-side-nav>
+  </mat-sidenav>
   <mat-sidenav-content>
     <app-devicewise-test></app-devicewise-test>
     <app-footer></app-footer>

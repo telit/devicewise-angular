@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'app-nav-bar',
@@ -6,10 +6,18 @@ import { Component, OnInit, ViewChild } from '@angular/core';
   styleUrls: ['./nav-bar.component.css']
 })
 export class NavBarComponent implements OnInit {
-  @ViewChild('snav') public snav;
+  @Output() snavOpened = new EventEmitter<boolean>();
+  snavOpenedBoolean = false;
+
   constructor() { }
 
   ngOnInit() {
+  }
+
+  snavToggle() {
+    console.log('emitting toggle');
+    this.snavOpenedBoolean = !this.snavOpenedBoolean;
+    this.snavOpened.emit(this.snavOpenedBoolean);
   }
 
 }

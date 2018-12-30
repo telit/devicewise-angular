@@ -6,16 +6,16 @@
     deviceWISE from a simple RESTFUL interface.</p>
   <div class="highlights">
     <a target="_blank" href="https://documenter.getpostman.com/view/4197967/RzZDgvoy">
-      <button mat-button color="primary">Postman Collection</button>
+      <button mat-raised-button color="primary">Postman Collection</button>
     </a>
     <a target="_blank" href="https://www.npmjs.com/package/devicewise">
-      <button mat-button color="primary">Angular Library</button>
+      <button mat-raised-button color="primary">Angular Library</button>
     </a>
     <a target="_blank" href="https://docs-engr.devicewise.com/Content/home.htm">
-      <button mat-button color="primary">DeviceWISE Help</button>
+      <button mat-raised-button color="primary">DeviceWISE Help</button>
     </a>
     <a target="_blank" href="http://telit.com">
-      <button mat-button color="primary">Telit</button>
+      <button mat-raised-button color="primary">Telit</button>
     </a>
   </div>
 
@@ -63,17 +63,17 @@
             <mat-panel-description>Login with your username & password.</mat-panel-description>
           </mat-expansion-panel-header>
           <mat-form-field>
-            <input matInput #endpoint [disabled]="loggedIn" placeholder="Endpoint" [value]="url" />
+            <input matInput #endpoint [disabled]="loggedIn" placeholder="Endpoint" [value]="url" (keyup.enter)="login(endpoint.value, username.value, password.value)" />
           </mat-form-field>
           <mat-form-field>
-            <input matInput #username [disabled]="loggedIn" placeholder="Username" value="" />
+            <input matInput #username [disabled]="loggedIn" placeholder="Username" value="" (keyup.enter)="login(endpoint.value, username.value, password.value)" />
           </mat-form-field>
           <mat-form-field>
-            <input matInput #password [disabled]="loggedIn" placeholder="Password" value="" />
+            <input matInput #password [disabled]="loggedIn" placeholder="Password" value="" (keyup.enter)="login(endpoint.value, username.value, password.value)" />
           </mat-form-field>
           <ngx-json-viewer [expanded]="false" *ngIf="loginResponse" [json]="loginResponse"></ngx-json-viewer>
           <mat-action-row>
-            <button mat-button color="primary" (click)="login(endpoint.value, username.value, password.value)">Login</button>
+            <button mat-raised-button color="primary" (click)="login(endpoint.value, username.value, password.value)">Login</button>
           </mat-action-row>
         </mat-expansion-panel>
 
@@ -83,7 +83,7 @@
             <mat-panel-description>Logout of your session.</mat-panel-description>
           </mat-expansion-panel-header>
           <ngx-json-viewer [expanded]="false" *ngIf="logoutResponse" [json]="logoutResponse"></ngx-json-viewer>
-          <mat-action-row><button mat-button color="primary" (click)="logout()">Logout</button></mat-action-row>
+          <mat-action-row><button mat-raised-button color="primary" (click)="logout()">Logout</button></mat-action-row>
         </mat-expansion-panel>
       </mat-accordion>
     </mat-card-content>
@@ -104,7 +104,7 @@
 
           <ng-container *ngIf="(deviceSelection | async); else readManual">
             <mat-form-field>
-              <mat-select #readDevice matNativeControl id="apiReadType" placeholder="Device" (selectionChange)="changeDevice($event)">
+              <mat-select #readDevice matNativeControl placeholder="Device" (selectionChange)="changeDevice($event)">
                 <mat-option *ngFor="let device of (devices | async)" [value]="device.name">{{ device.name }}</mat-option>
               </mat-select>
             </mat-form-field>
@@ -112,7 +112,7 @@
 
             <ng-container *ngIf="(variableSelection | async); else readManualManual">
               <mat-form-field>
-                <mat-select #readVariable matNativeControl id="apiReadType" placeholder="Variable" (selectionChange)="changeVariable($event)">
+                <mat-select #readVariable matNativeControl placeholder="Variable" (selectionChange)="changeVariable($event)">
                   <mat-option *ngFor="let variable of (variables | async)" [value]="variable.name">{{ variable.name
                     }}</mat-option>
                 </mat-select>
@@ -122,7 +122,7 @@
               </mat-list>
               <ngx-json-viewer [expanded]="false" *ngIf="readResponse" [json]="readResponse"></ngx-json-viewer>
               <mat-action-row>
-                <button mat-button color="primary" (click)="
+                <button mat-raised-button color="primary" (click)="
                 read(readDevice.value, readVariable.value)">
                   Read
                 </button>
@@ -134,7 +134,7 @@
                 <input matInput #readVariable placeholder="Variable" value="" />
               </mat-form-field>
               <mat-form-field>
-                <mat-select #readType matNativeControl id="apireadType" placeholder="Type">
+                <mat-select #readType matNativeControl placeholder="Type">
                   <mat-option value="1">INT1</mat-option>
                   <mat-option value="2">INT2</mat-option>
                   <mat-option value="3">INT4</mat-option>
@@ -157,7 +157,7 @@
               </mat-form-field>
               <ngx-json-viewer [expanded]="false" *ngIf="readResponse" [json]="readResponse"></ngx-json-viewer>
               <mat-action-row>
-                <button mat-button color="primary" (click)="read(readDevice.value, readVariable.value, readType.value, readCount.value, readLength.value)">Read</button>
+                <button mat-raised-button color="primary" (click)="read(readDevice.value, readVariable.value, readType.value, readCount.value, readLength.value)">Read</button>
               </mat-action-row>
             </ng-template>
 
@@ -171,7 +171,7 @@
               <input matInput #readVariable placeholder="Variable" value="" />
             </mat-form-field>
             <mat-form-field>
-              <mat-select #readType matNativeControl id="apiReadType" placeholder="Type">
+              <mat-select #readType matNativeControl placeholder="Type">
                 <mat-option value="1">INT1</mat-option>
                 <mat-option value="2">INT2</mat-option>
                 <mat-option value="3">INT4</mat-option>
@@ -194,7 +194,7 @@
             </mat-form-field>
             <ngx-json-viewer [expanded]="false" *ngIf="readResponse" [json]="readResponse"></ngx-json-viewer>
             <mat-action-row>
-              <button mat-button color="primary" (click)="read(readDevice.value, readVariable.value, readType.value, readCount.value, readLength.value)">
+              <button mat-raised-button color="primary" (click)="read(readDevice.value, readVariable.value, readType.value, readCount.value, readLength.value)">
                 Read
               </button>
             </mat-action-row>
@@ -237,7 +237,7 @@
               </mat-list>
               <ngx-json-viewer [expanded]="false" *ngIf="writeResponse" [json]="writeResponse"></ngx-json-viewer>
               <mat-action-row>
-                <button mat-button color="primary" (click)="
+                <button mat-raised-button color="primary" (click)="
                   write(
                       writeDevice.value,
                       writeVariable.value,
@@ -283,7 +283,7 @@
               </mat-form-field>
               <ngx-json-viewer [expanded]="false" *ngIf="writeResponse" [json]="writeResponse"></ngx-json-viewer>
               <mat-action-row>
-                <button mat-button color="primary" (click)="write(writeDevice.value,
+                <button mat-raised-button color="primary" (click)="write(writeDevice.value,
                                 writeVariable.value,
                                 writeType.value,
                                 writeCount.value,
@@ -328,9 +328,7 @@
             </mat-form-field>
             <ngx-json-viewer [expanded]="false" *ngIf="writeResponse" [json]="writeResponse"></ngx-json-viewer>
             <mat-action-row>
-              <button mat-button color="primary" (click)="write(writeDevice.value, writeVariable.value, writeType.value, writeCount.value, writeLength.value, writeData.value)">
-                write
-              </button>
+              <button mat-raised-button color="primary" (click)="write(writeDevice.value, writeVariable.value, writeType.value, writeCount.value, writeLength.value, writeData.value)">Write</button>
             </mat-action-row>
           </ng-template>
         </mat-expansion-panel>
@@ -343,14 +341,14 @@
 
           <ng-container *ngIf="(deviceSelection | async); else subscribeManual">
             <mat-form-field>
-              <mat-select #subscribeDevice matNativeControl id="apiReadType" placeholder="Device" (selectionChange)="changeDevice($event)">
+              <mat-select #subscribeDevice matNativeControl placeholder="Device" (selectionChange)="changeDevice($event)">
                 <mat-option *ngFor="let device of (devices | async)" [value]="device.name">{{ device.name }}</mat-option>
               </mat-select>
             </mat-form-field>
 
             <ng-container *ngIf="(variableSelection | async); else subscribeManualManual">
               <!-- <mat-form-field>
-                <mat-select #subscribeVariable matNativeControl id="apiReadType" placeholder="Variable"
+                <mat-select #subscribeVariable matNativeControl placeholder="Variable"
                   (selectionChange)="changeVariable($event)">
                   <mat-option *ngFor="let variable of (variables | async)" [value]="variable.name">{{ variable.name
                     }}</mat-option>
@@ -375,7 +373,7 @@
               </mat-form-field>
               <ngx-json-viewer [expanded]="false" *ngIf="subscribeResponse" [json]="subscribeResponse"></ngx-json-viewer>
               <mat-action-row>
-                <button mat-button color="primary" (click)="
+                <button mat-raised-button color="primary" (click)="
                 subscribe(
                     subscribeDevice.value,
                     subscribeVariable.value
@@ -417,7 +415,7 @@
               </mat-form-field>
               <ngx-json-viewer [expanded]="false" *ngIf="subscribeResponse" [json]="subscribeResponse"></ngx-json-viewer>
               <mat-action-row>
-                <button mat-button color="primary" (click)="
+                <button mat-raised-button color="primary" (click)="
                             subscribe(
                               subscribeDevice.value,
                               subscribeVariable.value,
@@ -469,7 +467,7 @@
             </mat-form-field>
             <ngx-json-viewer [expanded]="false" *ngIf="subscribeResponse" [json]="subscribeResponse"></ngx-json-viewer>
             <mat-action-row>
-              <button mat-button color="primary" (click)="
+              <button mat-raised-button color="primary" (click)="
                             subscribe(
                               subscribeDevice.value,
                               subscribeVariable.value,
@@ -504,8 +502,8 @@
                 </div>
               </mat-card-content>
               <mat-card-actions>
-                <button mat-button color="primary" (click)="startSubscriptions()">Start Subscriptions</button>
-                <button mat-button color="primary" (click)="stopSubscriptions()">Stop Subscriptions</button>
+                <button mat-raised-button color="primary" (click)="startSubscriptions()">Start Subscriptions</button>
+                <button mat-raised-button color="primary" (click)="stopSubscriptions()">Stop Subscriptions</button>
               </mat-card-actions>
             </mat-card>
           </ng-container>
@@ -519,17 +517,13 @@
 
           <ng-container *ngIf="(subscriptionSelection | async); else unsubscribeManual">
             <mat-form-field>
-              <mat-select #unsubscribeId matNativeControl id="apiReadType" placeholder="Subscription">
-                <!-- <mat-option *ngFor="let subscription of objectKeys(subscriptionResponsesSubject | async)" [value]=subscription">
-                  {{ (subscriptions[subscription]).request.params.variable}}
-                </mat-option> -->
-                <mat-option *ngFor="let device of (devices | async)" [value]="device.name">{{ device.name }}</mat-option>
-
+              <mat-select #unsubscribeId matNativeControl placeholder="Subscription">
+                <mat-option *ngFor="let subscription of objectKeys(subscriptions)" [value]="subscription">{{subscriptions[subscription].request.params.variable}}</mat-option>
               </mat-select>
             </mat-form-field>
             <ngx-json-viewer [expanded]="false" *ngIf="unsubscribeResponse" [json]="unsubscribeResponse"></ngx-json-viewer>
             <mat-action-row>
-              <button mat-button color="primary" (click)="unsubscribe(unsubscribeId.value)">Unsubscribe</button>
+              <button mat-raised-button color="primary" (click)="unsubscribe(unsubscribeId.value)">Unsubscribe</button>
             </mat-action-row>
           </ng-container>
 
@@ -539,7 +533,7 @@
             </mat-form-field>
             <ngx-json-viewer [expanded]="false" *ngIf="unsubscribeResponse" [json]="unsubscribeResponse"></ngx-json-viewer>
             <mat-action-row>
-              <button mat-button color="primary" (click)="unsubscribe(unsubscribeId.value)">Unsubscribe</button>
+              <button mat-raised-button color="primary" (click)="unsubscribe(unsubscribeId.value)">Unsubscribe</button>
             </mat-action-row>
           </ng-template>
         </mat-expansion-panel>
@@ -552,7 +546,7 @@
 
           <ngx-json-viewer [expanded]="false" *ngIf="unsubscribeAllResponse" [json]="unsubscribeAllResponse"></ngx-json-viewer>
           <mat-action-row>
-            <button mat-button color="primary" (click)="unsubscribeAll()">Unsubscribe All</button>
+            <button mat-raised-button color="primary" (click)="unsubscribeAll()">Unsubscribe All</button>
           </mat-action-row>
         </mat-expansion-panel>
 
@@ -573,7 +567,7 @@
             <mat-panel-description>List all devices.</mat-panel-description>
           </mat-expansion-panel-header>
           <ngx-json-viewer [expanded]="false" *ngIf="deviceListResponse" [json]="deviceListResponse"></ngx-json-viewer>
-          <mat-action-row><button mat-button color="primary" (click)="listDevices()">List Devices</button>
+          <mat-action-row><button mat-raised-button color="primary" (click)="listDevices()">List Devices</button>
           </mat-action-row>
         </mat-expansion-panel>
 
@@ -585,7 +579,7 @@
 
           <ng-container *ngIf="(deviceSelection | async); else deviceManual">
             <mat-form-field>
-              <mat-select #deviceInfoName matNativeControl id="apiReadType" placeholder="Device">
+              <mat-select #deviceInfoName matNativeControl placeholder="Device">
                 <mat-option *ngFor="let device of (devices | async)" [value]="device.name">{{ device.name }}</mat-option>
               </mat-select>
             </mat-form-field>
@@ -604,7 +598,7 @@
             </mat-form-field>
             <ngx-json-viewer [expanded]="false" *ngIf="deviceInfoResponse" [json]="deviceInfoResponse"></ngx-json-viewer>
             <mat-action-row>
-              <button mat-button color="primary" (click)="deviceInfo(deviceInfoName.value, deviceInfoType.value)">
+              <button mat-raised-button color="primary" (click)="deviceInfo(deviceInfoName.value, deviceInfoType.value)">
                 Get Info
               </button>
             </mat-action-row>
@@ -627,7 +621,7 @@
             </mat-form-field>
             <ngx-json-viewer [expanded]="false" *ngIf="deviceInfoResponse" [json]="deviceInfoResponse"></ngx-json-viewer>
             <mat-action-row>
-              <button mat-button color="primary" (click)="deviceInfo(deviceInfoName.value, deviceInfoType.value)">
+              <button mat-raised-button color="primary" (click)="deviceInfo(deviceInfoName.value, deviceInfoType.value)">
                 Get Info
               </button>
             </mat-action-row>
@@ -651,7 +645,7 @@
           </mat-accordion> -->
 
           <ngx-json-viewer [expanded]="false" *ngIf="deviceDataTypeResponse" [json]="deviceDataTypeResponse"></ngx-json-viewer>
-          <mat-action-row><button mat-button color="primary" (click)="deviceTypeList()">Get Data Types</button>
+          <mat-action-row><button mat-raised-button color="primary" (click)="deviceTypeList()">Get Data Types</button>
           </mat-action-row>
         </mat-expansion-panel>
 
@@ -661,27 +655,21 @@
             <mat-panel-description>Start a device.</mat-panel-description>
           </mat-expansion-panel-header>
 
-          <ng-container *ngIf="(deviceSelection | async); else startDeviceManual">
             <mat-form-field>
-              <mat-select #startDeviceName matNativeControl id="apiReadType" placeholder="Device" (selectionChange)="changeDevice($event)">
-                <mat-option *ngFor="let device of (devices | async)" [value]="device.name">{{ device.name }}</mat-option>
-              </mat-select>
+              <ng-container *ngIf="(deviceSelection | async); else startDeviceManual">
+                <mat-select [(value)]="deviceStartName" matNativeControl placeholder="Device" (selectionChange)="changeDevice($event)">
+                  <mat-option *ngFor="let device of (devices | async)" [value]="device.name">{{ device.name }}</mat-option>
+                </mat-select>
+              </ng-container>
+              <ng-template #startDeviceManual>
+                <input matInput [(value)]="deviceStartName" placeholder="Device" />
+              </ng-template>
             </mat-form-field>
             <ngx-json-viewer [expanded]="false" *ngIf="deviceStartResponse" [json]="deviceStartResponse"></ngx-json-viewer>
-            <mat-action-row>
-              <button mat-button color="primary" (click)="startDevice(startDeviceName.value)">Start</button>
-            </mat-action-row>
-          </ng-container>
 
-          <ng-template #startDeviceManual>
-            <mat-form-field>
-              <input matInput #startDeviceName placeholder="Device" />
-            </mat-form-field>
-            <ngx-json-viewer [expanded]="false" *ngIf="deviceStartResponse" [json]="deviceStartResponse"></ngx-json-viewer>
-            <mat-action-row>
-              <button mat-button color="primary" (click)="startDevice(startDeviceName.value)">Start</button>
-            </mat-action-row>
-          </ng-template>
+          <mat-action-row>
+            <button mat-raised-button color="primary" (click)="startDevice(deviceStartName)">Start</button>
+          </mat-action-row>
         </mat-expansion-panel>
 
         <mat-expansion-panel id="deviceStop" [disabled]="!loggedIn">
@@ -692,13 +680,13 @@
 
           <ng-container *ngIf="(deviceSelection | async); else stopDeviceManual">
             <mat-form-field>
-              <mat-select #stopDeviceName matNativeControl id="apiReadType" placeholder="Device" (selectionChange)="changeDevice($event)">
+              <mat-select #stopDeviceName matNativeControl placeholder="Device" (selectionChange)="changeDevice($event)">
                 <mat-option *ngFor="let device of (devices | async)" [value]="device.name">{{ device.name }}</mat-option>
               </mat-select>
             </mat-form-field>
             <ngx-json-viewer [expanded]="false" *ngIf="deviceStopResponse" [json]="deviceStopResponse"></ngx-json-viewer>
             <mat-action-row>
-              <button mat-button color="primary" (click)="stopDevice(stopDeviceName.value)">Stop</button>
+              <button mat-raised-button color="primary" (click)="stopDevice(stopDeviceName.value)">Stop</button>
             </mat-action-row>
           </ng-container>
 
@@ -708,7 +696,7 @@
             </mat-form-field>
             <ngx-json-viewer [expanded]="false" *ngIf="deviceStopResponse" [json]="deviceStopResponse"></ngx-json-viewer>
             <mat-action-row>
-              <button mat-button color="primary" (click)="stopDevice(stopDeviceName.value)">Stop</button>
+              <button mat-raised-button color="primary" (click)="stopDevice(stopDeviceName.value)">Stop</button>
             </mat-action-row>
           </ng-template>
         </mat-expansion-panel>
@@ -730,13 +718,13 @@
           </mat-expansion-panel-header>
           <ng-container *ngIf="(projectSelection | async); else startTriggerManual">
             <mat-form-field>
-              <mat-select #triggerListProject matNativeControl id="apiReadType" placeholder="Project">
+              <mat-select #triggerListProject matNativeControl placeholder="Project">
                 <mat-option *ngFor="let project of (projects | async)" [value]="project.name">{{ project.name }}</mat-option>
               </mat-select>
             </mat-form-field>
             <ngx-json-viewer [expanded]="false" *ngIf="triggerListResponse" [json]="triggerListResponse"></ngx-json-viewer>
             <mat-action-row>
-              <button mat-button color="primary" (click)="triggerList(triggerListProject.value)">List Triggers</button>
+              <button mat-raised-button color="primary" (click)="triggerList(triggerListProject.value)">List Triggers</button>
             </mat-action-row>
           </ng-container>
 
@@ -747,7 +735,7 @@
 
             <ngx-json-viewer [expanded]="false" *ngIf="triggerListResponse" [json]="triggerListResponse"></ngx-json-viewer>
             <mat-action-row>
-              <button mat-button color="primary" (click)="triggerList(triggerListProject.value)">List Triggers</button>
+              <button mat-raised-button color="primary" (click)="triggerList(triggerListProject.value)">List Triggers</button>
             </mat-action-row>
           </ng-template>
         </mat-expansion-panel>
@@ -760,7 +748,7 @@
 
           <ng-container *ngIf="(projectSelection | async); else startTriggerManual">
             <mat-form-field>
-              <mat-select #triggerStartProject matNativeControl id="apiReadType" placeholder="Project"
+              <mat-select #triggerStartProject matNativeControl placeholder="Project"
                 (selectionChange)="changeProject($event)">
                 <mat-option *ngFor="let project of (projects | async)" [value]="project.name">{{ project.name }}</mat-option>
               </mat-select>
@@ -768,16 +756,16 @@
 
             <ng-container *ngIf="(triggerSelection | async); else startTriggerManualManual">
               <mat-form-field>
-                <mat-select #triggerStartTrigger matNativeControl id="apiReadType" placeholder="Trigger">
+                <mat-select #triggerStartTrigger matNativeControl placeholder="Trigger">
                   <mat-option *ngFor="let trigger of (triggers | async)" [value]="trigger.name">{{ trigger.name }}</mat-option>
                 </mat-select>
-                <mat-error *ngIf="(triggers | async | subtriggers: 'On-Demand')?.length<= 0">
-                  No triggers.
+                <mat-error *ngIf="(triggers | async).length > 0">
+                  No Triggers!
                 </mat-error>
               </mat-form-field>
               <ngx-json-viewer [expanded]="false" *ngIf="triggerStartResponse" [json]="triggerStartResponse"></ngx-json-viewer>
               <mat-action-row>
-                <button mat-button color="primary" (click)="triggerStart(triggerStartProject.value, triggerStartTrigger.value)">Start
+                <button mat-raised-button color="primary" (click)="triggerStart(triggerStartProject.value, triggerStartTrigger.value)">Start
                   Trigger</button>
               </mat-action-row>
             </ng-container>
@@ -788,7 +776,7 @@
               </mat-form-field>
               <ngx-json-viewer [expanded]="false" *ngIf="triggerStartResponse" [json]="triggerStartResponse"></ngx-json-viewer>
               <mat-action-row>
-                <button mat-button color="primary" (click)="triggerStart(triggerStartProject.value, triggerStartTrigger.value)">Start
+                <button mat-raised-button color="primary" (click)="triggerStart(triggerStartProject.value, triggerStartTrigger.value)">Start
                   Trigger</button>
               </mat-action-row>
             </ng-template>
@@ -804,7 +792,7 @@
             </mat-form-field>
             <ngx-json-viewer [expanded]="false" *ngIf="triggerStartResponse" [json]="triggerStartResponse"></ngx-json-viewer>
             <mat-action-row>
-              <button mat-button color="primary" (click)="triggerStart(triggerStartProject.value, triggerStartTrigger.value)">Start
+              <button mat-raised-button color="primary" (click)="triggerStart(triggerStartProject.value, triggerStartTrigger.value)">Start
                 Trigger</button>
             </mat-action-row>
           </ng-template>
@@ -818,14 +806,14 @@
 
           <ng-container *ngIf="(projectSelection | async); else stopTriggerManual">
             <mat-form-field>
-              <mat-select #triggerStopProject matNativeControl id="apiReadType" placeholder="Project" (selectionChange)="changeProject($event)">
+              <mat-select #triggerStopProject matNativeControl placeholder="Project" (selectionChange)="changeProject($event)">
                 <mat-option *ngFor="let project of (projects | async)" [value]="project.name">{{ project.name }}</mat-option>
               </mat-select>
             </mat-form-field>
 
             <ng-container *ngIf="(triggerSelection | async); else stopTriggerManualManual">
               <mat-form-field>
-                <mat-select #triggerStopTrigger matNativeControl id="apiReadType" placeholder="Trigger">
+                <mat-select #triggerStopTrigger matNativeControl placeholder="Trigger">
                   <mat-option *ngFor="let trigger of (triggers | async)" [value]="trigger.name">{{ trigger.name }}</mat-option>
                 </mat-select>
                 <mat-error *ngIf="(triggers | async | subtriggers: 'On-Demand')?.length<= 0">
@@ -834,7 +822,7 @@
               </mat-form-field>
               <ngx-json-viewer [expanded]="false" *ngIf="triggerStopResponse" [json]="triggerStopResponse"></ngx-json-viewer>
               <mat-action-row>
-                <button mat-button color="primary" (click)="triggerStop(triggerStopProject.value, triggerStopTrigger.value)">Stop
+                <button mat-raised-button color="primary" (click)="triggerStop(triggerStopProject.value, triggerStopTrigger.value)">Stop
                   Trigger</button>
               </mat-action-row>
             </ng-container>
@@ -845,7 +833,7 @@
               </mat-form-field>
               <ngx-json-viewer [expanded]="false" *ngIf="triggerStopResponse" [json]="triggerStopResponse"></ngx-json-viewer>
               <mat-action-row>
-                <button mat-button color="primary" (click)="triggerStop(triggerStopProject.value, triggerStopTrigger.value)">Stop
+                <button mat-raised-button color="primary" (click)="triggerStop(triggerStopProject.value, triggerStopTrigger.value)">Stop
                   Trigger</button>
               </mat-action-row>
             </ng-template>
@@ -861,7 +849,7 @@
             </mat-form-field>
             <ngx-json-viewer [expanded]="false" *ngIf="triggerStopResponse" [json]="triggerStopResponse"></ngx-json-viewer>
             <mat-action-row>
-              <button mat-button color="primary" (click)="triggerStop(triggerStopProject.value, triggerStopTrigger.value)">Stop
+              <button mat-raised-button color="primary" (click)="triggerStop(triggerStopProject.value, triggerStopTrigger.value)">Stop
                 Trigger</button>
             </mat-action-row>
           </ng-template>
@@ -875,7 +863,7 @@
 
           <ng-container *ngIf="(projectSelection | async); else fireTriggerManual">
             <mat-form-field>
-              <mat-select #triggerFireProject matNativeControl id="apiReadType" placeholder="Project" (selectionChange)="changeProject($event)">
+              <mat-select #triggerFireProject matNativeControl placeholder="Project" (selectionChange)="changeProject($event)">
                 <mat-option *ngFor="let project of (projects | async)" [value]="project.name">{{ project.name }}</mat-option>
               </mat-select>
             </mat-form-field>
@@ -883,7 +871,7 @@
             <ng-container *ngIf="(triggerSelection | async); else fireTriggerManualManual">
               <!--<p>{{ triggers | async | subtriggers: 'On-Demand' | json }}</p>-->
               <mat-form-field>
-                <mat-select #triggerFireTrigger matNativeControl id="apiReadType" placeholder="Trigger">
+                <mat-select #triggerFireTrigger matNativeControl placeholder="Trigger">
                   <mat-option *ngFor="let trigger of (triggers | async | subtriggers: 'On-Demand')" [value]="trigger.name">{{
                     trigger.name }}</mat-option>
                 </mat-select>
@@ -893,7 +881,7 @@
               </mat-form-field>
               <ngx-json-viewer [expanded]="false" *ngIf="triggerFireResponse" [json]="triggerFireResponse"></ngx-json-viewer>
               <mat-action-row>
-                <button mat-button color="primary" (click)="triggerFire(triggerFireProject.value, triggerFireTrigger.value)">Fire
+                <button mat-raised-button color="primary" (click)="triggerFire(triggerFireProject.value, triggerFireTrigger.value)">Fire
                   Trigger</button>
               </mat-action-row>
             </ng-container>
@@ -904,7 +892,7 @@
               </mat-form-field>
               <ngx-json-viewer [expanded]="false" *ngIf="triggerFireResponse" [json]="triggerFireResponse"></ngx-json-viewer>
               <mat-action-row>
-                <button mat-button color="primary" (click)="triggerFire(triggerFireProject.value, triggerFireTrigger.value)">Fire
+                <button mat-raised-button color="primary" (click)="triggerFire(triggerFireProject.value, triggerFireTrigger.value)">Fire
                   Trigger</button>
               </mat-action-row>
             </ng-template>
@@ -920,7 +908,7 @@
             </mat-form-field>
             <ngx-json-viewer [expanded]="false" *ngIf="triggerFireResponse" [json]="triggerFireResponse"></ngx-json-viewer>
             <mat-action-row>
-              <button mat-button color="primary" (click)="triggerFire(triggerFireProject.value, triggerFireTrigger.value)">Fire
+              <button mat-raised-button color="primary" (click)="triggerFire(triggerFireProject.value, triggerFireTrigger.value)">Fire
                 Trigger</button>
             </mat-action-row>
           </ng-template>
@@ -934,7 +922,7 @@
 
           <ng-container *ngIf="(projectSelection | async); else subTriggerFireManual">
             <mat-form-field>
-              <mat-select #subTriggerFireProject matNativeControl id="apiReadType" placeholder="Project"
+              <mat-select #subTriggerFireProject matNativeControl placeholder="Project"
                 (selectionChange)="changeProject($event)">
                 <mat-option *ngFor="let project of (projects | async)" [value]="project.name">{{ project.name }}</mat-option>
               </mat-select>
@@ -942,7 +930,7 @@
 
             <ng-container *ngIf="(triggerSelection | async); else subTriggerFireManualManual">
               <mat-form-field>
-                <mat-select #subTriggerFireTrigger matNativeControl id="apiReadType" placeholder="SubTrigger">
+                <mat-select #subTriggerFireTrigger matNativeControl placeholder="SubTrigger">
                   <mat-option *ngFor="let trigger of (triggers | async | subtriggers: 'SubTrigger')" [value]="trigger.name">{{
                     trigger.name }}</mat-option>
                 </mat-select>
@@ -958,7 +946,7 @@
                 <input matInput #subTriggerFireVariableData placeholder="Data" />
                 <mat-hint>Arrays are comma delimitted</mat-hint>
               </mat-form-field>
-              <button mat-button color="primary" (click)="subTriggerAddVariable(subTriggerFireVariable.value, subTriggerFireVariableData.value)">Add
+              <button mat-raised-button color="primary" (click)="subTriggerAddVariable(subTriggerFireVariable.value, subTriggerFireVariableData.value)">Add
                 Variable</button>
               <!-- <mat-form-field class="form-field-fullwidth">
                 <mat-chip-list #chipList>
@@ -988,7 +976,7 @@
               </mat-form-field>
               <ngx-json-viewer [expanded]="false" *ngIf="subTriggerFireResponse" [json]="subTriggerFireResponse"></ngx-json-viewer>
               <mat-action-row>
-                <button mat-button color="primary" (click)="subTriggerFire(subTriggerFireProject.value, subTriggerFireTrigger.value, null)">Fire
+                <button mat-raised-button color="primary" (click)="subTriggerFire(subTriggerFireProject.value, subTriggerFireTrigger.value, null)">Fire
                   SubTrigger</button>
               </mat-action-row>
             </ng-container>
@@ -999,7 +987,7 @@
               </mat-form-field>
               <ngx-json-viewer [expanded]="false" *ngIf="subTriggerFireResponse" [json]="subTriggerFireResponse"></ngx-json-viewer>
               <mat-action-row>
-                <button mat-button color="primary" (click)="subTriggerFire(subTriggerFireProject.value, subTriggerFireTrigger.value)">Fire
+                <button mat-raised-button color="primary" (click)="subTriggerFire(subTriggerFireProject.value, subTriggerFireTrigger.value)">Fire
                   Trigger</button>
               </mat-action-row>
             </ng-template>
@@ -1015,7 +1003,7 @@
             </mat-form-field>
             <ngx-json-viewer [expanded]="false" *ngIf="subTriggerFireResponse" [json]="subTriggerFireResponse"></ngx-json-viewer>
             <mat-action-row>
-              <button mat-button color="primary" (click)="subTriggerFire(subTriggerFireProject.value, subTriggerFireTrigger.value)">Fire
+              <button mat-raised-button color="primary" (click)="subTriggerFire(subTriggerFireProject.value, subTriggerFireTrigger.value)">Fire
                 Trigger</button>
             </mat-action-row>
           </ng-template>
@@ -1039,7 +1027,7 @@
           </mat-expansion-panel-header>
           <ngx-json-viewer [expanded]="false" *ngIf="projectListResponse" [json]="projectListResponse"></ngx-json-viewer>
           <mat-action-row>
-            <button mat-button color="primary" (click)="projectList()">List Projects</button>
+            <button mat-raised-button color="primary" (click)="projectList()">List Projects</button>
           </mat-action-row>
         </mat-expansion-panel>
 
@@ -1051,14 +1039,14 @@
 
           <ng-container *ngIf="(projectSelection | async); else startTriggerManual">
             <mat-form-field>
-              <mat-select #projectStartProject matNativeControl id="apiReadType" placeholder="Project"
+              <mat-select #projectStartProject matNativeControl placeholder="Project"
                 (selectionChange)="changeProject($event)">
                 <mat-option *ngFor="let project of (projects | async)" [value]="project.name">{{ project.name }}</mat-option>
               </mat-select>
             </mat-form-field>
             <ngx-json-viewer [expanded]="false" *ngIf="projectStartResponse" [json]="projectStartResponse"></ngx-json-viewer>
             <mat-action-row>
-              <button mat-button color="primary" (click)="projectStart(projectStartProject.value)">Start Project</button>
+              <button mat-raised-button color="primary" (click)="projectStart(projectStartProject.value)">Start Project</button>
             </mat-action-row>
           </ng-container>
 
@@ -1068,7 +1056,7 @@
             </mat-form-field>
             <ngx-json-viewer [expanded]="false" *ngIf="projectStartResponse" [json]="projectStartResponse"></ngx-json-viewer>
             <mat-action-row>
-              <button mat-button color="primary" (click)="projectStart(projectStartProject.value)">Start Project</button>
+              <button mat-raised-button color="primary" (click)="projectStart(projectStartProject.value)">Start Project</button>
             </mat-action-row>
           </ng-template>
         </mat-expansion-panel>
@@ -1087,7 +1075,7 @@
             </mat-form-field>
             <ngx-json-viewer [expanded]="false" *ngIf="projectStopResponse" [json]="projectStopResponse"></ngx-json-viewer>
             <mat-action-row>
-              <button mat-button color="primary" (click)="projectStop(projectStopProject.value)">Stop Project</button>
+              <button mat-raised-button color="primary" (click)="projectStop(projectStopProject.value)">Stop Project</button>
             </mat-action-row>
           </ng-container>
 
@@ -1100,7 +1088,7 @@
             </mat-form-field>
             <ngx-json-viewer [expanded]="false" *ngIf="projectStopResponse" [json]="projectStopResponse"></ngx-json-viewer>
             <mat-action-row>
-              <button mat-button color="primary" (click)="projectStop(projectStopProject.value)">Stop Project</button>
+              <button mat-raised-button color="primary" (click)="projectStop(projectStopProject.value)">Stop Project</button>
             </mat-action-row>
           </ng-template>
         </mat-expansion-panel>
@@ -1127,7 +1115,7 @@
           </mat-form-field>
           <ngx-json-viewer [expanded]="false" *ngIf="channelSubscribeResponse" [json]="channelSubscribeResponse"></ngx-json-viewer>
           <mat-action-row>
-            <button mat-button color="primary" (click)="channelSubscribe(channelSubscribeChannel.value)">
+            <button mat-raised-button color="primary" (click)="channelSubscribe(channelSubscribeChannel.value)">
               Subscribe
             </button>
           </mat-action-row>
@@ -1144,7 +1132,7 @@
           </mat-form-field>
           <ngx-json-viewer [expanded]="false" *ngIf="channelUnsubscribeResponse" [json]="channelUnsubscribeResponse"></ngx-json-viewer>
           <mat-action-row>
-            <button mat-button color="primary" (click)="channelUnsubscribe(channelUnsubscribeChannel.value)">Unsubscribe</button>
+            <button mat-raised-button color="primary" (click)="channelUnsubscribe(channelUnsubscribeChannel.value)">Unsubscribe</button>
           </mat-action-row>
 
         </mat-expansion-panel>
@@ -1157,7 +1145,7 @@
 
           <ngx-json-viewer [expanded]="false" *ngIf="channelUnsubscribeAllResponse" [json]="channelUnsubscribeAllResponse"></ngx-json-viewer>
           <mat-action-row>
-            <button mat-button color="primary" (click)="channelUnsubscribeAll()">Unsubscribe All</button>
+            <button mat-raised-button color="primary" (click)="channelUnsubscribeAll()">Unsubscribe All</button>
           </mat-action-row>
         </mat-expansion-panel>
       </mat-accordion>
@@ -1190,7 +1178,7 @@
           </mat-form-field>
           <ngx-json-viewer [expanded]="false" *ngIf="pingResponse" [json]="pingResponse"></ngx-json-viewer>
           <mat-action-row>
-            <button mat-button color="primary" (click)="ping(pingAddress.value, pingCount.value)">Ping</button>
+            <button mat-raised-button color="primary" (click)="ping(pingAddress.value, pingCount.value)">Ping</button>
           </mat-action-row>
         </mat-expansion-panel>
       </mat-accordion>
@@ -1248,7 +1236,7 @@
           </mat-form-field>
           <ngx-json-viewer [expanded]="false" *ngIf="referenceListResponse" [json]="referenceListResponse"></ngx-json-viewer>
           <mat-action-row>
-            <button mat-button color="primary" (click)="referenceList(referenceType.value, referenceSource.value, referenceDirection.value)">Reference</button>
+            <button mat-raised-button color="primary" (click)="referenceList(referenceType.value, referenceSource.value, referenceDirection.value)">Reference</button>
           </mat-action-row>
         </mat-expansion-panel>
       </mat-accordion>
@@ -1289,7 +1277,7 @@
 
           <ngx-json-viewer [expanded]="false" *ngIf="sqlResponse" [json]="sqlResponse"></ngx-json-viewer>
           <mat-action-row>
-            <button mat-button color="primary" (click)="sqlQuery(sqlQueryString.value)">Query</button>
+            <button mat-raised-button color="primary" (click)="sqlQuery(sqlQueryString.value)">Query</button>
           </mat-action-row>
         </mat-expansion-panel>
       </mat-accordion>

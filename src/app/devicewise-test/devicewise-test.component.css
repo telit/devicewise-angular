@@ -44,11 +44,9 @@ table {
   flex-wrap: wrap;
 }
 
-.flex-container>* {
+.flex-container > * {
   margin: 0px 10px 10px 0px;
 }
-
-.normal-card {}
 
 .footer {
   background: #00253f;
@@ -63,15 +61,18 @@ table {
 }
 
 .footer a {
-  color:white;
+  color: white;
 }
 
 .highlights {
   margin: 15px 0;
 }
+.highlights button {
+  margin-right: 10px;
+}
 
 .subscriptions {
-  display:flex;
+  display: flex;
 }
 
 .subscription {
@@ -81,5 +82,5 @@ table {
 }
 
 .noMargin {
-  margin:0;
+  margin: 0;
 }

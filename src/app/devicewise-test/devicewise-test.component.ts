@@ -55,6 +55,7 @@ export class DevicewiseTestComponent implements OnInit {
   unsubscribeResponse;
   unsubscribeAllResponse;
   deviceInfoResponse;
+  deviceStartName;
   deviceStartResponse;
   deviceStopResponse;
   deviceListResponse;
@@ -510,8 +511,12 @@ export class DevicewiseTestComponent implements OnInit {
     this.currentDevice = input.value;
 
     this.devicewise.deviceInfo(this.currentDevice, 2).subscribe((data) => {
-        const filteredData = data.params.variableInfo.filter((value) => !value.structId);
-        this.variables.next(filteredData);
+        if (!data.params.variableInfo) {
+          this.variables.next([]);
+        } else {
+          const filteredData = data.params.variableInfo.filter((value) => !value.structId);
+          this.variables.next(filteredData);
+        }
       }, (error) => this.openSnackError(error)
     );
   }
