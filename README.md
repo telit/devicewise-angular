@@ -68,6 +68,32 @@ That's it!
 * Have a look at and play around with the `app` to get to know the devicewise service with `ng serve --open`
 * Set up other users in deviceWISE (default credentials are admin/admin)
 
+# Running the Demo
+
+Clone the repository.
+
+```bash
+git clone https://github.com/astone2014/devicewise-angular.git
+```
+
+Navigate to the folder.
+
+```bash
+cd devicewise-angular
+```
+
+Install packages.
+
+```bash
+npm i
+```
+
+Run Demo.
+
+```bash
+ng serve --open
+```
+
 # FAQ
 
 ## General tips
