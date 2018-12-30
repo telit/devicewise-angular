@@ -372,15 +372,11 @@
                 </mat-autocomplete>
               </mat-form-field>
               <ngx-json-viewer [expanded]="false" *ngIf="subscribeResponse" [json]="subscribeResponse"></ngx-json-viewer>
-              <mat-action-row>
-                <button mat-raised-button color="primary" (click)="
-                subscribe(
-                    subscribeDevice.value,
-                    subscribeVariable.value
-                  )">
+              <!-- <mat-action-row>
+                <button mat-raised-button color="primary" (click)="subscribe(subscribeDevice.value, subscribeVariable.value)">
                   Subscribe
                 </button>
-              </mat-action-row>
+              </mat-action-row> -->
             </ng-container>
 
             <ng-template #subscribeManualManual>
@@ -482,11 +478,11 @@
             </mat-action-row>
           </ng-template>
           <ng-container *ngIf="subscriptionsSubject | async; let subscriptions">
-            <mat-card [hidden]="objectKeys(subscriptions).length <= 0">
-              <mat-card-header>
-                <mat-card-title>Subscriptions</mat-card-title>
-              </mat-card-header>
-              <mat-card-content>
+            <div [hidden]="objectKeys(subscriptions).length <= 0">
+              <div>
+                <h2 class="mat-h2">Subscriptions</h2>
+              </div>
+              <div>
                 <div class="subscriptions">
                   <mat-card *ngFor="let subscription of objectKeys(subscriptions)" class="subscription" cdkDragBoundary=".subscriptions"
                     cdkDrag>
@@ -500,12 +496,12 @@
                     </mat-card-content>
                   </mat-card>
                 </div>
-              </mat-card-content>
-              <mat-card-actions>
+              </div>
+              <div>
                 <button mat-raised-button color="primary" (click)="startSubscriptions()">Start Subscriptions</button>
                 <button mat-raised-button color="primary" (click)="stopSubscriptions()">Stop Subscriptions</button>
-              </mat-card-actions>
-            </mat-card>
+              </div>
+            </div>
           </ng-container>
         </mat-expansion-panel>
 

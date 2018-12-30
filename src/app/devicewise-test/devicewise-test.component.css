@@ -72,13 +72,14 @@ table {
 }
 
 .subscriptions {
-  display: flex;
+  min-height: 400px;
 }
 
 .subscription {
-  border: solid 1px;
-  margin: 10px;
+  display:inline-block;
   width: 225px;
+  margin-right: 10px 10px 0px 0px;
+  border: solid 1px;
 }
 
 .noMargin {
