@@ -30,6 +30,7 @@
     "@angular/core": "^7.1.0"
   },
   "dependencies": {
+    "fetch-readablestream": "^0.2.0",
     "ngx-cookie-service": "^2.1.0"
   }
 }
