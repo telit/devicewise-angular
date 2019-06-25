@@ -74,11 +74,13 @@ export class DevicewiseTestComponent implements OnInit {
   channelSubscribeResponse;
   channelUnsubscribeResponse;
   channelUnsubscribeAllResponse;
+  private messageCount = 0;
+  private time = 0;
 
   objectKeys = Object.keys;
   separatorKeysCodes: number[] = [ENTER, COMMA];
-  @ViewChild('subscriptionInput') subscriptionInput: ElementRef<HTMLInputElement>;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild('subscriptionInput', {static:false}) subscriptionInput: ElementRef<HTMLInputElement>;
+  @ViewChild(MatPaginator, {static:false}) paginator: MatPaginator;
 
   displayedColumns: string[] = [];
   dataSource: MatTableDataSource<any> = new MatTableDataSource();
@@ -95,7 +97,7 @@ export class DevicewiseTestComponent implements OnInit {
     this.devicewise.setEndpoint('http://localhost:88');
     this.dataSource.paginator = this.paginator;
 
-    console.log('logging in!');
+    console.log('logging ins!');
     this.devicewise.easyLogin('', '', '').subscribe((login) => {
       console.log('logged in!');
       this.loaded = true;
@@ -227,9 +229,26 @@ export class DevicewiseTestComponent implements OnInit {
           return;
         }
 
+        let start = new Date();
+        this.time = start.getTime();
+        console.log('Started... ', this.time);
+
+        setInterval(() => {
+          let now = new Date();
+          let now_time = now.getTime();
+          let elapsed = now_time - this.time;
+          let secs_elapsed = elapsed / 1000;
+          let msg_p_sec = this.messageCount / secs_elapsed;
+          console.log('Time Elapsed:', secs_elapsed, ' - Messages Per Second:', msg_p_sec);
+        }, 5000);
+
         this.openSnackBar('Subscription to ' + variable + ' successful!', 'DISMISS');
         this.subscriptions[data.params.id] = newSubscription;
         this.subscriptionsSubject.next(this.subscriptions);
+
+        newSubscription.subscription.subscribe(() => {
+          this.messageCount++;
+        })
 
         this.devicewise.getNotifications();
       },

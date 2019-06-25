@@ -21,8 +21,11 @@ export class DevicewiseAngularService {
   private loggedIn = false;
   private activeSubscriptions: { [key: string]: Subject<DwResponse.Subscription> } = {};
   private notificationsController;
+  private messageCount = 0;
 
-  constructor(private cookieService: CookieService, private http: HttpClient) {}
+  constructor(private cookieService: CookieService, private http: HttpClient) {
+    console.log('IT WORKS AUSTEN!');
+  }
 
   setEndpoint(endpoint: string): void {
     this.url = endpoint;
@@ -225,8 +228,7 @@ export class DevicewiseAngularService {
     variable.subscription = newSubscription.asObservable();
 
     return this.http.post<DwResponse.Subscribe>(this.url + '/api', variable.request, httpOptions).pipe(
-      tap(
-        response => {
+      tap((response) => {
           variable.response = response;
           if (response.success) {
             this.activeSubscriptions[response.params.id] = newSubscription;
@@ -357,9 +359,9 @@ export class DevicewiseAngularService {
 
   // Device
 
-  deviceList(): Observable<DwResponse.DeviceList> {
-    return this.http.post<DwResponse.DeviceList>(this.url + '/api', { command: 'device.list' }, httpOptions);
-  }
+deviceList(): Observable<DwResponse.DeviceList> {
+  return this.http.post<DwResponse.DeviceList>(this.url + '/api', { command: 'device.list' }, httpOptions);
+}
 
   deviceInfo(device: string, options: number): Observable<DwResponse.DeviceInfo> {
     return this.http.post<DwResponse.DeviceInfo>(
