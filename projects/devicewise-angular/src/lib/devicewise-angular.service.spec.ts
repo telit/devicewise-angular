@@ -1,17 +1,15 @@
 import { HttpClientModule } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
-
+import { CookieService } from 'ngx-cookie-service';
+import { forkJoin, Observable } from 'rxjs';
 import { DevicewiseAngularService } from './devicewise-angular.service';
 import * as DwResponse from './models/dwresponse';
 import * as DwReqeust from './models/dwrequest';
-import * as Dwsubscription from './models/dwsubscription';
-import { CookieService } from 'ngx-cookie-service';
 import * as DwSubscription from './models/dwsubscription';
-import { forkJoin, Observable } from 'rxjs';
 
 describe('DevicewiseAngularService', () => {
   // const url = location.origin;
-  const url = 'http://localhost:88';
+  const url = 'http://192.168.0.196:88';
   let service: DevicewiseAngularService;
 
   beforeAll((done: DoneFn) => {

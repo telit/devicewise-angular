@@ -31,10 +31,10 @@
   "homepage": "https://github.com/astone2014/devicewise-angular",
   "peerDependencies": {
     "@angular/common": "^7.2.0",
-    "@angular/core": "^7.2.0"
-  },
-  "dependencies": {
+    "@angular/core": "^7.2.0",
     "ngx-cookie-service": "^2.1.0",
     "fetch-readablestream": "^0.2.0"
+  },
+  "dependencies": {
   }
 }

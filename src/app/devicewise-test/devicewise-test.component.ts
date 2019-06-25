@@ -1,8 +1,14 @@
 import { Component, OnInit, Inject, ElementRef, ViewChild } from '@angular/core';
-import { DevicewiseAngularService } from 'devicewise-angular';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { DwRequest, DwResponse, DwSubscription } from 'devicewise-angular';
-import { DeviceWise } from './models/dwconstants';
+import {
+  DevicewiseAngularService,
+  DevicewiseSubscribeService,
+  DevicewiseApiService,
+  DwRequest,
+  DwResponse,
+  DwSubscription,
+  DeviceWise
+} from 'devicewise-angular';
 import { BehaviorSubject } from 'rxjs';
 import {
   MatBottomSheet,
@@ -79,20 +85,23 @@ export class DevicewiseTestComponent implements OnInit {
 
   objectKeys = Object.keys;
   separatorKeysCodes: number[] = [ENTER, COMMA];
-  @ViewChild('subscriptionInput', {static:false}) subscriptionInput: ElementRef<HTMLInputElement>;
-  @ViewChild(MatPaginator, {static:false}) paginator: MatPaginator;
+  @ViewChild('subscriptionInput', { static: false }) subscriptionInput: ElementRef<HTMLInputElement>;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
   displayedColumns: string[] = [];
   dataSource: MatTableDataSource<any> = new MatTableDataSource();
 
   constructor(
     private devicewise: DevicewiseAngularService,
+    private dwApi: DevicewiseApiService,
+    private dwSubscribe: DevicewiseSubscribeService,
     public snackBar: MatSnackBar,
     private bottomSheet: MatBottomSheet
-  ) {}
+  ) { }
 
   ngOnInit() {
-    this.url = location.origin;
+    // this.url = location.origin;
+    this.url = 'http://192.168.0.196:88';
     this.dataSource.paginator = this.paginator;
     this.devicewise.easyLogin(this.url, '', '').subscribe((login) => {
       console.log('logged in!');
@@ -108,11 +117,11 @@ export class DevicewiseTestComponent implements OnInit {
   }
 
   refreshLists() {
-    this.devicewise.projectList().subscribe(data2 => {
+    this.dwApi.projectList().subscribe(data2 => {
       this.projects.next(data2.params.projects);
     });
 
-    this.devicewise.deviceList().subscribe(data2 => {
+    this.dwApi.deviceList().subscribe(data2 => {
       this.devices.next(data2.params.devices);
     });
   }
@@ -131,7 +140,7 @@ export class DevicewiseTestComponent implements OnInit {
   }
 
   logout() {
-    this.devicewise.logout().subscribe(
+    this.dwApi.logout().subscribe(
       data => {
         this.logoutResponse = data;
         if (data.success) {
@@ -153,7 +162,7 @@ export class DevicewiseTestComponent implements OnInit {
       length = this.selectedVariable.length ? this.selectedVariable.length : -1;
     }
 
-    this.devicewise.read(device, variable, type, count, length).subscribe(
+    this.dwApi.read(device, variable, type, count, length).subscribe(
       data => {
         this.readResponse = data;
       },
@@ -175,7 +184,7 @@ export class DevicewiseTestComponent implements OnInit {
       return -1;
     }
 
-    this.devicewise.write(device, variable, type, count, length, varData).subscribe(
+    this.dwApi.write(device, variable, type, count, length, varData).subscribe(
       data => {
         this.writeResponse = data;
       },
@@ -216,50 +225,50 @@ export class DevicewiseTestComponent implements OnInit {
 
     const newSubscription = new DwSubscription.Subscription(device, variable, type, count, length);
 
-    this.devicewise.getSubscription(newSubscription).subscribe(data => {
-        this.subscribeResponse = data;
-        if (!data.success) {
-          this.openSnackBar('Subscription to ' + variable + ' failed! ' + data.errorMessages[0], 'DISMISS');
-          return;
-        }
+    this.dwSubscribe.getSubscription(newSubscription).subscribe(data => {
+      this.subscribeResponse = data;
+      if (!data.success) {
+        this.openSnackBar('Subscription to ' + variable + ' failed! ' + data.errorMessages[0], 'DISMISS');
+        return;
+      }
 
-        let start = new Date();
-        this.time = start.getTime();
-        console.log('Started... ', this.time);
+      const start = new Date();
+      this.time = start.getTime();
+      console.log('Started... ', this.time);
 
-        setInterval(() => {
-          let now = new Date();
-          let now_time = now.getTime();
-          let elapsed = now_time - this.time;
-          let secs_elapsed = elapsed / 1000;
-          let msg_p_sec = this.messageCount / secs_elapsed;
-          console.log('Time Elapsed:', secs_elapsed, ' - Messages Per Second:', msg_p_sec);
-        }, 5000);
+      setInterval(() => {
+        const now = new Date();
+        const now_time = now.getTime();
+        const elapsed = now_time - this.time;
+        const secs_elapsed = elapsed / 1000;
+        const msg_p_sec = this.messageCount / secs_elapsed;
+        console.log('Time Elapsed:', secs_elapsed, ' - Messages Per Second:', msg_p_sec);
+      }, 5000);
 
-        this.openSnackBar('Subscription to ' + variable + ' successful!', 'DISMISS');
-        this.subscriptions[data.params.id] = newSubscription;
-        this.subscriptionsSubject.next(this.subscriptions);
+      this.openSnackBar('Subscription to ' + variable + ' successful!', 'DISMISS');
+      this.subscriptions[data.params.id] = newSubscription;
+      this.subscriptionsSubject.next(this.subscriptions);
 
-        newSubscription.subscription.subscribe(() => {
-          this.messageCount++;
-        })
+      newSubscription.subscription.subscribe(() => {
+        this.messageCount++;
+      });
 
-        this.devicewise.getNotifications();
-      },
+      this.dwSubscribe.getNotifications();
+    },
       error => this.openSnackError(error)
     );
   }
 
   startSubscriptions() {
-    this.devicewise.getNotifications();
+    this.dwSubscribe.getNotifications();
   }
 
   stopSubscriptions() {
-    this.devicewise.abortNotifications();
+    this.dwSubscribe.abortNotifications();
   }
 
   unsubscribe(id) {
-    this.devicewise.unsubscribe(id).subscribe(
+    this.dwSubscribe.unsubscribe(id).subscribe(
       data => {
         this.unsubscribeResponse = data;
         if (!data.success) {
@@ -276,7 +285,7 @@ export class DevicewiseTestComponent implements OnInit {
   }
 
   unsubscribeAll() {
-    this.devicewise.unsubscribeAll().subscribe(
+    this.dwSubscribe.unsubscribeAll().subscribe(
       data => {
         this.unsubscribeAllResponse = data;
         if (!data.success) {
@@ -290,7 +299,7 @@ export class DevicewiseTestComponent implements OnInit {
   }
 
   listDevices() {
-    this.devicewise.deviceList().subscribe(
+    this.dwApi.deviceList().subscribe(
       data => {
         this.devices.next(data.params.devices);
         this.deviceListResponse = data;
@@ -300,7 +309,7 @@ export class DevicewiseTestComponent implements OnInit {
   }
 
   deviceTypeList() {
-    this.devicewise.deviceTypeList().subscribe(
+    this.dwApi.deviceTypeList().subscribe(
       data => {
         this.deviceDataTypeResponse = data;
       },
@@ -309,7 +318,7 @@ export class DevicewiseTestComponent implements OnInit {
   }
 
   deviceInfo(device: string, options: number) {
-    this.devicewise.deviceInfo(device, Number(options)).subscribe(
+    this.dwApi.deviceInfo(device, Number(options)).subscribe(
       data => {
         this.deviceInfoResponse = data;
       },
@@ -318,7 +327,7 @@ export class DevicewiseTestComponent implements OnInit {
   }
 
   startDevice(device: string) {
-    this.devicewise.deviceStart(device).subscribe(
+    this.dwApi.deviceStart(device).subscribe(
       data => {
         this.deviceStartResponse = data;
       },
@@ -327,7 +336,7 @@ export class DevicewiseTestComponent implements OnInit {
   }
 
   stopDevice(device: string) {
-    this.devicewise.deviceStop(device).subscribe(
+    this.dwApi.deviceStop(device).subscribe(
       data => {
         this.deviceStopResponse = data;
       },
@@ -339,7 +348,7 @@ export class DevicewiseTestComponent implements OnInit {
     if (!project) {
       project = this.currentProject;
     }
-    return this.devicewise.triggerList(project).subscribe(
+    return this.dwApi.triggerList(project).subscribe(
       data => {
         this.triggerListResponse = data;
         if (!data.success) {
@@ -353,7 +362,7 @@ export class DevicewiseTestComponent implements OnInit {
   }
 
   triggerStart(project: string, trigger: string) {
-    return this.devicewise.triggerStart(project, trigger).subscribe(
+    return this.dwApi.triggerStart(project, trigger).subscribe(
       data => {
         this.triggerStartResponse = data;
       },
@@ -362,7 +371,7 @@ export class DevicewiseTestComponent implements OnInit {
   }
 
   triggerFire(project: string, trigger: string) {
-    return this.devicewise.triggerFire(project, trigger).subscribe(
+    return this.dwApi.triggerFire(project, trigger).subscribe(
       data => {
         this.triggerFireResponse = data;
       },
@@ -371,7 +380,7 @@ export class DevicewiseTestComponent implements OnInit {
   }
 
   triggerStop(project: string, trigger: string) {
-    return this.devicewise.triggerStop(project, trigger).subscribe(
+    return this.dwApi.triggerStop(project, trigger).subscribe(
       data => {
         this.triggerStopResponse = data;
       },
@@ -383,7 +392,7 @@ export class DevicewiseTestComponent implements OnInit {
     if (!input) {
       input = this.subTriggerVariables;
     }
-    return this.devicewise.subTriggerFire(project, trigger, reporting, input).subscribe(
+    return this.dwApi.subTriggerFire(project, trigger, reporting, input).subscribe(
       data => {
         this.subTriggerFireResponse = data;
       },
@@ -409,7 +418,7 @@ export class DevicewiseTestComponent implements OnInit {
   }
 
   projectList() {
-    return this.devicewise.projectList().subscribe(
+    return this.dwApi.projectList().subscribe(
       data => {
         this.projectListResponse = data;
         if (!data.success) {
@@ -422,7 +431,7 @@ export class DevicewiseTestComponent implements OnInit {
   }
 
   projectStart(name) {
-    return this.devicewise.projectStart(name).subscribe(
+    return this.dwApi.projectStart(name).subscribe(
       data => {
         this.projectStartResponse = data;
       },
@@ -431,7 +440,7 @@ export class DevicewiseTestComponent implements OnInit {
   }
 
   projectStop(name) {
-    return this.devicewise.projectStop(name).subscribe(
+    return this.dwApi.projectStop(name).subscribe(
       data => {
         this.projectStopResponse = data;
       },
@@ -442,7 +451,7 @@ export class DevicewiseTestComponent implements OnInit {
   // Channel
 
   channelSubscribe(channel) {
-    this.devicewise.channelSubscribe(channel).subscribe(
+    this.dwApi.channelSubscribe(channel).subscribe(
       data => {
         this.channelSubscribeResponse = data;
       },
@@ -451,7 +460,7 @@ export class DevicewiseTestComponent implements OnInit {
   }
 
   channelUnsubscribe(id) {
-    this.devicewise.channelUnsubscribe(id).subscribe(
+    this.dwApi.channelUnsubscribe(id).subscribe(
       data => {
         this.channelUnsubscribeResponse = data;
       },
@@ -460,7 +469,7 @@ export class DevicewiseTestComponent implements OnInit {
   }
 
   channelUnsubscribeAll() {
-    this.devicewise.channelUnsubscribeAll().subscribe(
+    this.dwApi.channelUnsubscribeAll().subscribe(
       data => {
         this.channelUnsubscribeAllResponse = data;
       },
@@ -471,7 +480,7 @@ export class DevicewiseTestComponent implements OnInit {
   // Diagnostic
 
   ping(address: string, count: number) {
-    this.devicewise.ping(address, count).subscribe(
+    this.dwApi.ping(address, count).subscribe(
       data => {
         this.pingResponse = data;
         if (data.success) {
@@ -485,7 +494,7 @@ export class DevicewiseTestComponent implements OnInit {
   // System
 
   referenceList(type: string, source: string, direction: string) {
-    this.devicewise.referenceList(type, source, direction).subscribe(
+    this.dwApi.referenceList(type, source, direction).subscribe(
       data => {
         this.referenceListResponse = data;
       },
@@ -496,7 +505,7 @@ export class DevicewiseTestComponent implements OnInit {
   // SQLite
 
   sqlQuery(query: string) {
-    this.devicewise.sql(query).subscribe(
+    this.dwApi.sql(query).subscribe(
       data => {
         this.sqlResponse = data;
         this.displayedColumns = data.params.columns;
@@ -523,14 +532,14 @@ export class DevicewiseTestComponent implements OnInit {
   changeDevice(input) {
     this.currentDevice = input.value;
 
-    this.devicewise.deviceInfo(this.currentDevice, 2).subscribe((data) => {
-        if (!data.params.variableInfo) {
-          this.variables.next([]);
-        } else {
-          const filteredData = data.params.variableInfo.filter((value) => !value.structId);
-          this.variables.next(filteredData);
-        }
-      }, (error) => this.openSnackError(error)
+    this.dwApi.deviceInfo(this.currentDevice, 2).subscribe((data) => {
+      if (!data.params.variableInfo) {
+        this.variables.next([]);
+      } else {
+        const filteredData = data.params.variableInfo.filter((value) => !value.structId);
+        this.variables.next(filteredData);
+      }
+    }, (error) => this.openSnackError(error)
     );
   }
 
@@ -609,7 +618,7 @@ export class SettingsComponent {
     @Inject(MAT_BOTTOM_SHEET_DATA) public data: any,
     private devicewiseTestComponent: DevicewiseTestComponent,
     private bottomSheetRef: MatBottomSheetRef<SettingsComponent>
-  ) {}
+  ) { }
 
   openLink(event: MouseEvent): void {
     this.bottomSheetRef.dismiss();
