@@ -13,7 +13,6 @@ import {
   MatAutocompleteSelectedEvent
 } from '@angular/material';
 import { SubTriggerPipe } from './custom-pipes.pipe';
-import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-devicewise-test',
@@ -88,8 +87,7 @@ export class DevicewiseTestComponent implements OnInit {
   constructor(
     private devicewise: DevicewiseAngularService,
     public snackBar: MatSnackBar,
-    private bottomSheet: MatBottomSheet,
-    private cookie: CookieService
+    private bottomSheet: MatBottomSheet
   ) {}
 
   ngOnInit() {
@@ -126,7 +124,6 @@ export class DevicewiseTestComponent implements OnInit {
       if (!login.success) {
         return;
       }
-      this.cookie.set('sessionId', login.sessionId);
       this.loggedIn = true;
       this.openSnackBar('Welcome. You\'re logged in as ' + username + '!', 'DISMISS');
       this.refreshLists();
@@ -140,7 +137,6 @@ export class DevicewiseTestComponent implements OnInit {
       data => {
         this.logoutResponse = data;
         if (data.success) {
-          this.cookie.set('sessionId', '');
           this.loggedIn = false;
         }
       },
