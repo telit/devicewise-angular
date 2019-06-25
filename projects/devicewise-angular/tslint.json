@@ -13,5 +13,12 @@
       "lib",
       "kebab-case"
     ]
+  },
+  "compilerOptions": {
+    "paths": {
+      "ngx-cookie-service/*": [
+        "./node_modules/ngx-cookie-service/*"
+      ]
+    }
   }
 }

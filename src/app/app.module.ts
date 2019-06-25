@@ -4,7 +4,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
-import { NgxPageScrollModule } from 'ngx-page-scroll';
 import { AppMaterialModules } from './material.module';
 
 import { DevicewiseAngularModule } from 'devicewise-angular';
@@ -36,7 +35,6 @@ import { SubTriggerPipe } from './devicewise-test/custom-pipes.pipe';
     FormsModule,
     ReactiveFormsModule,
     NgxJsonViewerModule,
-    NgxPageScrollModule,
     AppMaterialModules
   ],
   providers: [SubTriggerPipe, DevicewiseTestComponent],

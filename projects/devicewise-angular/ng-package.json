@@ -5,6 +5,7 @@
     "entryFile": "src/public_api.ts"
   },
   "whitelistedNonPeerDependencies": [
-    "ngx-cookie-service"
+    "ngx-cookie-service",
+    "fetch-readablestream"
   ]
 }

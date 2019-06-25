@@ -1,5 +1,4 @@
 import { Component, OnDestroy, ViewChild, ChangeDetectorRef, OnInit } from '@angular/core';
-import { PageScrollConfig } from 'ngx-page-scroll';
 import { MediaMatcher } from '@angular/cdk/layout';
 
 @Component({
@@ -10,7 +9,7 @@ import { MediaMatcher } from '@angular/cdk/layout';
 
 export class AppComponent implements OnDestroy, OnInit {
   mobileQuery: MediaQueryList;
-  @ViewChild('snav') sidenav: any;
+  @ViewChild('snav', {static:true}) sidenav: any;
 
   private _mobileQueryListener: () => void;
 
@@ -18,15 +17,12 @@ export class AppComponent implements OnDestroy, OnInit {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
-    PageScrollConfig.defaultScrollOffset = 64;
-    PageScrollConfig.defaultDuration = 333;
   }
 
   ngOnInit(): void {
   }
 
   onToggle(snavOpened: boolean) {
-    console.log('Snav: ' + snavOpened);
     this.sidenav.toggle();
   }
 
