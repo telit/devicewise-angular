@@ -21,9 +21,6 @@
     "paths": {
       "devicewise-angular": [
         "dist/devicewise-angular"
-      ],
-      "devicewise-angular/*": [
-        "dist/devicewise-angular/*"
       ]
     }
   }
