@@ -57,6 +57,7 @@ export class DevicewiseAngularService {
   easyLogin(endpoint: string, username: string, password: string): Observable<DwResponse.Login> {
     const loginSubject: Subject<DwResponse.Login> = new Subject();
 
+    this.setEndpoint(endpoint);
     this.ping('localhost', 4).subscribe((ping) => {
       if (!ping.success) {
         this.login(endpoint, username, password).subscribe((login) => {

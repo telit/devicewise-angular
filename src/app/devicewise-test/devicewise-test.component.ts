@@ -2,6 +2,7 @@ import { Component, OnInit, Inject, ElementRef, ViewChild } from '@angular/core'
 import { DevicewiseAngularService } from 'devicewise-angular';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { DwRequest, DwResponse, DwSubscription } from 'devicewise-angular';
+import { DeviceWise } from './models/dwconstants';
 import { BehaviorSubject } from 'rxjs';
 import {
   MatBottomSheet,
@@ -21,7 +22,7 @@ import { SubTriggerPipe } from './custom-pipes.pipe';
   providers: [SubTriggerPipe]
 })
 export class DevicewiseTestComponent implements OnInit {
-  url = location.origin;
+  url: string;
   loaded = false;
   loggedIn = false;
   username = '';
@@ -91,12 +92,9 @@ export class DevicewiseTestComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.url = this.devicewise.getEndpoint();
-    this.devicewise.setEndpoint('http://localhost:88');
+    this.url = location.origin;
     this.dataSource.paginator = this.paginator;
-
-    console.log('logging ins!');
-    this.devicewise.easyLogin('', '', '').subscribe((login) => {
+    this.devicewise.easyLogin(this.url, '', '').subscribe((login) => {
       console.log('logged in!');
       this.loaded = true;
       if (!login.success) {
