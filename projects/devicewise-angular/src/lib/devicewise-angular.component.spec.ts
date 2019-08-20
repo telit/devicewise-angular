@@ -1,7 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DevicewiseAngularComponent } from './devicewise-angular.component';
-import { CookieService } from 'ngx-cookie-service';
 import { DevicewiseAngularModule } from './devicewise-angular.module';
 
 describe('DevicewiseAngularComponent', () => {

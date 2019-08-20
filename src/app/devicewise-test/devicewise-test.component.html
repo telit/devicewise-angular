@@ -546,6 +546,179 @@
           </mat-action-row>
         </mat-expansion-panel>
 
+        
+        <mat-expansion-panel id="multiSubscribe" [disabled]="!loggedIn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>MultiSubscribe</mat-panel-title>
+            <mat-panel-description>Subscribe to multiple device variables and get their initial values.</mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <ng-container *ngIf="(deviceSelection | async); else multiSubscribeManual">
+            <mat-form-field>
+              <mat-select #multiSubscribeDevice matNativeControl placeholder="Device" (selectionChange)="changeDevice($event)">
+                <mat-option *ngFor="let device of (devices | async)" [value]="device.name">{{ device.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <ng-container *ngIf="(variableSelection | async); else multiSubscribeManualManual">
+              <!-- <mat-form-field>
+                <mat-select #multiSubscribeVariable matNativeControl placeholder="Variable"
+                  (selectionChange)="changeVariable($event)">
+                  <mat-option *ngFor="let variable of (variables | async)" [value]="variable.name">{{ variable.name
+                    }}</mat-option>
+                </mat-select>
+              </mat-form-field> -->
+              <mat-form-field class="form-field-fullwidth" style="margin:15px 0px 0px 0px;">
+                <mat-chip-list #chipList>
+                  <mat-chip *ngFor="let subscription of multiSubsciptions" selectable="true" removable="true"
+                    (removed)="unmultiSubscribe(subscription)">
+                    {{ subscription.request.params.variable}}
+                    <mat-icon matChipRemove>cancel</mat-icon>
+                  </mat-chip>
+                  <input placeholder="New Subscriptions..." #multiSubscribeInput [matAutocomplete]="auto"
+                    [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                    [matChipInputAddOnBlur]="true" />
+                </mat-chip-list>
+                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="multiSubscibeVariableSelected($event)">
+                  <mat-option *ngFor="let variable of variables | async" [value]="variable.name">
+                    {{variable.name}}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+              <ngx-json-viewer [expanded]="false" *ngIf="multiSubscribeResponse" [json]="multiSubscribeResponse"></ngx-json-viewer>
+              <mat-action-row>
+                <button mat-raised-button color="primary" (click)="multiSubscribe(multiSubscribeDevice.value, multiSubscribeVariable.value)">
+                  MultiSubscribe
+                </button>
+              </mat-action-row>
+            </ng-container>
+
+            <ng-template #multiSubscribeManualManual>
+              <mat-form-field>
+                <input matInput #multiSubscribeVariable placeholder="Variable" value="" />
+              </mat-form-field>
+              <mat-form-field>
+                <input matInput #multiSubscribeRate placeholder="Poll Rate" value="1" />
+                <mat-hint>In seconds.</mat-hint>
+              </mat-form-field>
+              <mat-form-field>
+                <mat-select #multiSubscribeType matNativeControl id="apimultiSubscribeType" placeholder="Type">
+                  <mat-option value="1">INT1</mat-option>
+                  <mat-option value="2">INT2</mat-option>
+                  <mat-option value="3">INT4</mat-option>
+                  <mat-option value="4">INT8</mat-option>
+                  <mat-option value="5">UINT1</mat-option>
+                  <mat-option value="6">UINT2</mat-option>
+                  <mat-option value="7">UINT4</mat-option>
+                  <mat-option value="8">UINT8</mat-option>
+                  <mat-option value="9">FLOAT4</mat-option>
+                  <mat-option value="10">FLOAT8</mat-option>
+                  <mat-option value="11">BOOL</mat-option>
+                  <mat-option value="16">STRING</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field>
+                <input matInput #multiSubscribeCount placeholder="Count" value="1" />
+              </mat-form-field>
+              <mat-form-field>
+                <input matInput #multiSubscribeLength placeholder="Length" value="-1" />
+              </mat-form-field>
+              <ngx-json-viewer [expanded]="false" *ngIf="multiSubscribeResponse" [json]="multiSubscribeResponse"></ngx-json-viewer>
+              <mat-action-row>
+                <button mat-raised-button color="primary" (click)="
+                            multiSubscribe(
+                              multiSubscribeDevice.value,
+                              multiSubscribeVariable.value,
+                              multiSubscribeRate.value,
+                              multiSubscribeType.value,
+                              multiSubscribeCount.value,
+                              multiSubscribeLength.value
+                            )
+                          ">
+                  Subscribe
+                </button>
+              </mat-action-row>
+            </ng-template>
+
+          </ng-container>
+
+          <ng-template #multiSubscribeManual>
+            <mat-form-field>
+              <input matInput #multiSubscribeDevice placeholder="Device" value="" />
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput #multiSubscribeVariable placeholder="Variable" value="" />
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput #multiSubscribeRate placeholder="Poll Rate" value="1" />
+              <mat-hint>In seconds.</mat-hint>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-select #multiSubscribeType matNativeControl id="apiMultiSubscribeType" placeholder="Type">
+                <mat-option value="1">INT1</mat-option>
+                <mat-option value="2">INT2</mat-option>
+                <mat-option value="3">INT4</mat-option>
+                <mat-option value="4">INT8</mat-option>
+                <mat-option value="5">UINT1</mat-option>
+                <mat-option value="6">UINT2</mat-option>
+                <mat-option value="7">UINT4</mat-option>
+                <mat-option value="8">UINT8</mat-option>
+                <mat-option value="9">FLOAT4</mat-option>
+                <mat-option value="10">FLOAT8</mat-option>
+                <mat-option value="11">BOOL</mat-option>
+                <mat-option value="16">STRING</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput #multiSubscribeCount placeholder="Count" value="1" />
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput #multiSubscribeLength placeholder="Length" value="-1" />
+            </mat-form-field>
+            <ngx-json-viewer [expanded]="false" *ngIf="multiSubscribeResponse" [json]="multiSubscribeResponse"></ngx-json-viewer>
+            <mat-action-row>
+              <button mat-raised-button color="primary" (click)="
+                            multiSubscribe(
+                              multiSubscribeDevice.value,
+                              multiSubscribeVariable.value,
+                              multiSubscribeRate.value,
+                              multiSubscribeType.value,
+                              multiSubscribeCount.value,
+                              multiSubscribeLength.value
+                            )
+                          ">
+                Multi Subscribe
+              </button>
+            </mat-action-row>
+          </ng-template>
+          
+          <ng-container *ngIf="multiSubsciptionsSubject | async; let subscriptions">
+            <div [hidden]="multiSubscribeVariables.length <= 0">
+              <div>
+                <h2 class="mat-h2">Subscriptions</h2>
+              </div>
+              <div>
+                <div class="subscriptions">
+                  <mat-card *ngFor="let subscription of multiSubscribeVariables" class="subscription" cdkDragBoundary=".subscriptions"
+                    cdkDrag>
+                    <mat-card-content>
+                      <div *ngIf="subscription.subscription | async; let subscriptionData">
+                        <div class="data-title">
+                          <h1 class="mat-h1 noMargin">{{ subscription.request.params.variable}}</h1>
+                        </div>
+                        <h2 class="mat-h2 noMargin" *ngIf="subscriptionData.params.data; let data">Data: {{ data }}</h2>
+                      </div>
+                    </mat-card-content>
+                  </mat-card>
+                </div>
+              </div>
+              <div>
+                <button mat-raised-button color="primary" (click)="startMultiSubcribe()">Start Subscriptions</button>
+                <button mat-raised-button color="primary" (click)="stopMultiSubcribe()">Stop Subscriptions</button>
+              </div>
+            </div>
+          </ng-container>
+        </mat-expansion-panel>
       </mat-accordion>
     </mat-card-content>
   </mat-card>

@@ -12,12 +12,16 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class DevicewiseApiService {
-  private url = location.origin;
+  private url = 'http://localhost:88';
 
   constructor(private http: HttpClient) { }
 
   setEndpoint(endpoint: string): void {
     this.url = endpoint;
+  }
+
+  getEndpoint(): string {
+    return this.url;
   }
 
   // Authentication

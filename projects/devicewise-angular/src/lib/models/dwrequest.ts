@@ -39,11 +39,41 @@ export interface SubscribeParams {
   count: number;
   length: number;
 }
+
 export class Unubscribe {}
 
 export class UnubscribeAll {}
 
 export class NotificationCount {}
+
+// MultiSubscribe
+
+export class DwmultisubscribeRequest {
+  command: string;
+  params: DwmultisubscribeRequestParams;
+}
+
+export class DwmultisubscribeRequestParams {
+  minimal: boolean;
+  subscriptions: DwmultisubscribeRequestSubscriptions;
+}
+
+export interface DwmultisubscribeRequestSubscriptions {
+  variable: DwmultisubscribeRequestVariableSubscription[];
+  channel: DwmultisubscribeRequestChannelSubscription[];
+}
+
+export interface DwmultisubscribeRequestVariableSubscription {
+  device: string;
+  variable: string;
+  type: number|string;
+  count: number|string;
+  length: number|string;
+}
+
+export interface DwmultisubscribeRequestChannelSubscription {
+  channel: string;
+}
 
 // Device
 
