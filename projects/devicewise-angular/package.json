@@ -35,6 +35,5 @@
     "ngx-cookie-service": "^2.1.0",
     "fetch-readablestream": "^0.2.0"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }
