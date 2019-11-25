@@ -2,14 +2,15 @@ import { Component, OnInit, Inject, ElementRef, ViewChild } from '@angular/core'
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import {
   DevicewiseAngularService,
-  DevicewiseSubscribeService,
   DevicewiseApiService,
+  DevicewiseSubscribeService,
+  DevicewiseMultisubscribeService,
   DwRequest,
   DwResponse,
   DwSubscription,
-  DeviceWise
+  DwType
 } from 'devicewise-angular';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, forkJoin } from 'rxjs';
 import {
   MatBottomSheet,
   MatBottomSheetRef,
@@ -20,6 +21,7 @@ import {
   MatAutocompleteSelectedEvent
 } from '@angular/material';
 import { SubTriggerPipe } from './custom-pipes.pipe';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-devicewise-test',
@@ -36,7 +38,7 @@ export class DevicewiseTestComponent implements OnInit {
   currentProject: string;
   currentDevice: string;
   currentVariableString: string;
-  currentVariable: DwSubscription.Subscription;
+  currentVariable: DwSubscription;
   deviceSelection: BehaviorSubject<boolean> = new BehaviorSubject(true);
   variableSelection: BehaviorSubject<boolean> = new BehaviorSubject(true);
   subscriptionSelection: BehaviorSubject<boolean> = new BehaviorSubject(true);
@@ -47,12 +49,14 @@ export class DevicewiseTestComponent implements OnInit {
   projects: BehaviorSubject<DwResponse.ProjectListProject[]> = new BehaviorSubject([]);
   variables: BehaviorSubject<DwResponse.DeviceInfoVariable[]> = new BehaviorSubject([]);
   selectedVariable: DwResponse.DeviceInfoVariable;
-  // subscriptionResponses: DwSubscription.Subscription[] = [];
-  // subscriptionResponsesSubject: BehaviorSubject<DwSubscription.Subscription[]> = new BehaviorSubject([]);
+  // subscriptionResponses: DwSubscription[] = [];
+  // subscriptionResponsesSubject: BehaviorSubject<DwSubscription[]> = new BehaviorSubject([]);
   subTriggerVariables: any[] = [];
   subTriggerVariablesSubject: BehaviorSubject<any[]> = new BehaviorSubject([]);
   subscriptions = {};
   subscriptionsSubject: BehaviorSubject<{}> = new BehaviorSubject({});
+  multiSubscribeVariables: DwSubscription[] = [];
+  multiSubsciptionsSubject: BehaviorSubject<{}> = new BehaviorSubject({});
   loginResponse;
   logoutResponse;
   readResponse;
@@ -60,6 +64,7 @@ export class DevicewiseTestComponent implements OnInit {
   subscribeResponse;
   unsubscribeResponse;
   unsubscribeAllResponse;
+  multiSubscribeResponse;
   deviceInfoResponse;
   deviceStartName;
   deviceStartResponse;
@@ -86,6 +91,7 @@ export class DevicewiseTestComponent implements OnInit {
   objectKeys = Object.keys;
   separatorKeysCodes: number[] = [ENTER, COMMA];
   @ViewChild('subscriptionInput', { static: false }) subscriptionInput: ElementRef<HTMLInputElement>;
+  @ViewChild('multiSubscribeInput', { static: false }) multiSubscribeInput: ElementRef<HTMLInputElement>;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
   displayedColumns: string[] = [];
@@ -95,13 +101,14 @@ export class DevicewiseTestComponent implements OnInit {
     private devicewise: DevicewiseAngularService,
     private dwApi: DevicewiseApiService,
     private dwSubscribe: DevicewiseSubscribeService,
+    private dwMultiSubscribe: DevicewiseMultisubscribeService,
     public snackBar: MatSnackBar,
     private bottomSheet: MatBottomSheet
   ) { }
 
   ngOnInit() {
     // this.url = location.origin;
-    this.url = 'http://192.168.0.196:88';
+    this.url = 'http://localhost:88';
     this.dataSource.paginator = this.paginator;
     this.devicewise.easyLogin(this.url, '', '').subscribe((login) => {
       console.log('logged in!');
@@ -124,6 +131,14 @@ export class DevicewiseTestComponent implements OnInit {
     this.dwApi.deviceList().subscribe(data2 => {
       this.devices.next(data2.params.devices);
     });
+
+    // const observables = [this.dwApi.projectList(), this.dwApi.deviceList()];
+    // return forkJoin(observables).pipe(
+    //   tap((response) => {
+    //     this.projects.next(response[0].params.projects);
+    //     this.devices.next(response[1].params.devices);
+    //   })
+    // )
   }
 
   login(endpoint: string, username: string, password: string) {
@@ -209,6 +224,23 @@ export class DevicewiseTestComponent implements OnInit {
     this.subscriptionInput.nativeElement.value = '';
   }
 
+  multiSubscibeVariableSelected(event: MatAutocompleteSelectedEvent): void {
+    this.selectedVariable = this.variables.getValue().find((variable, varIndex) => {
+      return event.option.viewValue === variable.name;
+    });
+    let count = this.selectedVariable.xdim * this.selectedVariable.ydim * this.selectedVariable.zdim;
+    if (!count) {
+      count = 1;
+    }
+    let length = this.selectedVariable.length;
+    if (!length) {
+      length = -1;
+    }
+
+    this.multiSubscribe(this.currentDevice, event.option.viewValue, 1, this.dwTypeToNumber(this.selectedVariable.type), count, length);
+    this.multiSubscribeInput.nativeElement.value = '';
+  }
+
   subscribe(device, variable, rate?, type?, count?, length?) {
     if (!type) {
       type = this.dwTypeToNumber(this.selectedVariable.type);
@@ -223,7 +255,7 @@ export class DevicewiseTestComponent implements OnInit {
       rate = 1;
     }
 
-    const newSubscription = new DwSubscription.Subscription(device, variable, type, count, length);
+    const newSubscription = new DwSubscription(device, variable, type, count, length);
 
     this.dwSubscribe.getSubscription(newSubscription).subscribe(data => {
       this.subscribeResponse = data;
@@ -256,6 +288,31 @@ export class DevicewiseTestComponent implements OnInit {
       this.dwSubscribe.getNotifications();
     },
       error => this.openSnackError(error)
+    );
+  }
+
+  multiSubscribe(device, variable, rate?, type?, count?, length?) {
+    if (!type) {
+      type = this.dwTypeToNumber(this.selectedVariable.type);
+    }
+    if (!count) {
+      count = this.selectedVariable.xdim ? this.selectedVariable.xdim : 1;
+    }
+    if (!length) {
+      length = this.selectedVariable.length ? this.selectedVariable.length : -1;
+    }
+    if (!rate) {
+      rate = 1;
+    }
+
+    const var1: DwSubscription = new DwSubscription(device, variable, type, count, length);
+    this.multiSubscribeVariables.push(var1);
+
+    this.dwMultiSubscribe.initMultiSubscribe(this.multiSubscribeVariables);
+
+    var1.subscription.subscribe(data => {
+      console.log(data);
+    }, error => this.openSnackError(error)
     );
   }
 
@@ -579,31 +636,31 @@ export class DevicewiseTestComponent implements OnInit {
   dwTypeToNumber(dwType: string) {
     switch (dwType) {
       case 'INT1':
-        return 1;
+        return DwType.INT1;
       case 'INT2':
-        return 2;
+        return DwType.INT2;
       case 'INT4':
-        return 3;
+        return DwType.INT4;
       case 'INT8':
-        return 4;
+        return DwType.INT8;
       case 'UINT1':
-        return 5;
+        return DwType.UINT1;
       case 'UINT2':
-        return 6;
+        return DwType.UINT2;
       case 'UINT4':
-        return 7;
+        return DwType.UINT4;
       case 'UINT8':
-        return 8;
+        return DwType.UINT8;
       case 'FLOAT4':
-        return 9;
+        return DwType.FLOAT4;
       case 'FLOAT8':
-        return 10;
+        return DwType.FLOAT8;
       case 'BOOL':
-        return 1;
+        return DwType.BOOL;
       case 'STRING':
-        return 16;
+        return DwType.STRING;
       default:
-        return 0;
+        return DwType.UNKNOWN;
     }
   }
 }

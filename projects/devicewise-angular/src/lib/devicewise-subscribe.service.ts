@@ -1,16 +1,10 @@
 import { Injectable } from '@angular/core';
-import { HttpHeaders } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 import { Observable, Subject } from 'rxjs';
 import fetchStream from 'fetch-readablestream';
 import { DevicewiseApiService } from './devicewise-api.service';
 import * as DwResponse from './models/dwresponse';
 import * as DwSubscription from './models/dwsubscription';
-
-const httpOptions = {
-  headers: new HttpHeaders({}),
-  withCredentials: true
-};
 
 @Injectable({
   providedIn: 'root'
@@ -19,16 +13,15 @@ const httpOptions = {
 export class DevicewiseSubscribeService {
   private activeSubscriptions: { [key: string]: Subject<DwResponse.Subscription> } = {};
   private notificationsController;
-  private url = location.origin;
+  private url = 'http://localhost:88';
 
-  constructor(private api: DevicewiseApiService) {
-  }
+  constructor(private api: DevicewiseApiService) { }
 
   setEndpoint(endpoint: string): void {
     this.url = endpoint;
   }
 
-  getSubscription(variable: DwSubscription.Subscription): Observable<DwResponse.Subscribe> {
+  getSubscription(variable: DwSubscription.DwSubscription): Observable<DwResponse.Subscribe> {
     const newSubscription: Subject<DwResponse.Subscription> = new Subject();
     variable.subscription = newSubscription.asObservable();
 

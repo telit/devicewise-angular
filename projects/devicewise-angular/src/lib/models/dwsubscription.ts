@@ -2,7 +2,7 @@ import * as DwResponse from './dwresponse';
 import * as DwRequest from './dwrequest';
 import { Observable } from 'rxjs';
 
-export class Subscription {
+export class DwSubscription {
   request: DwRequest.Subscribe;
   response: DwResponse.Subscribe;
   subscription: Observable<DwResponse.Subscription>;

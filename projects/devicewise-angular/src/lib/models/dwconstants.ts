@@ -1,4 +1,5 @@
-export enum DeviceWise {
+export enum DwType {
+  UNKNOWN = 1,
   INT1 = 1,
   INT2 = 2,
   INT4 = 3,
