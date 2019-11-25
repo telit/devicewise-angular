@@ -217,6 +217,14 @@ export class DevicewiseApiService {
     );
   }
 
+  actionTypeList(): Observable<DwResponse.ActionTypeList> {
+    return this.http.post<DwResponse.ActionTypeList>(this.url + '/api', { command: 'actiontype.enum' }, httpOptions);
+  }
+
+  eventTypeList(): Observable<DwResponse.EventTypeList> {
+    return this.http.post<DwResponse.EventTypeList>(this.url + '/api', { command: 'eventtype.enum' }, httpOptions);
+  }
+
   // Project
 
   projectList(): Observable<DwResponse.ProjectList> {

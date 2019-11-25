@@ -97,6 +97,94 @@ export class Unsubscribe {
   success: boolean;
 }
 
+export class ActionTypeList {
+  success: boolean;
+  params: ActionTypeListParams;
+}
+
+export interface ActionTypeListParams {
+  actionTypes: ActionType[];
+}
+
+export interface ResultSettings {
+  advanced: boolean;
+  hex: boolean;
+  readonly: boolean;
+  required: boolean;
+  revalidate: boolean;
+  sort: boolean;
+}
+
+export interface Results {
+  defaultGoTo: string;
+  descId: number;
+  name: string;
+  nameId: number;
+  returnCode: number;
+  settings: ResultSettings;
+}
+
+export interface ActionType {
+  defaultErrorRoute: number;
+  descNlsId: number;
+  group: string;
+  groupNlsId: number;
+  name: string;
+  nameNlsId: number;
+  options: number;
+  overviewArgs: string[];
+  overviewFormat: string;
+  propertyDescriptions: DeviceDataTypeProperty[];
+  results: Results[];
+  type: string;
+}
+
+export class ActionList {
+  success: boolean;
+  params: ActionTypeListParams;
+}
+
+export interface ActionListActions {
+  actions: ActionType[];
+}
+
+
+
+export class EventTypeList {
+  success: boolean;
+  params: EventTypeListParams;
+}
+
+export interface EventTypeListParams {
+  EventTypes: EventType[];
+}
+
+export interface EventType {
+  defaultErrorRoute: number;
+  descNlsId: number;
+  group: string;
+  groupNlsId: number;
+  name: string;
+  nameNlsId: number;
+  options: number;
+  overviewArgs: string[];
+  overviewFormat: string;
+  propertyDescriptions: DeviceDataTypeProperty[];
+  results: Results[];
+  type: string;
+}
+
+export class EventList {
+  success: boolean;
+  params: EventTypeListParams;
+}
+
+export interface EventListEvents {
+  Events: EventType[];
+}
+
+
+
 export class DeviceTypeList {
   success: boolean;
   params: DeviceTypeListParams;
