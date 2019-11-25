@@ -444,9 +444,9 @@ export interface SqlParams {
 
 export class ReferenceList {
   success: boolean;
-  params: ReferenceListParams;
+  // params: ReferenceListParams;
   errorCodes?: number[];
   errorMessages?: string[];
 }
 
-export interface ReferenceListParams {}
+// export interface ReferenceListParams {}
