@@ -14,4 +14,9 @@ import * as DwResponse from './lib/models/dwresponse';
 import { DwType } from './lib/models/dwconstants';
 import { DwSubscription } from './lib/models/dwsubscription';
 
-export { DwRequest, DwResponse, DwType, DwSubscription };
+export {
+  DwRequest,
+  DwResponse,
+  DwType,
+  DwSubscription
+};

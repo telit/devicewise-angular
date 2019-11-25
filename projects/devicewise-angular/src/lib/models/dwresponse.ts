@@ -156,7 +156,7 @@ export class EventTypeList {
 }
 
 export interface EventTypeListParams {
-  EventTypes: EventType[];
+  eventTypes: EventType[];
 }
 
 export interface EventType {
