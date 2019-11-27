@@ -1183,17 +1183,6 @@
             <mat-panel-title>Action Type</mat-panel-title>
             <mat-panel-description>List all action types.</mat-panel-description>
           </mat-expansion-panel-header>
-
-          <!-- <mat-accordion *ngIf="deviceDataTypeResponse">
-            <mat-expansion-panel *ngFor="let type of deviceDataTypeResponse.params.deviceTypes">
-              <mat-expansion-panel-header>
-                <mat-panel-title>{{type.name}}</mat-panel-title>
-                <mat-panel-description>{{type.familyName}} ({{type.typeId}})</mat-panel-description>
-              </mat-expansion-panel-header>
-              <ngx-json-viewer [expanded]="true" *ngIf="type" [json]="type"></ngx-json-viewer>
-            </mat-expansion-panel>
-          </mat-accordion> -->
-
           <ngx-json-viewer [expanded]="false" *ngIf="actionTypeResponse" [json]="actionTypeResponse"></ngx-json-viewer>
           <mat-action-row><button mat-raised-button color="primary" (click)="actionTypeList()">Get Action Types</button>
           </mat-action-row>
@@ -1204,17 +1193,6 @@
             <mat-panel-title>Event Type</mat-panel-title>
             <mat-panel-description>List all event types.</mat-panel-description>
           </mat-expansion-panel-header>
-
-          <!-- <mat-accordion *ngIf="deviceDataTypeResponse">
-            <mat-expansion-panel *ngFor="let type of deviceDataTypeResponse.params.deviceTypes">
-              <mat-expansion-panel-header>
-                <mat-panel-title>{{type.name}}</mat-panel-title>
-                <mat-panel-description>{{type.familyName}} ({{type.typeId}})</mat-panel-description>
-              </mat-expansion-panel-header>
-              <ngx-json-viewer [expanded]="true" *ngIf="type" [json]="type"></ngx-json-viewer>
-            </mat-expansion-panel>
-          </mat-accordion> -->
-
           <ngx-json-viewer [expanded]="false" *ngIf="eventTypeResponse" [json]="eventTypeResponse"></ngx-json-viewer>
           <mat-action-row><button mat-raised-button color="primary" (click)="eventTypeList()">Get Event Types</button>
           </mat-action-row>
