@@ -76,6 +76,8 @@ export class DevicewiseTestComponent implements OnInit {
   triggerFireResponse;
   triggerStopResponse;
   subTriggerFireResponse;
+  actionTypeResponse: DwResponse.ActionTypeList;
+  eventTypeResponse: DwResponse.EventTypeList;
   projectListResponse;
   projectStartResponse;
   projectStopResponse;
@@ -156,13 +158,13 @@ export class DevicewiseTestComponent implements OnInit {
 
   logout() {
     this.dwApi.logout().subscribe(
-      data => {
+      (data) => {
         this.logoutResponse = data;
         if (data.success) {
           this.loggedIn = false;
         }
       },
-      error => this.openSnackError(error)
+      (error) => this.openSnackError(error)
     );
   }
 
@@ -178,10 +180,10 @@ export class DevicewiseTestComponent implements OnInit {
     }
 
     this.dwApi.read(device, variable, type, count, length).subscribe(
-      data => {
+      (data) => {
         this.readResponse = data;
       },
-      error => this.openSnackError(error)
+      (error) => this.openSnackError(error)
     );
   }
 
@@ -200,10 +202,10 @@ export class DevicewiseTestComponent implements OnInit {
     }
 
     this.dwApi.write(device, variable, type, count, length, varData).subscribe(
-      data => {
+      (data) => {
         this.writeResponse = data;
       },
-      error => this.openSnackError(error)
+      (error) => this.openSnackError(error)
     );
   }
 
@@ -257,7 +259,7 @@ export class DevicewiseTestComponent implements OnInit {
 
     const newSubscription = new DwSubscription(device, variable, type, count, length);
 
-    this.dwSubscribe.getSubscription(newSubscription).subscribe(data => {
+    this.dwSubscribe.getSubscription(newSubscription).subscribe((data) => {
       this.subscribeResponse = data;
       if (!data.success) {
         this.openSnackBar('Subscription to ' + variable + ' failed! ' + data.errorMessages[0], 'DISMISS');
@@ -287,7 +289,7 @@ export class DevicewiseTestComponent implements OnInit {
 
       this.dwSubscribe.getNotifications();
     },
-      error => this.openSnackError(error)
+      (error) => this.openSnackError(error)
     );
   }
 
@@ -305,14 +307,13 @@ export class DevicewiseTestComponent implements OnInit {
       rate = 1;
     }
 
-    const var1: DwSubscription = new DwSubscription(device, variable, type, count, length);
-    this.multiSubscribeVariables.push(var1);
+    const newSubscription: DwSubscription = new DwSubscription(device, variable, type, count, length);
+    this.multiSubscribeVariables.push(newSubscription);
 
     this.dwMultiSubscribe.initMultiSubscribe(this.multiSubscribeVariables);
 
-    var1.subscription.subscribe(data => {
-      console.log(data);
-    }, error => this.openSnackError(error)
+    newSubscription.subscription.subscribe((data) => {
+    }, (error) => this.openSnackError(error)
     );
   }
 
@@ -326,7 +327,7 @@ export class DevicewiseTestComponent implements OnInit {
 
   unsubscribe(id) {
     this.dwSubscribe.unsubscribe(id).subscribe(
-      data => {
+      (data) => {
         this.unsubscribeResponse = data;
         if (!data.success) {
           return;
@@ -337,13 +338,13 @@ export class DevicewiseTestComponent implements OnInit {
           this.subscriptionsSubject.next(this.subscriptions);
         }
       },
-      error => this.openSnackError(error)
+      (error) => this.openSnackError(error)
     );
   }
 
   unsubscribeAll() {
     this.dwSubscribe.unsubscribeAll().subscribe(
-      data => {
+      (data) => {
         this.unsubscribeAllResponse = data;
         if (!data.success) {
           return;
@@ -351,53 +352,53 @@ export class DevicewiseTestComponent implements OnInit {
         this.subscriptions = {};
         this.subscriptionsSubject.next(this.subscriptions);
       },
-      error => this.openSnackError(error)
+      (error) => this.openSnackError(error)
     );
   }
 
   listDevices() {
     this.dwApi.deviceList().subscribe(
-      data => {
+      (data) => {
         this.devices.next(data.params.devices);
         this.deviceListResponse = data;
       },
-      error => this.openSnackError(error)
+      (error) => this.openSnackError(error)
     );
   }
 
   deviceTypeList() {
     this.dwApi.deviceTypeList().subscribe(
-      data => {
+      (data) => {
         this.deviceDataTypeResponse = data;
       },
-      error => this.openSnackError(error)
+      (error) => this.openSnackError(error)
     );
   }
 
   deviceInfo(device: string, options: number) {
     this.dwApi.deviceInfo(device, Number(options)).subscribe(
-      data => {
+      (data) => {
         this.deviceInfoResponse = data;
       },
-      error => this.openSnackError(error)
+      (error) => this.openSnackError(error)
     );
   }
 
   startDevice(device: string) {
     this.dwApi.deviceStart(device).subscribe(
-      data => {
+      (data) => {
         this.deviceStartResponse = data;
       },
-      error => this.openSnackError(error)
+      (error) => this.openSnackError(error)
     );
   }
 
   stopDevice(device: string) {
     this.dwApi.deviceStop(device).subscribe(
-      data => {
+      (data) => {
         this.deviceStopResponse = data;
       },
-      error => this.openSnackError(error)
+      (error) => this.openSnackError(error)
     );
   }
 
@@ -406,7 +407,7 @@ export class DevicewiseTestComponent implements OnInit {
       project = this.currentProject;
     }
     return this.dwApi.triggerList(project).subscribe(
-      data => {
+      (data) => {
         this.triggerListResponse = data;
         if (!data.success) {
           this.triggers.next([]);
@@ -414,34 +415,34 @@ export class DevicewiseTestComponent implements OnInit {
         }
         this.triggers.next(data.params.triggers);
       },
-      error => this.openSnackError(error)
+      (error) => this.openSnackError(error)
     );
   }
 
   triggerStart(project: string, trigger: string) {
     return this.dwApi.triggerStart(project, trigger).subscribe(
-      data => {
+      (data) => {
         this.triggerStartResponse = data;
       },
-      error => this.openSnackError(error)
+      (error) => this.openSnackError(error)
     );
   }
 
   triggerFire(project: string, trigger: string) {
     return this.dwApi.triggerFire(project, trigger).subscribe(
-      data => {
+      (data) => {
         this.triggerFireResponse = data;
       },
-      error => this.openSnackError(error)
+      (error) => this.openSnackError(error)
     );
   }
 
   triggerStop(project: string, trigger: string) {
     return this.dwApi.triggerStop(project, trigger).subscribe(
-      data => {
+      (data) => {
         this.triggerStopResponse = data;
       },
-      error => this.openSnackError(error)
+      (error) => this.openSnackError(error)
     );
   }
 
@@ -450,10 +451,10 @@ export class DevicewiseTestComponent implements OnInit {
       input = this.subTriggerVariables;
     }
     return this.dwApi.subTriggerFire(project, trigger, reporting, input).subscribe(
-      data => {
+      (data) => {
         this.subTriggerFireResponse = data;
       },
-      error => this.openSnackError(error)
+      (error) => this.openSnackError(error)
     );
   }
 
@@ -474,34 +475,52 @@ export class DevicewiseTestComponent implements OnInit {
     this.subTriggerVariablesSubject.next(this.subTriggerVariables);
   }
 
+  actionTypeList() {
+    this.dwApi.actionTypeList().subscribe(
+      (data) => {
+        this.actionTypeResponse = data;
+      },
+      (error) => this.openSnackError(error)
+    );
+  }
+
+  eventTypeList() {
+    this.dwApi.eventTypeList().subscribe(
+      (data) => {
+        this.eventTypeResponse = data;
+      },
+      (error) => this.openSnackError(error)
+    );
+  }
+
   projectList() {
     return this.dwApi.projectList().subscribe(
-      data => {
+      (data) => {
         this.projectListResponse = data;
         if (!data.success) {
           return;
         }
         this.projects.next(data.params.projects);
       },
-      error => this.openSnackError(error)
+      (error) => this.openSnackError(error)
     );
   }
 
   projectStart(name) {
     return this.dwApi.projectStart(name).subscribe(
-      data => {
+      (data) => {
         this.projectStartResponse = data;
       },
-      error => this.openSnackError(error)
+      (error) => this.openSnackError(error)
     );
   }
 
   projectStop(name) {
     return this.dwApi.projectStop(name).subscribe(
-      data => {
+      (data) => {
         this.projectStopResponse = data;
       },
-      error => this.openSnackError(error)
+      (error) => this.openSnackError(error)
     );
   }
 
@@ -509,28 +528,28 @@ export class DevicewiseTestComponent implements OnInit {
 
   channelSubscribe(channel) {
     this.dwApi.channelSubscribe(channel).subscribe(
-      data => {
+      (data) => {
         this.channelSubscribeResponse = data;
       },
-      error => this.openSnackError(error)
+      (error) => this.openSnackError(error)
     );
   }
 
   channelUnsubscribe(id) {
     this.dwApi.channelUnsubscribe(id).subscribe(
-      data => {
+      (data) => {
         this.channelUnsubscribeResponse = data;
       },
-      error => this.openSnackError(error)
+      (error) => this.openSnackError(error)
     );
   }
 
   channelUnsubscribeAll() {
     this.dwApi.channelUnsubscribeAll().subscribe(
-      data => {
+      (data) => {
         this.channelUnsubscribeAllResponse = data;
       },
-      error => this.openSnackError(error)
+      (error) => this.openSnackError(error)
     );
   }
 
@@ -538,13 +557,13 @@ export class DevicewiseTestComponent implements OnInit {
 
   ping(address: string, count: number) {
     this.dwApi.ping(address, count).subscribe(
-      data => {
+      (data) => {
         this.pingResponse = data;
         if (data.success) {
           this.loggedIn = true;
         }
       },
-      error => this.openSnackError(error)
+      (error) => this.openSnackError(error)
     );
   }
 
@@ -552,10 +571,10 @@ export class DevicewiseTestComponent implements OnInit {
 
   referenceList(type: string, source: string, direction: string) {
     this.dwApi.referenceList(type, source, direction).subscribe(
-      data => {
+      (data) => {
         this.referenceListResponse = data;
       },
-      error => this.openSnackError(error)
+      (error) => this.openSnackError(error)
     );
   }
 
@@ -563,13 +582,13 @@ export class DevicewiseTestComponent implements OnInit {
 
   sqlQuery(query: string) {
     this.dwApi.sql(query).subscribe(
-      data => {
+      (data) => {
         this.sqlResponse = data;
         this.displayedColumns = data.params.columns;
         this.dataSource.data = data.params.results;
         this.paginator._changePageSize(this.paginator.pageSize);
       },
-      error => this.openSnackError(error)
+      (error) => this.openSnackError(error)
     );
   }
 

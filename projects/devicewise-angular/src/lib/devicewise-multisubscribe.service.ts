@@ -67,17 +67,16 @@ export class DevicewiseMultisubscribeService {
     this.activeReplaySubjects = [];
     this.variables = [];
 
-    if (variables) {
-      variables.forEach((variable) => {
-        const dwVariableName = variable.request.params.device + '.' + variable.request.params.variable;
-        const newSubscription: ReplaySubject<Dwresponse.Subscription> = new ReplaySubject<Dwresponse.Subscription>();
-        variable.subscription = newSubscription.asObservable();
-        this.activeReplaySubjects.push(newSubscription);
-        this.activeSubscriptions[dwVariableName] = newSubscription;
-      });
-    } else {
-      variables = [];
-    }
+    if (!variables) variables = [];
+
+    variables.forEach((variable) => {
+      const dwVariableName = variable.request.params.device + '.' + variable.request.params.variable;
+      const newSubscription: ReplaySubject<Dwresponse.Subscription> = new ReplaySubject<Dwresponse.Subscription>();
+      variable.subscription = newSubscription.asObservable();
+      this.activeReplaySubjects.push(newSubscription);
+      this.activeSubscriptions[dwVariableName] = newSubscription;
+    });
+
     this.permanentVariables.forEach((variable, index) => {
       const dwVariableName = variable.request.params.device + '.' + variable.request.params.variable;
       if (!this.activeSubscriptions[dwVariableName]) {
@@ -90,9 +89,15 @@ export class DevicewiseMultisubscribeService {
     return this.multiSubscribe(this.variables);
   }
 
-  multiSubscribe(variables: DwSubscription[]): AbortController {
+  multiSubscribe(variables: DwSubscription[]) {
     const abortController = new AbortController();
+    if (this.abortControllers.length) {
+      this.abortAllNotifications();
+    }
     this.abortControllers.push(abortController);
+
+    const requestVariables = this.dwVariableArrayToMultiSubRequest(this.variables);
+    // console.log(requestVariables, this.permanentVariables, this.variables);
 
     fetchStream(this.url + '/api', {
       signal: abortController.signal,
@@ -102,7 +107,7 @@ export class DevicewiseMultisubscribeService {
         params: {
           minimal: true,
           subscriptions: {
-            variable: this.dwVariableArrayToMultiSubRequest(this.variables)
+            variable: requestVariables
           }
         }
       }),
@@ -112,10 +117,12 @@ export class DevicewiseMultisubscribeService {
       const chunks = '';
       this.pump(reader, chunks);
     }).catch((error) => {
-      console.warn('MultiSubscribe Fetch Error:', error);
+      console.warn('Abort Controller!', error);
+      setTimeout(() => {
+        console.log('reader error multisub');
+        this.multiSubscribe(this.variables);
+      });
     });
-
-    return abortController;
   }
 
   pump(reader, chunks) {
