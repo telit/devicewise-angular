@@ -28,7 +28,7 @@ import { SubTriggerPipe } from './devicewise-test/custom-pipes.pipe';
   ],
   entryComponents: [SettingsComponent],
   imports: [
-    DevicewiseAngularModule,
+    DevicewiseAngularModule.forRoot(),
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
