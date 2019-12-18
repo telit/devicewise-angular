@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import * as DwResponse from './models/dwresponse';
+import { DwType } from './models/dwconstants';
 
 const httpOptions = {
   headers: new HttpHeaders({}),
@@ -328,5 +329,36 @@ export class DevicewiseApiService {
       },
       httpOptions
     );
+  }
+
+  public dwTypeToNumber(dwType: string) {
+    switch (dwType) {
+      case 'INT1':
+        return DwType.INT1;
+      case 'INT2':
+        return DwType.INT2;
+      case 'INT4':
+        return DwType.INT4;
+      case 'INT8':
+        return DwType.INT8;
+      case 'UINT1':
+        return DwType.UINT1;
+      case 'UINT2':
+        return DwType.UINT2;
+      case 'UINT4':
+        return DwType.UINT4;
+      case 'UINT8':
+        return DwType.UINT8;
+      case 'FLOAT4':
+        return DwType.FLOAT4;
+      case 'FLOAT8':
+        return DwType.FLOAT8;
+      case 'BOOL':
+        return DwType.BOOL;
+      case 'STRING':
+        return DwType.STRING;
+      default:
+        return DwType.UNKNOWN;
+    }
   }
 }

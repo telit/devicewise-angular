@@ -121,7 +121,7 @@ export class DevicewiseMultisubscribeService {
       setTimeout(() => {
         console.log('reader error multisub');
         this.multiSubscribe(this.variables);
-      });
+      }, 1000);
     });
   }
 
