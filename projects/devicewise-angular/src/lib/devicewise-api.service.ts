@@ -35,7 +35,7 @@ export class DevicewiseApiService {
           username: username,
           password: password
         }
-      });
+      }, httpOptions);
   }
 
   logout(): Observable<DwResponse.Logout> {
@@ -318,6 +318,7 @@ export class DevicewiseApiService {
   // Diagnostics
 
   ping(address: string, count: number): Observable<DwResponse.Ping> {
+    console.log('sending ping with credentials', httpOptions);
     return this.http.post<DwResponse.Ping>(
       this.url + '/api',
       {
