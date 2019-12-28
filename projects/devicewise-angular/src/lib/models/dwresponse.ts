@@ -2,11 +2,11 @@
 
 export class Login {
   success: boolean;
-  errorCodes?: [number];
-  errorMessages?: [string];
   sessionId: string;
   roles: [string];
   requirePasswordChange: boolean;
+  errorCodes?: [number];
+  errorMessages?: [string];
 }
 
 export class Logout {

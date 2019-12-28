@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import * as DwResponse from './models/dwresponse';
 import { DwType } from './models/dwconstants';
+import { DevicewiseAngularService } from './devicewise-angular.service';
 
 const httpOptions = {
   headers: new HttpHeaders({}),
@@ -13,22 +14,26 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class DevicewiseApiService {
-  private url = 'http://localhost:88';
+  public url = '';
+  public url$: BehaviorSubject<string> = new BehaviorSubject<string>(null);
 
   constructor(private http: HttpClient) { }
 
   setEndpoint(endpoint: string): void {
     this.url = endpoint;
+    this.url$.next(endpoint);
   }
 
   getEndpoint(): string {
     return this.url;
   }
 
-  // Authentication
+  getEndpointasObservable(): Observable<string> {
+    return this.url$.asObservable();
+  }
 
-  login(endpoint: string, username: string, password: string): Observable<DwResponse.Login> {
-    this.url = endpoint;
+  // Authentication
+  public login(endpoint: string, username: string, password: string): Observable<DwResponse.Login> {
     return this.http
       .post<DwResponse.Login>(this.url + '/api/login', {
         auth: {
@@ -38,13 +43,12 @@ export class DevicewiseApiService {
       }, httpOptions);
   }
 
-  logout(): Observable<DwResponse.Logout> {
+  public logout(): Observable<DwResponse.Logout> {
     return this.http.post<DwResponse.Logout>(this.url + '/api/logout', null, httpOptions);
   }
 
   // Variable
-
-  read(device: string, variable: string, type: number, count: number, length: number): Observable<DwResponse.Read> {
+  public read(device: string, variable: string, type: number, count: number, length: number): Observable<DwResponse.Read> {
     return this.http.post<DwResponse.Read>(
       this.url + '/api',
       {
@@ -61,7 +65,7 @@ export class DevicewiseApiService {
     );
   }
 
-  write(device: string, variable: string, type: number, count: number, length: number, data: any): Observable<DwResponse.Write> {
+  public write(device: string, variable: string, type: number, count: number, length: number, data: any): Observable<DwResponse.Write> {
     return this.http.post<DwResponse.Write>(
       this.url + '/api',
       {
@@ -80,8 +84,7 @@ export class DevicewiseApiService {
   }
 
   // Subscribe
-
-  subscribe(
+  public subscribe(
     device: string,
     variable: string,
     rate: number,
@@ -105,7 +108,7 @@ export class DevicewiseApiService {
     );
   }
 
-  unsubscribe(id: number): Observable<DwResponse.Unsubscribe> {
+  public unsubscribe(id: number): Observable<DwResponse.Unsubscribe> {
     return this.http.post<DwResponse.Unsubscribe>(
       this.url + '/api',
       {
@@ -116,7 +119,7 @@ export class DevicewiseApiService {
     );
   }
 
-  unsubscribeAll(): Observable<DwResponse.UnsubscribeAll> {
+  public unsubscribeAll(): Observable<DwResponse.UnsubscribeAll> {
     return this.http.post<DwResponse.UnsubscribeAll>(
       this.url + '/api',
       {
@@ -126,7 +129,7 @@ export class DevicewiseApiService {
     );
   }
 
-  notificationGet(): Observable<any> {
+  public notificationGet(): Observable<any> {
     return this.http.post(
       this.url + '/api',
       {
@@ -136,7 +139,7 @@ export class DevicewiseApiService {
     );
   }
 
-  notificationCount(): Observable<DwResponse.NotificationCount> {
+  public notificationCount(): Observable<DwResponse.NotificationCount> {
     return this.http.post<DwResponse.NotificationCount>(
       this.url + '/api',
       {
@@ -146,13 +149,14 @@ export class DevicewiseApiService {
     );
   }
 
-  // Device
+  // Multisubscribe
 
-  deviceList(): Observable<DwResponse.DeviceList> {
+  // Device
+  public deviceList(): Observable<DwResponse.DeviceList> {
     return this.http.post<DwResponse.DeviceList>(this.url + '/api', { command: 'device.list' }, httpOptions);
   }
 
-  deviceInfo(device: string, options: number): Observable<DwResponse.DeviceInfo> {
+  public deviceInfo(device: string, options: number): Observable<DwResponse.DeviceInfo> {
     return this.http.post<DwResponse.DeviceInfo>(
       this.url + '/api',
       { command: 'device.info', params: { name: device, opts: options } },
@@ -164,7 +168,7 @@ export class DevicewiseApiService {
     return this.http.post<DwResponse.DeviceDataType>(this.url + '/api', { command: 'devicetype.enum' }, httpOptions);
   }
 
-  deviceStart(device: string): Observable<DwResponse.DeviceStart> {
+  public deviceStart(device: string): Observable<DwResponse.DeviceStart> {
     return this.http.post<DwResponse.DeviceStart>(
       this.url + '/api',
       { command: 'device.start', params: { name: device } },
@@ -172,7 +176,7 @@ export class DevicewiseApiService {
     );
   }
 
-  deviceStop(device: string): Observable<DwResponse.DeviceStop> {
+  public deviceStop(device: string): Observable<DwResponse.DeviceStop> {
     return this.http.post<DwResponse.DeviceStop>(
       this.url + '/api',
       { command: 'device.stop', params: { name: device } },
@@ -181,8 +185,7 @@ export class DevicewiseApiService {
   }
 
   // Trigger
-
-  triggerList(project: string): Observable<DwResponse.TriggerList> {
+  public triggerList(project: string): Observable<DwResponse.TriggerList> {
     return this.http.post<DwResponse.TriggerList>(
       this.url + '/api',
       { command: 'trigger.list', params: { project: project } },
@@ -190,7 +193,7 @@ export class DevicewiseApiService {
     );
   }
 
-  triggerStart(project: string, trigger: string): Observable<DwResponse.TriggerStart> {
+  public triggerStart(project: string, trigger: string): Observable<DwResponse.TriggerStart> {
     return this.http.post<DwResponse.TriggerStart>(
       this.url + '/api',
       { command: 'trigger.start', params: { name: trigger, project: project } },
@@ -198,7 +201,7 @@ export class DevicewiseApiService {
     );
   }
 
-  triggerFire(project: string, trigger: string): Observable<DwResponse.TriggerFire> {
+  public triggerFire(project: string, trigger: string): Observable<DwResponse.TriggerFire> {
     return this.http.post<DwResponse.TriggerFire>(
       this.url + '/api',
       { command: 'trigger.fire', params: { name: trigger, project: project } },
@@ -206,7 +209,7 @@ export class DevicewiseApiService {
     );
   }
 
-  triggerStop(project: string, trigger: string): Observable<DwResponse.TriggerStop> {
+  public triggerStop(project: string, trigger: string): Observable<DwResponse.TriggerStop> {
     return this.http.post<DwResponse.TriggerStop>(
       this.url + '/api',
       { command: 'trigger.stop', params: { name: trigger, project: project } },
@@ -214,7 +217,7 @@ export class DevicewiseApiService {
     );
   }
 
-  subTriggerFire(project: string, trigger: string, reporting: boolean, input: any[]): Observable<DwResponse.SubTriggerFire> {
+  public subTriggerFire(project: string, trigger: string, reporting: boolean, input: any[]): Observable<DwResponse.SubTriggerFire> {
     return this.http.post<DwResponse.SubTriggerFire>(
       this.url + '/api',
       { command: 'subtrigger.fire', params: { name: trigger, project: project, reportingEnabled: reporting, input: input } },
@@ -222,21 +225,20 @@ export class DevicewiseApiService {
     );
   }
 
-  actionTypeList(): Observable<DwResponse.ActionTypeList> {
+  public actionTypeList(): Observable<DwResponse.ActionTypeList> {
     return this.http.post<DwResponse.ActionTypeList>(this.url + '/api', { command: 'actiontype.enum' }, httpOptions);
   }
 
-  eventTypeList(): Observable<DwResponse.EventTypeList> {
+  public eventTypeList(): Observable<DwResponse.EventTypeList> {
     return this.http.post<DwResponse.EventTypeList>(this.url + '/api', { command: 'eventtype.enum' }, httpOptions);
   }
 
   // Project
-
-  projectList(): Observable<DwResponse.ProjectList> {
+  public projectList(): Observable<DwResponse.ProjectList> {
     return this.http.post<DwResponse.ProjectList>(this.url + '/api', { command: 'project.list' }, httpOptions);
   }
 
-  projectStart(name): Observable<DwResponse.ProjectStart> {
+  public projectStart(name): Observable<DwResponse.ProjectStart> {
     return this.http.post<DwResponse.ProjectStart>(
       this.url + '/api',
       { command: 'project.start', params: { name: name } },
@@ -244,7 +246,7 @@ export class DevicewiseApiService {
     );
   }
 
-  projectStop(name): Observable<DwResponse.ProjectStop> {
+  public projectStop(name): Observable<DwResponse.ProjectStop> {
     return this.http.post<DwResponse.ProjectStop>(
       this.url + '/api',
       { command: 'project.stop', params: { name: name } },
@@ -255,7 +257,7 @@ export class DevicewiseApiService {
   // Channel
 
   // TODO
-  channelSubscribe(channel: string): Observable<DwResponse.ChannelSubscribe> {
+  public channelSubscribe(channel: string): Observable<DwResponse.ChannelSubscribe> {
     return this.http.post<DwResponse.ChannelSubscribe>(
       this.url + '/api',
       {
@@ -268,7 +270,7 @@ export class DevicewiseApiService {
     );
   }
 
-  channelUnsubscribe(id: string): Observable<DwResponse.ChannelUnsubscribe> {
+  public channelUnsubscribe(id: string): Observable<DwResponse.ChannelUnsubscribe> {
     return this.http.post<DwResponse.ChannelUnsubscribe>(
       this.url + '/api',
       {
@@ -279,7 +281,7 @@ export class DevicewiseApiService {
     );
   }
 
-  channelUnsubscribeAll(): Observable<DwResponse.ChannelUnsubscribeAll> {
+  public channelUnsubscribeAll(): Observable<DwResponse.ChannelUnsubscribeAll> {
     return this.http.post<DwResponse.ChannelUnsubscribeAll>(
       this.url + '/api',
       {
@@ -290,8 +292,7 @@ export class DevicewiseApiService {
   }
 
   // SQLite
-
-  sql(query): Observable<DwResponse.Sql> {
+  public sql(query): Observable<DwResponse.Sql> {
     return this.http.post<DwResponse.Sql>(
       this.url + '/api',
       {
@@ -303,8 +304,7 @@ export class DevicewiseApiService {
   }
 
   // System
-
-  referenceList(type: string, key: string, flag: string): Observable<DwResponse.ReferenceList> {
+  public referenceList(type: string, key: string, flag: string): Observable<DwResponse.ReferenceList> {
     return this.http.post<DwResponse.ReferenceList>(
       this.url + '/api',
       {
@@ -316,8 +316,7 @@ export class DevicewiseApiService {
   }
 
   // Diagnostics
-
-  ping(address: string, count: number): Observable<DwResponse.Ping> {
+  public ping(address: string, count: number): Observable<DwResponse.Ping> {
     console.log('sending ping with credentials', httpOptions);
     return this.http.post<DwResponse.Ping>(
       this.url + '/api',
@@ -332,6 +331,7 @@ export class DevicewiseApiService {
     );
   }
 
+  // Util
   public dwTypeToNumber(dwType: string) {
     switch (dwType) {
       case 'INT1':
@@ -360,6 +360,37 @@ export class DevicewiseApiService {
         return DwType.STRING;
       default:
         return DwType.UNKNOWN;
+    }
+  }
+
+  public dwTypeToString(number: number) {
+    switch (number) {
+      case DwType.INT1:
+        return 'INT1';
+      case DwType.INT2:
+        return 'INT2';
+      case DwType.INT4:
+        return 'INT4';
+      case DwType.INT8:
+        return 'INT8';
+      case DwType.UINT1:
+        return 'UINT1';
+      case DwType.UINT2:
+        return 'UINT2';
+      case DwType.UINT4:
+        return 'UINT4';
+      case DwType.UINT8:
+        return 'UINT8';
+      case DwType.FLOAT4:
+        return 'FLOAT4';
+      case DwType.FLOAT8:
+        return 'FLOAT8';
+      case DwType.BOOL:
+        return 'BOOL';
+      case DwType.STRING:
+        return 'STRING';
+      default:
+        return 'UNKNOWN';
     }
   }
 }

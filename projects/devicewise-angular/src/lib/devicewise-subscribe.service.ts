@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { Observable, Subject } from 'rxjs';
 import fetchStream from 'fetch-readablestream';
-import { DevicewiseApiService } from './devicewise-api.service';
 import * as DwResponse from './models/dwresponse';
 import * as DwSubscription from './models/dwsubscription';
+import { DevicewiseAngularService } from './devicewise-angular.service';
+import { DevicewiseApiService } from './devicewise-api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,19 +14,17 @@ import * as DwSubscription from './models/dwsubscription';
 export class DevicewiseSubscribeService {
   private activeSubscriptions: { [key: string]: Subject<DwResponse.Subscription> } = {};
   private notificationsController;
-  private url = 'http://localhost:88';
+  private url = '';
 
-  constructor(private api: DevicewiseApiService) { }
-
-  setEndpoint(endpoint: string): void {
-    this.url = endpoint;
+  constructor(private apiService: DevicewiseApiService) {
+    this.apiService.getEndpointasObservable().subscribe((url) => this.url = url);
   }
 
-  getSubscription(variable: DwSubscription.DwSubscription): Observable<DwResponse.Subscribe> {
+  public getSubscription(variable: DwSubscription.DwSubscription): Observable<DwResponse.Subscribe> {
     const newSubscription: Subject<DwResponse.Subscription> = new Subject();
     variable.subscription = newSubscription.asObservable();
 
-    return this.api.subscribe(
+    return this.apiService.subscribe(
       variable.request.params.device,
       variable.request.params.variable,
       1,
@@ -38,7 +37,7 @@ export class DevicewiseSubscribeService {
         if (response.success) {
           this.activeSubscriptions[response.params.id] = newSubscription;
 
-          this.api.read(
+          this.apiService.read(
             variable.request.params.device,
             variable.request.params.variable,
             variable.request.params.type,
@@ -71,22 +70,22 @@ export class DevicewiseSubscribeService {
       }, (error) => {
         console.log('subError', error);
         if (error.status === 401) {
-          this.api.logout().subscribe();
+          this.apiService.logout().subscribe();
         }
       }
       )
     );
   }
 
-  unsubscribeAll(): Observable<DwResponse.UnsubscribeAll> {
-    return this.api.unsubscribeAll();
+  public unsubscribeAll(): Observable<DwResponse.UnsubscribeAll> {
+    return this.apiService.unsubscribeAll();
   }
 
-  unsubscribe(id: number): Observable<DwResponse.Unsubscribe> {
-    return this.api.unsubscribe(id);
+  public unsubscribe(id: number): Observable<DwResponse.Unsubscribe> {
+    return this.apiService.unsubscribe(id);
   }
 
-  getNotifications() {
+  public getNotifications() {
     this.notificationsController = new AbortController();
 
     console.log('Getting notifications...');
@@ -108,7 +107,7 @@ export class DevicewiseSubscribeService {
       });
   }
 
-  pump(reader, chunks) {
+  private pump(reader, chunks) {
     let toRead = 0;
     let length = 0;
     let subString;
@@ -139,7 +138,7 @@ export class DevicewiseSubscribeService {
           this.abortNotifications();
           console.warn('DeviceWISE subscription error. Abort notifications', subObj);
           if (subObj.errorCodes[0] === -1451) {
-            this.api.logout();
+            this.apiService.logout();
           } else {
             this.getNotifications();
           }
@@ -164,7 +163,7 @@ export class DevicewiseSubscribeService {
     }
   }
 
-  abortNotifications() {
+  public abortNotifications() {
     if (this.notificationsController) {
       this.notificationsController.abort();
     }

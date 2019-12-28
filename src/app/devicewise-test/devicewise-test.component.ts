@@ -110,7 +110,7 @@ export class DevicewiseTestComponent implements OnInit {
 
   ngOnInit() {
     // this.url = location.origin;
-    this.url = 'http://localhost:88';
+    this.url = '';
     this.dataSource.paginator = this.paginator;
     this.devicewise.easyLogin(this.url, '', '').subscribe((login) => {
       console.log('logged in!');

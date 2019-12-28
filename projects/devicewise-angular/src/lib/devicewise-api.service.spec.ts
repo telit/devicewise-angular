@@ -18,7 +18,7 @@ describe('DevicewiseApiService', () => {
 
   it('set endpoint should set endpoint', () => {
     const dw: DevicewiseApiService = TestBed.get(DevicewiseApiService);
-    const endpoint = 'http://localhost:88';
+    const endpoint = '';
     dw.setEndpoint(endpoint);
     expect(dw.getEndpoint()).toEqual(endpoint);
   });
