@@ -4,7 +4,7 @@ addons:
   chrome: stable
 
 node_js:
-  - "8"
+  - "10.15"
 
 branches:
   only:
@@ -14,5 +14,6 @@ before_script:
   - npm install -g @angular/cli
 
 script:
+  - npm install
   - ng build devicewise-angular
   - ng test devicewise-angular
