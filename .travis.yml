@@ -1,5 +1,5 @@
 language: node_js
-sudo: required
+sudo: true
 addons:
   chrome: stable
 
@@ -16,4 +16,4 @@ before_script:
 script:
   - npm install
   - ng build devicewise-angular
-  - ng test devicewise-angular
+  - ng test devicewise-angular -watch false -browsers ChromeHeadless
