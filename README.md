@@ -1,3 +1,6 @@
+
+[![Build Status](https://travis-ci.com/astone2014/devicewise-angular.svg?branch=master)](https://travis-ci.com/astone2014/devicewise-angular)
+
 # DeviceWISE Angular API Service
 
 An Angular (2+) service for communicating with deviceWISE.
@@ -129,5 +132,3 @@ This service is provided to you free by [Telit IoT Platforms](https://telit.com/
 # License
 
 [MIT](https://github.com/astone2014/devicewise-angular/master/LICENSE)
-
-[![Build Status](https://travis-ci.com/astone2014/devicewise-angular.svg?branch=master)](https://travis-ci.com/astone2014/devicewise-angular)
