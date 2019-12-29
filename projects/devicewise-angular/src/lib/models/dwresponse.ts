@@ -298,9 +298,19 @@ export interface DeviceDataTypeProperty {
   type: string;
 }
 
-export class DeviceStart {}
+export class DeviceStart {
+  success: boolean;
+  params: any;
+  errorCodes?: number[];
+  errorMessages?: string[];
+}
 
-export class DeviceStop {}
+export class DeviceStop {
+  success: boolean;
+  params: any;
+  errorCodes?: number[];
+  errorMessages?: string[];
+}
 
 // Trigger
 

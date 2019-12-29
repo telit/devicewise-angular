@@ -19,15 +19,15 @@ export class DevicewiseAngularService {
     this.apiService.getEndpointasObservable().subscribe((url) => this.url = url);
   }
 
-  setLoginStatus(status: boolean) {
+  private setLoginStatus(status: boolean) {
     this.loggedIn = status;
   }
 
-  getLoginStatus(): boolean {
+  public getLoginStatus(): boolean {
     return this.loggedIn;
   }
 
-  easyLogin(endpoint: string, username: string, password: string): Observable<DwResponse.Login> {
+  public easyLogin(endpoint: string, username: string, password: string): Observable<DwResponse.Login> {
     this.apiService.setEndpoint(endpoint);
     return this.apiService.ping('localhost', 4).pipe(
       flatMap((pingResponse: any) => {
@@ -47,7 +47,7 @@ export class DevicewiseAngularService {
     );
   }
 
-  login(endpoint: string, username: string, password: string) {
+  private login(endpoint: string, username: string, password: string) {
     return this.apiService.login(endpoint, username, password).pipe(
       map((login) => {
         console.log('login response', login);
@@ -61,11 +61,12 @@ export class DevicewiseAngularService {
     );
   }
 
-  logout(): Observable<DwResponse.Logout> {
+  public logout(): Observable<DwResponse.Logout> {
     return this.apiService.logout().pipe(
       tap((response) => {
         if (response.success) {
-          this.cookieService.delete('sessionId');
+          this.setLoginStatus(false);
+          // this.cookieService.delete('sessionId');
         }
       })
     );

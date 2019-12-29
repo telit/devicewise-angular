@@ -76,7 +76,7 @@ export class DevicewiseApiService {
           type: type,
           count: count,
           length: length,
-          data: data
+          data: JSON.stringify(data)
         }
       },
       httpOptions
@@ -164,7 +164,7 @@ export class DevicewiseApiService {
     );
   }
 
-  deviceTypeList(): Observable<DwResponse.DeviceDataType> {
+  public deviceTypeList(): Observable<DwResponse.DeviceDataType> {
     return this.http.post<DwResponse.DeviceDataType>(this.url + '/api', { command: 'devicetype.enum' }, httpOptions);
   }
 
