@@ -317,7 +317,6 @@ export class DevicewiseApiService {
 
   // Diagnostics
   public ping(address: string, count: number): Observable<DwResponse.Ping> {
-    console.log('sending ping with credentials', httpOptions);
     return this.http.post<DwResponse.Ping>(
       this.url + '/api',
       {

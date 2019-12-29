@@ -28,10 +28,11 @@ export class DevicewiseAngularService {
   }
 
   public easyLogin(endpoint: string, username: string, password: string): Observable<DwResponse.Login> {
+    console.log('logging in...', endpoint);
     this.apiService.setEndpoint(endpoint);
-    return this.apiService.ping('localhost', 4).pipe(
-      flatMap((pingResponse: any) => {
-        if (pingResponse.success) {
+    return this.apiService.channelUnsubscribeAll().pipe(
+      flatMap((channelUnsubscribeResponse: any) => {
+        if (channelUnsubscribeResponse.success) {
           const loginResponse: DwResponse.Login = {
             success: true,
             sessionId: this.cookieService.get('sessionId'),
@@ -49,10 +50,9 @@ export class DevicewiseAngularService {
 
   private login(endpoint: string, username: string, password: string) {
     return this.apiService.login(endpoint, username, password).pipe(
-      map((login) => {
-        console.log('login response', login);
+      tap((login) => {
+        this.setLoginStatus(login.success);
         if (login.success) {
-          this.setLoginStatus(true);
           this.cookieService.deleteAll();
           this.cookieService.set('sessionId', login.sessionId);
         }
@@ -66,7 +66,6 @@ export class DevicewiseAngularService {
       tap((response) => {
         if (response.success) {
           this.setLoginStatus(false);
-          // this.cookieService.delete('sessionId');
         }
       })
     );

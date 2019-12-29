@@ -12,9 +12,4 @@ describe('DevicewiseSubscribeService', () => {
     const service: DevicewiseSubscribeService = TestBed.get(DevicewiseSubscribeService);
     expect(service).toBeTruthy();
   });
-
-  it('should subscribe', () => {
-    const service: DevicewiseSubscribeService = TestBed.get(DevicewiseSubscribeService);
-    expect(service).toBeTruthy();
-  });
 });
