@@ -1,3 +1,4 @@
+import { tap, delay, filter } from 'rxjs/operators';
 import { DevicewiseAngularModule } from './devicewise-angular.module';
 import { DevicewiseAngularService } from './devicewise-angular.service';
 import { DwType } from './models/dwconstants';
@@ -62,108 +63,180 @@ fdescribe('DevicewiseMultisubscribeNewService', () => {
     });
   });
 
-  it('should be able to subscribe to observable twice', (done: DoneFn) => {
+  it('should be able to subscribe many times', (done: DoneFn) => {
     const subs = [];
 
     variables.forEach((variable) => {
       subs.push(new DwSubscription(variable.device, variable.variable, variable.type, variable.count, variable.length).request.params);
     });
 
-    let messagesReceived1 = 0;
-    let subscriptionsDone = 0;
     const multiSubscribe$ = service.multiSubscribe(subs);
-    const subscription1 = multiSubscribe$.subscribe({
-      next: (data) => {
-        expect(data.device.length).toBeGreaterThan(0);
-        expect(data.variable.length).toBeGreaterThan(0);
-        expect(data.data[0]).toBeGreaterThanOrEqual(0);
-        expect(data.data[0]).toBeLessThanOrEqual(100);
-        ++messagesReceived1;
-        if (messagesReceived1 === variables.length) {
-          subscription1.unsubscribe();
-          ++subscriptionsDone;
-          if (subscriptionsDone === 2) {
-            done();
-          }
-        }
-      },
-      error: (err) => console.log('err', err),
-      complete: () => console.log('complete')
-    });
+    const random = Math.floor(Math.random() * 10);
+    for (let i = 0; i < random; i++) {
+      const subscription = multiSubscribe$.subscribe({
+        next: (data) => {
+          expect(data.device.length).toBeGreaterThan(0);
+          expect(data.variable.length).toBeGreaterThan(0);
+          expect(data.data[0]).toBeGreaterThanOrEqual(0);
+          expect(data.data[0]).toBeLessThanOrEqual(100);
+        },
+        error: (err) => console.log('err', err),
+        complete: () => console.log('complete')
+      });
 
-    let messagesReceived2 = 0;
-    const subscription2 = multiSubscribe$.subscribe({
-      next: (data) => {
-        expect(data.device.length).toBeGreaterThan(0);
-        expect(data.variable.length).toBeGreaterThan(0);
-        expect(data.data[0]).toBeGreaterThanOrEqual(0);
-        expect(data.data[0]).toBeLessThanOrEqual(100);
-        ++messagesReceived2;
-        if (messagesReceived2 === variables.length) {
-          subscription2.unsubscribe();
-          ++subscriptionsDone;
-          if (subscriptionsDone === 2) {
-            done();
-          }
-        }
-      },
-      error: (err) => console.log('err2', err),
-      complete: () => console.log('complete2')
-    });
+      setTimeout(() => {
+        subscription.unsubscribe();
+      }, 1000);
+    }
+
+    setTimeout(() => {
+      done();
+    }, 2000);
   });
 
-  it('should be able to unsubscribe', (done: DoneFn) => {
+  it('should subscribe, unsubscribe, subscribe', (done: DoneFn) => {
     const subs = [];
 
     variables.forEach((variable) => {
       subs.push(new DwSubscription(variable.device, variable.variable, variable.type, variable.count, variable.length).request.params);
     });
 
-    let messagesReceived = 0;
-    const multiSubscribe$ = service.multiSubscribe(subs);
-    const subscription = multiSubscribe$.subscribe({
-      next: (data) => {
-        expect(data.device.length).toBeGreaterThan(0);
-        expect(data.variable.length).toBeGreaterThan(0);
-        expect(data.data[0]).toBeGreaterThanOrEqual(0);
-        expect(data.data[0]).toBeLessThanOrEqual(100);
-        ++messagesReceived;
-        if (messagesReceived === variables.length) {
+    const random = Math.floor(Math.random() * 10);
+    for (let i = 0; i < random; i++) {
+      const random2 = Math.floor(Math.random() * 10);
+      const multiSubscribe$ = service.multiSubscribe(subs);
+      for (let j = 0; j < random2; j++) {
+        const subscription = multiSubscribe$.subscribe({
+          next: (data) => {
+            expect(data.device.length).toBeGreaterThan(0);
+            expect(data.variable.length).toBeGreaterThan(0);
+            expect(data.data[0]).toBeGreaterThanOrEqual(0);
+            expect(data.data[0]).toBeLessThanOrEqual(100);
+          },
+          error: (err) => console.log('err', err),
+          complete: () => console.log('complete')
+        });
+
+        setTimeout(() => {
           subscription.unsubscribe();
-          console.log(subscription);
-          done();
-        }
-      },
-      error: (err) => console.log('err', err),
-      complete: () => console.log('complete')
-    });
+        }, 2000);
+      }
+    }
+
+    setTimeout(() => {
+      done();
+    }, 2000);
   });
 
-  it('should be able to unsubscribe', (done: DoneFn) => {
+  it('should subscribe, unsubscribe, subscribe', (done: DoneFn) => {
     const subs = [];
 
     variables.forEach((variable) => {
       subs.push(new DwSubscription(variable.device, variable.variable, variable.type, variable.count, variable.length).request.params);
     });
 
-    let messagesReceived = 0;
     const multiSubscribe$ = service.multiSubscribe(subs);
-    const subscription = multiSubscribe$.subscribe({
-      next: (data) => {
-        expect(data.device.length).toBeGreaterThan(0);
-        expect(data.variable.length).toBeGreaterThan(0);
-        expect(data.data[0]).toBeGreaterThanOrEqual(0);
-        expect(data.data[0]).toBeLessThanOrEqual(100);
-        ++messagesReceived;
-        if (messagesReceived === variables.length) {
-          subscription.unsubscribe();
-          console.log(subscription);
-          done();
-        }
-      },
-      error: (err) => console.log('err', err),
-      complete: () => console.log('complete')
+    const random = Math.floor(Math.random() * 10);
+
+    variables.forEach((variable) => {
+      const subscription = multiSubscribe$.pipe(
+        filter((val) => val.variable === variable.variable)
+      ).subscribe({
+        next: (data) => {
+          // console.log('var' + variable.variable, data);
+          expect(data.device.length).toBeGreaterThan(0);
+          expect(data.variable.length).toBeGreaterThan(0);
+          expect(data.device).toEqual(variable.device);
+          expect(data.variable).toEqual(variable.variable);
+          expect(data.data[0]).toBeGreaterThanOrEqual(0);
+          expect(data.data[0]).toBeLessThanOrEqual(100);
+        },
+        error: (err) => console.log('err', err),
+        complete: () => console.log('complete')
+      });
+
+      setTimeout(() => {
+        subscription.unsubscribe();
+      }, 1000);
     });
+
+    setTimeout(() => {
+      done();
+    }, 2000);
   });
+
+  // it('should be able to unsubscribe', (done: DoneFn) => {
+  //   const subs = [];
+
+  //   variables.forEach((variable) => {
+  //     subs.push(new DwSubscription(variable.device, variable.variable, variable.type, variable.count, variable.length).request.params);
+  //   });
+
+  //   let messagesReceived = 0;
+  //   const multiSubscribe$ = service.multiSubscribe(subs);
+  //   const subscription = multiSubscribe$.subscribe({
+  //     next: (data) => {
+  //       expect(data.device.length).toBeGreaterThan(0);
+  //       expect(data.variable.length).toBeGreaterThan(0);
+  //       expect(data.data[0]).toBeGreaterThanOrEqual(0);
+  //       expect(data.data[0]).toBeLessThanOrEqual(100);
+  //       ++messagesReceived;
+  //       console.log('recvd', messagesReceived);
+  //       if (messagesReceived === variables.length) {
+  //         subscription.unsubscribe();
+  //         done();
+  //       }
+  //     },
+  //     error: (err) => console.log('err', err),
+  //     complete: () => console.log('complete')
+  //   });
+  // });
+
+  // it('should be able to unsubscribe and resubscribe', (done: DoneFn) => {
+  //   const subs = [];
+
+  //   variables.forEach((variable) => {
+  //     subs.push(new DwSubscription(variable.device, variable.variable, variable.type, variable.count, variable.length).request.params);
+  //   });
+
+  //   let messagesReceived = 0;
+  //   const multiSubscribe$ = service.multiSubscribe(subs);
+  //   let subscription = multiSubscribe$.subscribe({
+  //     next: (data) => {
+  //       expect(data.device.length).toBeGreaterThan(0);
+  //       expect(data.variable.length).toBeGreaterThan(0);
+  //       expect(data.data[0]).toBeGreaterThanOrEqual(0);
+  //       expect(data.data[0]).toBeLessThanOrEqual(100);
+  //       ++messagesReceived;
+  //       console.log('recvd', messagesReceived);
+  //       if (messagesReceived === variables.length) {
+  //         subscription.unsubscribe();
+
+  //         messagesReceived = 0;
+  //         subscription = multiSubscribe$.subscribe({
+  //           next: (data2) => {
+  //             expect(data2.device.length).toBeGreaterThan(0);
+  //             expect(data2.variable.length).toBeGreaterThan(0);
+  //             expect(data2.data[0]).toBeGreaterThanOrEqual(0);
+  //             expect(data2.data[0]).toBeLessThanOrEqual(100);
+  //             ++messagesReceived;
+  //             console.log('recvd', messagesReceived);
+  //             if (messagesReceived === variables.length) {
+  //               subscription.unsubscribe();
+
+  //               done();
+  //             }
+  //           },
+  //           error: (err) => console.log('err', err),
+  //           complete: () => console.log('complete')
+  //         });
+
+  //         // done();
+  //       }
+  //     },
+  //     error: (err) => console.log('err', err),
+  //     complete: () => console.log('complete')
+  //   });
+  // });
 
 });
