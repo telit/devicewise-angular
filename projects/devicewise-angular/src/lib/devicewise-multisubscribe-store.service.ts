@@ -1,4 +1,4 @@
-import { finalize, share, multicast, refCount, publish, tap, findIndex } from 'rxjs/operators';
+import { finalize, share, multicast, refCount, publish, tap, findIndex, take } from 'rxjs/operators';
 import { Observable, Subscription, Subject, ReplaySubject, Observer } from 'rxjs';
 import { Variable, DevicewiseMultisubscribeNewService, MultiSubscribeResponse, MultiSubscribeParams } from './devicewise-multisubscribe-new.service';
 import { DevicewiseApiService } from './devicewise-api.service';
@@ -11,26 +11,36 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
   public url = '';
   requestVariables: Variable[] = [];
   subject: ReplaySubject<MultiSubscribeParams> = new ReplaySubject<MultiSubscribeParams>(1);
-  multiSubscribe$: Observable<MultiSubscribeParams>;
   subscription: Subscription;
   status = 0;
 
   constructor(private devicewiseMultisubscribeService: DevicewiseMultisubscribeNewService, private apiService: DevicewiseApiService) {
-    this.apiService.getEndpointasObservable().subscribe((url) => {
-      this.url = url;
-    });
+    this.apiService.getEndpointasObservable().subscribe((url) => this.url = url);
   }
 
-  getRequestVariables(): Variable[] {
+  public subscriptionAsObservable() {
+    if (!this.subscription) {
+      this.startMultisubscribe(true);
+    }
+    return this.subject.asObservable().pipe(
+      share(),
+      finalize(() => this.stopMultisubscribe())
+    );
+  }
+
+  public getRequestVariables(): Variable[] {
     return this.requestVariables;
   }
 
-  addRequestVariables(variables: Variable[]) {
+  public addRequestVariables(variables: Variable[]) {
+    const newRequestVariables = this.requestVariables.concat(variables);
     this.requestVariables = this.requestVariables.concat(variables);
-    this.restartMultisubscribe();
+    this.startMultisubscribe(false).pipe(take(1)).subscribe(
+      (data) => this.requestVariables.concat(variables)
+    );
   }
 
-  removeRequestVariables(variables: Variable[]) {
+  public removeRequestVariables(variables: Variable[]) {
     variables.forEach((variable, index) => {
       const foundIndex = this.requestVariables.findIndex(
         (requestVariable) => {
@@ -39,52 +49,38 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
       );
       this.requestVariables.splice(foundIndex, 1);
     });
-    this.restartMultisubscribe();
+    this.startMultisubscribe(false);
   }
 
-  clearRequestVariables(variables: Variable[]) {
+  private clearRequestVariables(variables: Variable[]) {
     this.requestVariables = [];
+  }
+
+  private startMultisubscribe(newSubject: boolean) {
     this.stopMultisubscribe();
+    const sub = this.devicewiseMultisubscribeService.multiSubscribe(this.requestVariables);
+    if (newSubject || this.subject.observers.length > 0) {
+      this.subscription = sub.subscribe(this.subject);
+    }
+    return sub;
   }
 
-  restartMultisubscribe() {
-    this.stopMultisubscribe();
-    this.subscription = this.startMultisubscribe().subscribe((data) => {
-      this.subject.next(data);
-    });
-  }
-
-  startMultisubscribe(): Observable<MultiSubscribeParams> {
-    return this.devicewiseMultisubscribeService.multiSubscribe(this.requestVariables).pipe(
-      tap((data) => this.subject.next(data))
-    );
-  }
-
-  stopMultisubscribe() {
-    if (this.subscription) {
+  private stopMultisubscribe() {
+    if (this.subscription && !this.subscription.closed) {
       this.subscription.unsubscribe();
     }
   }
 
-  getMultiSubscribeStatus() {
+  public getMultiSubscribeStatus() {
     return this.status;
   }
 
   ngOnDestroy(): void {
+    this.stopMultisubscribe();
     if (this.subject) {
       this.subject.complete();
       this.subject.unsubscribe();
     }
-    this.stopMultisubscribe();
   }
 
-  subscriptionAsObservable() {
-    return this.subject.asObservable().pipe(
-      share(),
-      finalize(() => {
-        console.log('finalize');
-        this.stopMultisubscribe();
-      })
-    );
-  }
 }

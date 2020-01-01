@@ -1,9 +1,8 @@
+import { TestBed, async } from '@angular/core/testing';
 import { DevicewiseAngularModule } from './devicewise-angular.module';
-import { DwType } from './models/dwconstants';
 import { DevicewiseAngularService } from './devicewise-angular.service';
 import { DevicewiseMultisubscribeStoreService } from './devicewise-multisubscribe-store.service';
-import { TestBed, async } from '@angular/core/testing';
-import { Subscription } from 'rxjs';
+import { DwType } from './models/dwconstants';
 import { filter } from 'rxjs/operators';
 
 fdescribe('DevicewiseMultisubscribeStoreService', () => {
@@ -35,45 +34,52 @@ fdescribe('DevicewiseMultisubscribeStoreService', () => {
     expect(service).toBeTruthy();
   });
 
-  // it('add variable', () => {
-  //   service.addRequestVariables([variables[0]]);
-  //   const requestVariables = service.getRequestVariables();
-  //   expect(requestVariables.length).toEqual(1);
-  //   expect(requestVariables[0]).toEqual(variables[0]);
-  // });
+  it('add variable', () => {
+    service.addRequestVariables([variables[0]]);
+    const requestVariables = service.getRequestVariables();
+    expect(requestVariables.length).toEqual(1);
+    expect(requestVariables[0]).toEqual(variables[0]);
+  });
 
-  // it('remove variable', () => {
-  //   service.addRequestVariables([variables[0]]);
-  //   let requestVariables = service.getRequestVariables();
-  //   expect(requestVariables.length).toEqual(1);
-  //   expect(requestVariables[0]).toEqual(variables[0]);
+  it('add variable', () => {
+    service.addRequestVariables([variables[0]]);
+    const requestVariables = service.getRequestVariables();
+    expect(requestVariables.length).toEqual(1);
+    expect(requestVariables[0]).toEqual(variables[0]);
+  });
 
-  //   service.removeRequestVariables([variables[0]]);
-  //   requestVariables = service.getRequestVariables();
-  //   expect(requestVariables.length).toEqual(0);
-  // });
+  it('remove variable', () => {
+    service.addRequestVariables([variables[0]]);
+    let requestVariables = service.getRequestVariables();
+    expect(requestVariables.length).toEqual(1);
+    expect(requestVariables[0]).toEqual(variables[0]);
 
-  // it('add many variables', () => {
-  //   service.addRequestVariables(variables);
-  //   const requestVariables = service.getRequestVariables();
-  //   expect(requestVariables.length).toEqual(4);
-  //   requestVariables.forEach((variable, index) => {
-  //     expect(variable).toEqual(variables[index]);
-  //   });
-  // });
+    service.removeRequestVariables([variables[0]]);
+    requestVariables = service.getRequestVariables();
+    expect(requestVariables.length).toEqual(0);
+  });
 
-  // it('remove many variables', () => {
-  //   service.addRequestVariables(variables);
-  //   let requestVariables = service.getRequestVariables();
-  //   expect(requestVariables.length).toEqual(4);
-  //   requestVariables.forEach((variable, index) => {
-  //     expect(variable).toEqual(variables[index]);
-  //   });
+  it('add many variables', () => {
+    service.addRequestVariables(variables);
+    const requestVariables = service.getRequestVariables();
+    expect(requestVariables.length).toEqual(4);
+    requestVariables.forEach((variable, index) => {
+      expect(variable).toEqual(variables[index]);
+    });
+  });
 
-  //   service.removeRequestVariables(variables);
-  //   requestVariables = service.getRequestVariables();
-  //   expect(requestVariables.length).toEqual(0);
-  // });
+  it('remove many variables', () => {
+    service.addRequestVariables(variables);
+    let requestVariables = service.getRequestVariables();
+    expect(requestVariables.length).toEqual(4);
+    requestVariables.forEach((variable, index) => {
+      expect(variable).toEqual(variables[index]);
+    });
+
+    service.removeRequestVariables(variables);
+    requestVariables = service.getRequestVariables();
+    expect(requestVariables.length).toEqual(0);
+  });
 
 
   it('start multisubscribe works', (done: DoneFn) => {
@@ -81,8 +87,11 @@ fdescribe('DevicewiseMultisubscribeStoreService', () => {
     const requestVariables = service.getRequestVariables();
     expect(requestVariables.length).toEqual(1);
     expect(requestVariables[0]).toEqual(variables[0]);
+    let messagesReceived = 0;
 
     const subscription = service.subscriptionAsObservable().subscribe((data) => {
+      console.log('multi sub message', data);
+      ++messagesReceived;
       expect(data.device).toEqual(variables[0].device);
       expect(data.variable).toEqual(variables[0].variable);
       expect(data.data.length).toEqual(1);
@@ -93,8 +102,41 @@ fdescribe('DevicewiseMultisubscribeStoreService', () => {
     setTimeout(() => {
       subscription.unsubscribe();
       expect(subscription.closed).toBeTruthy();
+      expect(messagesReceived).toBeGreaterThanOrEqual(requestVariables.length);
       done();
+    }, 1500);
+  });
+
+  it('start multisubscribe works2', (done: DoneFn) => {
+    service.addRequestVariables([variables[0]]);
+    let requestVariables = service.getRequestVariables();
+    expect(requestVariables.length).toEqual(1);
+    expect(requestVariables[0]).toEqual(variables[0]);
+    let messagesReceived = 0;
+
+    const subscription = service.subscriptionAsObservable().subscribe((data) => {
+      console.log('multi sub message', data);
+      ++messagesReceived;
+      expect(data.device).toEqual(variables[0].device);
+      // expect(data.variable).toEqual(variables[0].variable);
+      expect(data.data.length).toEqual(1);
+      expect(data.data.length).toBeGreaterThanOrEqual(0);
+      expect(data.data.length).toBeLessThanOrEqual(100);
+    });
+
+    setTimeout(() => {
+      service.addRequestVariables([variables[1]]);
+      requestVariables = service.getRequestVariables();
+      expect(requestVariables.length).toEqual(2);
+      expect(requestVariables[1]).toEqual(variables[1]);
     }, 1000);
+
+    setTimeout(() => {
+      subscription.unsubscribe();
+      expect(subscription.closed).toBeTruthy();
+      expect(messagesReceived).toBeGreaterThanOrEqual(requestVariables.length);
+      done();
+    }, 3000);
   });
 
   it('add vars, sub, add more vars', (done: DoneFn) => {
@@ -188,39 +230,39 @@ fdescribe('DevicewiseMultisubscribeStoreService', () => {
     }, 3000);
   });
 
-  it('add vars, sub, unsub, resub', (done: DoneFn) => {
-    service.addRequestVariables([variables[0]]);
-    const requestVariables = service.getRequestVariables();
-    expect(requestVariables.length).toEqual(1);
-    expect(requestVariables[0]).toEqual(variables[0]);
+  // it('add vars, sub, unsub, resub', (done: DoneFn) => {
+  //   service.addRequestVariables([variables[0]]);
+  //   const requestVariables = service.getRequestVariables();
+  //   expect(requestVariables.length).toEqual(1);
+  //   expect(requestVariables[0]).toEqual(variables[0]);
 
-    const subscription = service.subscriptionAsObservable().subscribe((data) => {
-      expect(data.device).toEqual(variables[0].device);
-      expect(data.variable).toEqual(variables[0].variable);
-      expect(data.data.length).toEqual(1);
-      expect(data.data.length).toBeGreaterThanOrEqual(0);
-      expect(data.data.length).toBeLessThanOrEqual(100);
-    });
+  //   const subscription = service.subscriptionAsObservable().subscribe((data) => {
+  //     expect(data.device).toEqual(variables[0].device);
+  //     expect(data.variable).toEqual(variables[0].variable);
+  //     expect(data.data.length).toEqual(1);
+  //     expect(data.data.length).toBeGreaterThanOrEqual(0);
+  //     expect(data.data.length).toBeLessThanOrEqual(100);
+  //   });
 
-    setTimeout(() => {
-      subscription.unsubscribe();
-      expect(subscription.closed).toBeTruthy();
+  //   setTimeout(() => {
+  //     subscription.unsubscribe();
+  //     expect(subscription.closed).toBeTruthy();
 
-      const subscription2 = service.subscriptionAsObservable().subscribe((data) => {
-        expect(data.device).toEqual(variables[0].device);
-        expect(data.variable).toEqual(variables[0].variable);
-        expect(data.data.length).toEqual(1);
-        expect(data.data.length).toBeGreaterThanOrEqual(0);
-        expect(data.data.length).toBeLessThanOrEqual(100);
-      });
+  //     const subscription2 = service.subscriptionAsObservable().subscribe((data) => {
+  //       expect(data.device).toEqual(variables[0].device);
+  //       expect(data.variable).toEqual(variables[0].variable);
+  //       expect(data.data.length).toEqual(1);
+  //       expect(data.data.length).toBeGreaterThanOrEqual(0);
+  //       expect(data.data.length).toBeLessThanOrEqual(100);
+  //     });
 
-      setTimeout(() => {
-        subscription2.unsubscribe();
-        expect(subscription2.closed).toBeTruthy();
-        done();
-      }, 1000);
-    }, 1000);
-  });
+  //     setTimeout(() => {
+  //       subscription2.unsubscribe();
+  //       expect(subscription2.closed).toBeTruthy();
+  //       done();
+  //     }, 1000);
+  //   }, 1000);
+  // });
 
   // it('start multisubscribe works', (done: DoneFn) => {
   //   service.addRequestVariables([variables[0]]);
@@ -231,7 +273,6 @@ fdescribe('DevicewiseMultisubscribeStoreService', () => {
   //   const subscription = service.subscriptionAsObservable();
 
   //   subscription.subscribe((data) => {
-  //     console.log('observable hit!');
   //     expect(data.device).toEqual(variables[0].device);
   //     expect(data.variable).toEqual(variables[0].variable);
   //     expect(data.data.length).toEqual(1);
@@ -241,7 +282,6 @@ fdescribe('DevicewiseMultisubscribeStoreService', () => {
   //   });
 
   //   subscription.subscribe((data) => {
-  //     console.log('observable hit!');
   //     expect(data.device).toEqual(variables[0].device);
   //     expect(data.variable).toEqual(variables[0].variable);
   //     expect(data.data.length).toEqual(1);
@@ -272,12 +312,12 @@ fdescribe('DevicewiseMultisubscribeStoreService', () => {
   //     }
   //   });
 
-  // setTimeout(() => {
-  //   service.addRequestVariables([variables[1]]);
-  //   requestVariables = service.getRequestVariables();
-  //   expect(requestVariables.length).toEqual(2);
-  //   expect(requestVariables[1]).toEqual(variables[1]);
-  // }, 500);
+  //   setTimeout(() => {
+  //     service.addRequestVariables([variables[1]]);
+  //     requestVariables = service.getRequestVariables();
+  //     expect(requestVariables.length).toEqual(2);
+  //     expect(requestVariables[1]).toEqual(variables[1]);
+  //   }, 500);
   // });
 
   // it('stop multisubscribe works', (done: DoneFn) => {
@@ -286,7 +326,7 @@ fdescribe('DevicewiseMultisubscribeStoreService', () => {
   //   expect(requestVariables.length).toEqual(1);
   //   expect(requestVariables[0]).toEqual(variables[0]);
 
-  //   const subscription = service.startMultisubscribe().subscribe((data) => {
+  //   const subscription = service.subscriptionAsObservable().subscribe((data) => {
   //     expect(data.device).toEqual(variables[0].device);
   //     expect(data.variable).toEqual(variables[0].variable);
   //     expect(data.data.length).toEqual(1);
@@ -297,5 +337,27 @@ fdescribe('DevicewiseMultisubscribeStoreService', () => {
   //     done();
   //   });
   // });
+
+  // it('invalid multisubscribe request', (done: DoneFn) => {
+  //   const invalidVariable = JSON.parse(JSON.stringify(variables[0]));
+  //   invalidVariable.variable = invalidVariable.variable + '1234';
+  //   service.addRequestVariables([invalidVariable]);
+  //   const requestVariables = service.getRequestVariables();
+  //   expect(requestVariables.length).toEqual(1);
+  //   expect(requestVariables[0]).toEqual(invalidVariable);
+
+  //   const subscription = service.subscriptionAsObservable().subscribe((data) => {
+  //     expect(data.device).toEqual(variables[0].device);
+  //     expect(data.variable).toEqual(variables[0].variable);
+  //     expect(data.data.length).toEqual(1);
+  //     expect(data.data.length).toBeGreaterThanOrEqual(0);
+  //     expect(data.data.length).toBeLessThanOrEqual(100);
+  //     subscription.unsubscribe();
+  //     expect(subscription.closed).toBeTruthy();
+  //     done();
+  //   },
+  //   (err) => console.warn('Failed to add new request variable', err));
+  // });
+
 
 });

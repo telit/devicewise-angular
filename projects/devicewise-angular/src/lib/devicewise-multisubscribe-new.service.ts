@@ -1,4 +1,4 @@
-import { map, finalize, tap, share, takeWhile, expand, take, concatAll, flatMap, concatMap } from 'rxjs/operators';
+import { map, tap, share, concatAll, retryWhen, switchMap } from 'rxjs/operators';
 import { Observable, throwError, observable, of } from 'rxjs';
 import { DevicewiseApiService } from './devicewise-api.service';
 import { Injectable } from '@angular/core';
@@ -39,11 +39,41 @@ export class DevicewiseMultisubscribeNewService {
     this.apiService.getEndpointasObservable().subscribe((url) => this.url = url);
   }
 
+/**
+ * Subscribe to multiple `requestVariables`. emits inital value and then on change of value.
+ * Observable, and emits the resulting values as an Observable.
+ *
+ * See [Documentation](https://docs.devicewise.com/Content/home.htm)
+ *
+ * ## Example
+ * Subscribe to a variable 'OEE' from device 'Machine1' and then unsubscribe a second later.
+ * ```ts
+ * import { DevicewiseMultisubscribeNewService } from './devicewise-multisubscribe-new.service';
+ * import { DwSubscription } from './models/dwsubscription';
+ * import { DwType } from './models/dwconstants';
+ *
+ * const variables = [new DwSubscription('Machine1', 'OEE', DwType.INT4, 1, -1).request.params];
+ * const multiSubscribe$ = service.multiSubscribe(variables);
+ * const subscription = multiSubscribe$.subscribe({
+ *   next: (data) => console.log('next', data),
+ *   error: (err) => console.log('error', err),
+ *   complete: () => console.log('complete')
+ * });
+ *
+ * setTimeout(() => {
+ *   subscription.unsubscribe();
+ * }, 1000);
+ * ```
+ *
+ * @param requestVariables requestVariables Variables to subscribe to.
+ * @method map
+ * @owner Observable
+ */
   public multiSubscribe(requestVariables: Variable[]): Observable<MultiSubscribeParams> {
     let buffer = '';
     let lastCharactersToReadNumber = 0;
 
-    const fetchObservable$ = this.fetchObservable(this.url + '/api', {
+    return this.fetchObservable(this.url + '/api', {
       method: 'POST',
       body: JSON.stringify({
         command: 'multisubscribe',
@@ -56,9 +86,8 @@ export class DevicewiseMultisubscribeNewService {
       }),
       credentials: 'include'
     }).pipe(
-      // tap((data) => console.log('data1', data)),
       tap((data) => buffer += data),
-      map((data) => {
+      map(() => {
         const objs: MultiSubscribeResponse[] = [];
         while (buffer.length > 0) {
           let obj: MultiSubscribeResponse;
@@ -82,39 +111,44 @@ export class DevicewiseMultisubscribeNewService {
             break;
           }
 
-          if (obj.success === false) {
-            throwError(obj.errorMessages[0]);
-            continue;
+          if (obj.success === true) {
+            objs.push(obj);
+          } else {
+            buffer = buffer.substring(charactersToReadStringLength + charactersToReadNumber);
+            throw obj;
           }
 
-          objs.push(obj);
           buffer = buffer.substring(charactersToReadStringLength + charactersToReadNumber);
         }
 
         return objs;
       }),
-      // tap((data) => console.log('data2', data)),
       concatAll(),
+      retryWhen((errors) => errors.pipe(
+        switchMap((sourceErr) => {
+          if (sourceErr.success === false && (sourceErr.errorCodes[0] === -7002)) {
+            return of(true);
+          } else {
+            return throwError(sourceErr);
+          }
+        })
+      )),
       map((data) => data.params),
-      // tap((data) => console.log('emitting multiSubscribe', data)),
       share(),
-      // tap((data) => console.log('subscriber got data', data)),
     );
-
-    return fetchObservable$;
   }
 
   private fetchObservable(input: RequestInfo, init?: RequestInit): Observable<string> {
-    const abortController = new AbortController();
+    let abortController = new AbortController();
 
     return new Observable((observer) => {
+      abortController = new AbortController();
       fetch(input, { signal: abortController.signal, ...init }).then((response) => {
         const reader = response.body.getReader();
         const stream = new ReadableStream({
           start(controller: ReadableStreamDefaultController<any>) {
             function push() {
               reader.read().then((result: ReadableStreamReadResult<any>) => {
-
                 if (result.done) {
                   controller.close();
                   return;
@@ -125,12 +159,18 @@ export class DevicewiseMultisubscribeNewService {
 
                 controller.enqueue(result.value);
                 push();
-              }).catch((err) => observer.error(err));
+              }).catch((err) => {
+                if (err.code !== 20) { } // Ignore
+              });
             }
             push();
           }
         });
-      }).catch((err) => observer.error(err));
+      }).catch((err) => {
+        if (err.code !== 20) {
+          observer.error(err);
+        }
+      });
 
       return () => {
         abortController.abort();
