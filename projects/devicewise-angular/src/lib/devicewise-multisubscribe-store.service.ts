@@ -1,6 +1,6 @@
 import { finalize, share, multicast, refCount, publish, tap, findIndex, take } from 'rxjs/operators';
 import { Observable, Subscription, Subject, ReplaySubject, Observer } from 'rxjs';
-import { Variable, DevicewiseMultisubscribeNewService, MultiSubscribeResponse, MultiSubscribeParams } from './devicewise-multisubscribe-new.service';
+import { Variable, DevicewiseMultisubscribeService, MultiSubscribeResponse, MultiSubscribeParams } from './devicewise-multisubscribe.service';
 import { DevicewiseApiService } from './devicewise-api.service';
 import { Injectable, OnDestroy } from '@angular/core';
 
@@ -14,7 +14,7 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
   subscription: Subscription;
   status = 0;
 
-  constructor(private devicewiseMultisubscribeService: DevicewiseMultisubscribeNewService, private apiService: DevicewiseApiService) {
+  constructor(private devicewiseMultisubscribeService: DevicewiseMultisubscribeService, private apiService: DevicewiseApiService) {
     this.apiService.getEndpointasObservable().subscribe((url) => this.url = url);
   }
 
@@ -33,10 +33,11 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
   }
 
   public addRequestVariables(variables: Variable[]) {
-    const newRequestVariables = this.requestVariables.concat(variables);
     this.requestVariables = this.requestVariables.concat(variables);
+    // const newRequestVariables = this.requestVariables.concat(variables);
     this.startMultisubscribe(false).pipe(take(1)).subscribe(
-      (data) => this.requestVariables.concat(variables)
+      null,
+      (err) => console.log(err)
     );
   }
 
@@ -58,8 +59,8 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
 
   private startMultisubscribe(newSubject: boolean) {
     this.stopMultisubscribe();
-    const sub = this.devicewiseMultisubscribeService.multiSubscribe(this.requestVariables);
-    if (newSubject || this.subject.observers.length > 0) {
+    const sub = this.devicewiseMultisubscribeService.multiSubscribe(this.requestVariables); //.pipe(tap((x) => console.log('tap', x)));
+    if (newSubject === true || this.subject.observers.length > 0) {
       this.subscription = sub.subscribe(this.subject);
     }
     return sub;

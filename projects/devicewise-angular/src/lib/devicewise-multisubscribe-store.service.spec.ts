@@ -5,7 +5,7 @@ import { DevicewiseMultisubscribeStoreService } from './devicewise-multisubscrib
 import { DwType } from './models/dwconstants';
 import { filter } from 'rxjs/operators';
 
-fdescribe('DevicewiseMultisubscribeStoreService', () => {
+describe('DevicewiseMultisubscribeStoreService', () => {
   let service: DevicewiseMultisubscribeStoreService;
   let authService: DevicewiseAngularService;
   const endpoint = 'http://192.168.1.19:88';
@@ -81,30 +81,56 @@ fdescribe('DevicewiseMultisubscribeStoreService', () => {
     expect(requestVariables.length).toEqual(0);
   });
 
-
   it('start multisubscribe works', (done: DoneFn) => {
-    service.addRequestVariables([variables[0]]);
-    const requestVariables = service.getRequestVariables();
-    expect(requestVariables.length).toEqual(1);
-    expect(requestVariables[0]).toEqual(variables[0]);
     let messagesReceived = 0;
 
     const subscription = service.subscriptionAsObservable().subscribe((data) => {
-      console.log('multi sub message', data);
       ++messagesReceived;
       expect(data.device).toEqual(variables[0].device);
-      expect(data.variable).toEqual(variables[0].variable);
+      // //expect(data.variable).toEqual(variables[0].variable);
       expect(data.data.length).toEqual(1);
       expect(data.data.length).toBeGreaterThanOrEqual(0);
       expect(data.data.length).toBeLessThanOrEqual(100);
     });
+
+    service.addRequestVariables([variables[0]]);
+    const requestVariables = service.getRequestVariables();
+    expect(requestVariables.length).toEqual(1);
+    expect(requestVariables[0]).toEqual(variables[0]);
+
 
     setTimeout(() => {
       subscription.unsubscribe();
       expect(subscription.closed).toBeTruthy();
       expect(messagesReceived).toBeGreaterThanOrEqual(requestVariables.length);
       done();
-    }, 1500);
+    }, 3000);
+  });
+
+  it('add vars then start multisubscribe works', (done: DoneFn) => {
+    let messagesReceived = 0;
+
+    service.addRequestVariables([variables[0]]);
+    const requestVariables = service.getRequestVariables();
+    expect(requestVariables.length).toEqual(1);
+    expect(requestVariables[0]).toEqual(variables[0]);
+
+    const subscription = service.subscriptionAsObservable().subscribe((data) => {
+      ++messagesReceived;
+      expect(data.device).toEqual(variables[0].device);
+      // //expect(data.variable).toEqual(variables[0].variable);
+      expect(data.data.length).toEqual(1);
+      expect(data.data.length).toBeGreaterThanOrEqual(0);
+      expect(data.data.length).toBeLessThanOrEqual(100);
+    });
+
+
+    setTimeout(() => {
+      subscription.unsubscribe();
+      expect(subscription.closed).toBeTruthy();
+      expect(messagesReceived).toBeGreaterThanOrEqual(requestVariables.length);
+      done();
+    }, 3000);
   });
 
   it('start multisubscribe works2', (done: DoneFn) => {
@@ -115,10 +141,8 @@ fdescribe('DevicewiseMultisubscribeStoreService', () => {
     let messagesReceived = 0;
 
     const subscription = service.subscriptionAsObservable().subscribe((data) => {
-      console.log('multi sub message', data);
       ++messagesReceived;
       expect(data.device).toEqual(variables[0].device);
-      // expect(data.variable).toEqual(variables[0].variable);
       expect(data.data.length).toEqual(1);
       expect(data.data.length).toBeGreaterThanOrEqual(0);
       expect(data.data.length).toBeLessThanOrEqual(100);
@@ -136,7 +160,7 @@ fdescribe('DevicewiseMultisubscribeStoreService', () => {
       expect(subscription.closed).toBeTruthy();
       expect(messagesReceived).toBeGreaterThanOrEqual(requestVariables.length);
       done();
-    }, 3000);
+    }, 2500);
   });
 
   it('add vars, sub, add more vars', (done: DoneFn) => {
@@ -149,7 +173,7 @@ fdescribe('DevicewiseMultisubscribeStoreService', () => {
       filter((data) => data.variable === variables[0].variable)
     ).subscribe((data) => {
       expect(data.device).toEqual(variables[0].device);
-      expect(data.variable).toEqual(variables[0].variable);
+      //expect(data.variable).toEqual(variables[0].variable);
       expect(data.data.length).toEqual(1);
       expect(data.data.length).toBeGreaterThanOrEqual(0);
       expect(data.data.length).toBeLessThanOrEqual(100);
@@ -159,7 +183,7 @@ fdescribe('DevicewiseMultisubscribeStoreService', () => {
       filter((data) => data.variable === variables[1].variable)
     ).subscribe((data) => {
       expect(data.device).toEqual(variables[1].device);
-      expect(data.variable).toEqual(variables[1].variable);
+      // expect(data.variable).toEqual(variables[1].variable);
       expect(data.data.length).toEqual(1);
       expect(data.data.length).toBeGreaterThanOrEqual(0);
       expect(data.data.length).toBeLessThanOrEqual(100);
@@ -191,7 +215,7 @@ fdescribe('DevicewiseMultisubscribeStoreService', () => {
       filter((data) => data.variable === variables[0].variable)
     ).subscribe((data) => {
       expect(data.device).toEqual(variables[0].device);
-      expect(data.variable).toEqual(variables[0].variable);
+      //expect(data.variable).toEqual(variables[0].variable);
       expect(data.data.length).toEqual(1);
       expect(data.data.length).toBeGreaterThanOrEqual(0);
       expect(data.data.length).toBeLessThanOrEqual(100);
@@ -201,7 +225,7 @@ fdescribe('DevicewiseMultisubscribeStoreService', () => {
       filter((data) => data.variable === variables[1].variable)
     ).subscribe((data) => {
       expect(data.device).toEqual(variables[1].device);
-      expect(data.variable).toEqual(variables[1].variable);
+      // expect(data.variable).toEqual(variables[1].variable);
       expect(data.data.length).toEqual(1);
       expect(data.data.length).toBeGreaterThanOrEqual(0);
       expect(data.data.length).toBeLessThanOrEqual(100);
@@ -230,134 +254,151 @@ fdescribe('DevicewiseMultisubscribeStoreService', () => {
     }, 3000);
   });
 
-  // it('add vars, sub, unsub, resub', (done: DoneFn) => {
-  //   service.addRequestVariables([variables[0]]);
-  //   const requestVariables = service.getRequestVariables();
-  //   expect(requestVariables.length).toEqual(1);
-  //   expect(requestVariables[0]).toEqual(variables[0]);
+  it('add vars, sub, unsub, resub', (done: DoneFn) => {
+    service.addRequestVariables([variables[0]]);
+    const requestVariables = service.getRequestVariables();
+    expect(requestVariables.length).toEqual(1);
+    expect(requestVariables[0]).toEqual(variables[0]);
 
-  //   const subscription = service.subscriptionAsObservable().subscribe((data) => {
-  //     expect(data.device).toEqual(variables[0].device);
-  //     expect(data.variable).toEqual(variables[0].variable);
-  //     expect(data.data.length).toEqual(1);
-  //     expect(data.data.length).toBeGreaterThanOrEqual(0);
-  //     expect(data.data.length).toBeLessThanOrEqual(100);
-  //   });
+    const subscription = service.subscriptionAsObservable().subscribe((data) => {
+      expect(data.device).toEqual(variables[0].device);
+      //expect(data.variable).toEqual(variables[0].variable);
+      expect(data.data.length).toEqual(1);
+      expect(data.data.length).toBeGreaterThanOrEqual(0);
+      expect(data.data.length).toBeLessThanOrEqual(100);
+    });
 
-  //   setTimeout(() => {
-  //     subscription.unsubscribe();
-  //     expect(subscription.closed).toBeTruthy();
+    setTimeout(() => {
+      subscription.unsubscribe();
+      expect(subscription.closed).toBeTruthy();
 
-  //     const subscription2 = service.subscriptionAsObservable().subscribe((data) => {
-  //       expect(data.device).toEqual(variables[0].device);
-  //       expect(data.variable).toEqual(variables[0].variable);
-  //       expect(data.data.length).toEqual(1);
-  //       expect(data.data.length).toBeGreaterThanOrEqual(0);
-  //       expect(data.data.length).toBeLessThanOrEqual(100);
-  //     });
+      const subscription2 = service.subscriptionAsObservable().subscribe((data) => {
+        expect(data.device).toEqual(variables[0].device);
+        //expect(data.variable).toEqual(variables[0].variable);
+        expect(data.data.length).toEqual(1);
+        expect(data.data.length).toBeGreaterThanOrEqual(0);
+        expect(data.data.length).toBeLessThanOrEqual(100);
+      });
 
-  //     setTimeout(() => {
-  //       subscription2.unsubscribe();
-  //       expect(subscription2.closed).toBeTruthy();
-  //       done();
-  //     }, 1000);
-  //   }, 1000);
-  // });
+      setTimeout(() => {
+        subscription2.unsubscribe();
+        expect(subscription2.closed).toBeTruthy();
+        done();
+      }, 1000);
+    }, 1000);
+  });
 
-  // it('start multisubscribe works', (done: DoneFn) => {
-  //   service.addRequestVariables([variables[0]]);
-  //   const requestVariables = service.getRequestVariables();
-  //   expect(requestVariables.length).toEqual(1);
-  //   expect(requestVariables[0]).toEqual(variables[0]);
+  it('start multisubscribe works', (done: DoneFn) => {
+    service.addRequestVariables([variables[0]]);
+    const requestVariables = service.getRequestVariables();
+    expect(requestVariables.length).toEqual(1);
+    expect(requestVariables[0]).toEqual(variables[0]);
 
-  //   const subscription = service.subscriptionAsObservable();
+    const subscription = service.subscriptionAsObservable();
 
-  //   subscription.subscribe((data) => {
-  //     expect(data.device).toEqual(variables[0].device);
-  //     expect(data.variable).toEqual(variables[0].variable);
-  //     expect(data.data.length).toEqual(1);
-  //     expect(data.data.length).toBeGreaterThanOrEqual(0);
-  //     expect(data.data.length).toBeLessThanOrEqual(100);
-  //     done();
-  //   });
+    subscription.subscribe((data) => {
+      expect(data.device).toEqual(variables[0].device);
+      //expect(data.variable).toEqual(variables[0].variable);
+      expect(data.data.length).toEqual(1);
+      expect(data.data.length).toBeGreaterThanOrEqual(0);
+      expect(data.data.length).toBeLessThanOrEqual(100);
+      done();
+    });
 
-  //   subscription.subscribe((data) => {
-  //     expect(data.device).toEqual(variables[0].device);
-  //     expect(data.variable).toEqual(variables[0].variable);
-  //     expect(data.data.length).toEqual(1);
-  //     expect(data.data.length).toBeGreaterThanOrEqual(0);
-  //     expect(data.data.length).toBeLessThanOrEqual(100);
-  //     done();
-  //   });
-  // });
+    subscription.subscribe((data) => {
+      expect(data.device).toEqual(variables[0].device);
+      //expect(data.variable).toEqual(variables[0].variable);
+      expect(data.data.length).toEqual(1);
+      expect(data.data.length).toBeGreaterThanOrEqual(0);
+      expect(data.data.length).toBeLessThanOrEqual(100);
+      done();
+    });
+  });
 
-  // it('start multisubscribe and add variables', (done: DoneFn) => {
-  //   service.addRequestVariables([variables[0]]);
-  //   let requestVariables = service.getRequestVariables();
-  //   expect(requestVariables.length).toEqual(1);
-  //   expect(requestVariables[0]).toEqual(variables[0]);
+  it('start multisubscribe and add variables', (done: DoneFn) => {
+    service.addRequestVariables([variables[0]]);
+    let requestVariables = service.getRequestVariables();
+    expect(requestVariables.length).toEqual(1);
+    expect(requestVariables[0]).toEqual(variables[0]);
 
-  //   let messagesReceived = 0;
-  //   const subscription = service.subscriptionAsObservable().subscribe((data) => {
-  //     expect(data.device).toEqual(variables[0].device);
-  //     expect(data.variable).toEqual(variables[0].variable);
-  //     expect(data.data.length).toEqual(1);
-  //     expect(data.data.length).toBeGreaterThanOrEqual(0);
-  //     expect(data.data.length).toBeLessThanOrEqual(100);
-  //     ++messagesReceived;
-  //     if (messagesReceived === 2) {
-  //       subscription.unsubscribe();
-  //       expect(subscription.closed).toBeTruthy();
-  //       done();
-  //     }
-  //   });
+    let messagesReceived = 0;
+    const subscription = service.subscriptionAsObservable().subscribe((data) => {
+      expect(data.device).toEqual(variables[0].device);
+      //expect(data.variable).toEqual(variables[0].variable);
+      expect(data.data.length).toEqual(1);
+      expect(data.data.length).toBeGreaterThanOrEqual(0);
+      expect(data.data.length).toBeLessThanOrEqual(100);
+      ++messagesReceived;
+      if (messagesReceived === 2) {
+        subscription.unsubscribe();
+        expect(subscription.closed).toBeTruthy();
+        done();
+      }
+    });
 
-  //   setTimeout(() => {
-  //     service.addRequestVariables([variables[1]]);
-  //     requestVariables = service.getRequestVariables();
-  //     expect(requestVariables.length).toEqual(2);
-  //     expect(requestVariables[1]).toEqual(variables[1]);
-  //   }, 500);
-  // });
+    setTimeout(() => {
+      service.addRequestVariables([variables[1]]);
+      requestVariables = service.getRequestVariables();
+      expect(requestVariables.length).toEqual(2);
+      expect(requestVariables[1]).toEqual(variables[1]);
+    }, 500);
+  });
 
-  // it('stop multisubscribe works', (done: DoneFn) => {
-  //   service.addRequestVariables([variables[0]]);
-  //   const requestVariables = service.getRequestVariables();
-  //   expect(requestVariables.length).toEqual(1);
-  //   expect(requestVariables[0]).toEqual(variables[0]);
+  it('stop multisubscribe works', (done: DoneFn) => {
+    service.addRequestVariables([variables[0]]);
+    const requestVariables = service.getRequestVariables();
+    expect(requestVariables.length).toEqual(1);
+    expect(requestVariables[0]).toEqual(variables[0]);
 
-  //   const subscription = service.subscriptionAsObservable().subscribe((data) => {
-  //     expect(data.device).toEqual(variables[0].device);
-  //     expect(data.variable).toEqual(variables[0].variable);
-  //     expect(data.data.length).toEqual(1);
-  //     expect(data.data.length).toBeGreaterThanOrEqual(0);
-  //     expect(data.data.length).toBeLessThanOrEqual(100);
-  //     subscription.unsubscribe();
-  //     expect(subscription.closed).toBeTruthy();
-  //     done();
-  //   });
-  // });
+    const subscription = service.subscriptionAsObservable().subscribe((data) => {
+      expect(data.device).toEqual(variables[0].device);
+      //expect(data.variable).toEqual(variables[0].variable);
+      expect(data.data.length).toEqual(1);
+      expect(data.data.length).toBeGreaterThanOrEqual(0);
+      expect(data.data.length).toBeLessThanOrEqual(100);
+      subscription.unsubscribe();
+      expect(subscription.closed).toBeTruthy();
+      done();
+    });
+  });
 
-  // it('invalid multisubscribe request', (done: DoneFn) => {
-  //   const invalidVariable = JSON.parse(JSON.stringify(variables[0]));
-  //   invalidVariable.variable = invalidVariable.variable + '1234';
-  //   service.addRequestVariables([invalidVariable]);
-  //   const requestVariables = service.getRequestVariables();
-  //   expect(requestVariables.length).toEqual(1);
-  //   expect(requestVariables[0]).toEqual(invalidVariable);
+  it('invalid multisubscribe request', (done: DoneFn) => {
+    const invalidVariable = JSON.parse(JSON.stringify(variables[0]));
+    invalidVariable.variable = invalidVariable.variable + '1234';
+    service.addRequestVariables([invalidVariable]);
+    const requestVariables = service.getRequestVariables();
+    expect(requestVariables.length).toEqual(1);
+    expect(requestVariables[0]).toEqual(invalidVariable);
 
-  //   const subscription = service.subscriptionAsObservable().subscribe((data) => {
-  //     expect(data.device).toEqual(variables[0].device);
-  //     expect(data.variable).toEqual(variables[0].variable);
-  //     expect(data.data.length).toEqual(1);
-  //     expect(data.data.length).toBeGreaterThanOrEqual(0);
-  //     expect(data.data.length).toBeLessThanOrEqual(100);
-  //     subscription.unsubscribe();
-  //     expect(subscription.closed).toBeTruthy();
-  //     done();
-  //   },
-  //   (err) => console.warn('Failed to add new request variable', err));
-  // });
+    const subscription = service.subscriptionAsObservable().subscribe(null,
+      (err) => {
+        expect(err.success).toEqual(false);
+        expect(err.errorCodes).toBeLessThan(-1);
+        expect(err.errorMessages.length).toBeGreaterThan(0);
+        done();
+      });
+  });
 
+  it('invalid multisubscribe request multi var', (done: DoneFn) => {
+    const invalidVariable = JSON.parse(JSON.stringify(variables[0]));
+    const invalidVariable2 = JSON.parse(JSON.stringify(variables[0]));
+    invalidVariable.variable = invalidVariable.variable + '1234';
+    invalidVariable2.variable = invalidVariable.variable + '1234';
+
+    service.addRequestVariables([invalidVariable, invalidVariable2]);
+    const requestVariables = service.getRequestVariables();
+    expect(requestVariables.length).toEqual(2);
+    expect(requestVariables[0]).toEqual(invalidVariable);
+    expect(requestVariables[1]).toEqual(invalidVariable2);
+
+
+    const subscription = service.subscriptionAsObservable().subscribe(null,
+      (err) => {
+        expect(err.success).toEqual(false);
+        expect(err.errorCodes).toBeLessThan(-1);
+        expect(err.errorMessages.length).toBeGreaterThan(0);
+        done();
+      });
+  });
 
 });

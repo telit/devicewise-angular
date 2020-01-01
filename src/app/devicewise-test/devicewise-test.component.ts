@@ -8,7 +8,8 @@ import {
   DwRequest,
   DwResponse,
   DwSubscription,
-  DwType
+  DwType,
+  Variable
 } from 'devicewise-angular';
 import { BehaviorSubject, forkJoin } from 'rxjs';
 import {
@@ -55,7 +56,7 @@ export class DevicewiseTestComponent implements OnInit {
   subTriggerVariablesSubject: BehaviorSubject<any[]> = new BehaviorSubject([]);
   subscriptions = {};
   subscriptionsSubject: BehaviorSubject<{}> = new BehaviorSubject({});
-  multiSubscribeVariables: DwSubscription[] = [];
+  multiSubscribeVariables: Variable[] = [];
   multiSubsciptionsSubject: BehaviorSubject<{}> = new BehaviorSubject({});
   loginResponse;
   logoutResponse;
@@ -307,12 +308,16 @@ export class DevicewiseTestComponent implements OnInit {
       rate = 1;
     }
 
-    const newSubscription: DwSubscription = new DwSubscription(device, variable, type, count, length);
+    const newSubscription: Variable = {
+      device: device,
+      variable: variable,
+      type: type,
+      count: count,
+      length: length,
+  };
     this.multiSubscribeVariables.push(newSubscription);
 
-    this.dwMultiSubscribe.initMultiSubscribe(this.multiSubscribeVariables);
-
-    newSubscription.subscription.subscribe((data) => {
+    this.dwMultiSubscribe.multiSubscribe(this.multiSubscribeVariables).subscribe((data) => {
     }, (error) => this.openSnackError(error)
     );
   }

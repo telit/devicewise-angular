@@ -1,120 +1,79 @@
-import { Injectable } from '@angular/core';
-import { Subject, ReplaySubject } from 'rxjs';
-import fetchStream from 'fetch-readablestream';
-import * as Dwresponse from './models/dwresponse';
-import * as Dwrequest from './models/dwrequest';
-import { DwSubscription } from './models/dwsubscription';
-import { DevicewiseAngularService } from './devicewise-angular.service';
+import { map, tap, share, concatAll, retryWhen, switchMap } from 'rxjs/operators';
+import { Observable, throwError, of } from 'rxjs';
 import { DevicewiseApiService } from './devicewise-api.service';
+import { Injectable } from '@angular/core';
+
+interface FetchData {
+  buffer: string;
+}
+
+export interface Variable {
+  device: string;
+  variable: string;
+  type: number;
+  count: number;
+  length: number;
+}
+
+export interface MultiSubscribeResponse {
+  success: boolean;
+  params: MultiSubscribeParams;
+  errorCodes?: number[];
+  errorMessages?: string[];
+}
+
+export interface MultiSubscribeParams {
+  device: string;
+  variable: string;
+  data: number[];
+}
 
 @Injectable({
   providedIn: 'root'
 })
-
 export class DevicewiseMultisubscribeService {
-  private activeSubscriptions: { [key: string]: Subject<Dwresponse.Subscription> } = {};
-  private abortControllers: AbortController[] = [];
-  private variables: DwSubscription[] = [];
-  private permanentVariables: DwSubscription[] = [];
-  private permanentSubscriptions: Subject<Dwresponse.Subscription>[] = [];
-  private activeReplaySubjects: ReplaySubject<Dwresponse.Subscription>[] = [];
-  private url = '';
+  public url = '';
+  public multiSubscribeShared: Observable<MultiSubscribeParams>;
 
   constructor(private apiService: DevicewiseApiService) {
     this.apiService.getEndpointasObservable().subscribe((url) => this.url = url);
   }
 
-  public dwVariableArrayToMultiSubRequest(variables: DwSubscription[]): Dwrequest.DwmultisubscribeRequestVariableSubscription[] {
-    const multiSubArray: Dwrequest.DwmultisubscribeRequestVariableSubscription[] = [];
-    variables.forEach((variable, index) => {
-      multiSubArray.push({
-        device: variable.request.params.device,
-        variable: variable.request.params.variable,
-        type: variable.request.params.type,
-        count: variable.request.params.count,
-        length: variable.request.params.length
-      });
-    });
-    return multiSubArray;
-  }
+/**
+ * Subscribe to multiple `requestVariables`. emits inital value and then on change of value.
+ * Observable, and emits the resulting values as an Observable.
+ *
+ * See [Documentation](https://docs.devicewise.com/Content/home.htm)
+ *
+ * ## Example
+ * Subscribe to a variable 'OEE' from device 'Machine1' and then unsubscribe a second later.
+ * ```ts
+ * import { DevicewiseMultisubscribeNewService } from './devicewise-multisubscribe-new.service';
+ * import { DwSubscription } from './models/dwsubscription';
+ * import { DwType } from './models/dwconstants';
+ *
+ * const variables = [new DwSubscription('Machine1', 'OEE', DwType.INT4, 1, -1).request.params];
+ * const multiSubscribe$ = service.multiSubscribe(variables);
+ * const subscription = multiSubscribe$.subscribe({
+ *   next: (data) => console.log('next', data),
+ *   error: (err) => console.log('error', err),
+ *   complete: () => console.log('complete')
+ * });
+ *
+ * setTimeout(() => {
+ *   subscription.unsubscribe();
+ * }, 1000);
+ * ```
+ *
+ * @param requestVariables requestVariables Variables to subscribe to.
+ * @method map
+ * @owner Observable
+ */
+  public multiSubscribe(requestVariables: Variable[]): Observable<MultiSubscribeParams> {
+    let buffer = '';
+    let lastCharactersToReadNumber = 0;
 
-  public addPermanentVariables(variables: DwSubscription[]) {
-    let exist = false;
-    variables.forEach((variable) => {
-      exist = false;
-      const newSubscription: ReplaySubject<Dwresponse.Subscription> = new ReplaySubject<Dwresponse.Subscription>();
-      this.permanentVariables.forEach((permanentVariable) => {
-        if (permanentVariable.request.params.variable === variable.request.params.variable) {
-          exist = true;
-        }
-      });
-      if (!exist) {
-        variable.subscription = newSubscription.asObservable();
-        this.permanentSubscriptions.push(newSubscription);
-        this.permanentVariables.push(variable);
-      }
-    });
-  }
-
-  public removePermanentVariables(variableNames: string[]) {
-    variableNames.forEach((variableName) => {
-      this.permanentVariables.forEach((permanentVariable, index) => {
-        if (permanentVariable.request.params.variable === variableName) {
-          this.permanentVariables.splice(index, 1);
-          return;
-        }
-      });
-    });
-  }
-
-  public initMultiSubscribe(variables: DwSubscription[]) {
-    let newPermanentVariable = false;
-    this.activeReplaySubjects.forEach((variable) => {
-      variable.complete();
-    });
-    this.activeReplaySubjects = [];
-    this.variables = [];
-
-    if (!variables) {
-      variables = [];
-    }
-
-    variables.forEach((variable) => {
-      const dwVariableName = variable.request.params.device + '.' + variable.request.params.variable;
-      if (this.activeSubscriptions[dwVariableName]) {
-        console.log('dw: Already exists', this.activeSubscriptions[dwVariableName]);
-        variable.subscription = this.activeSubscriptions[dwVariableName];
-        return;
-      }
-      const newSubscription: ReplaySubject<Dwresponse.Subscription> = new ReplaySubject<Dwresponse.Subscription>();
-      variable.subscription = newSubscription.asObservable();
-      this.activeReplaySubjects.push(newSubscription);
-      this.activeSubscriptions[dwVariableName] = newSubscription;
-    });
-
-    this.permanentVariables.forEach((variable, index) => {
-      const dwVariableName = variable.request.params.device + '.' + variable.request.params.variable;
-      if (!this.activeSubscriptions[dwVariableName]) {
-        newPermanentVariable = true;
-        this.activeSubscriptions[dwVariableName] = this.permanentSubscriptions[index];
-      }
-    });
-    this.variables = this.variables.concat(this.permanentVariables, variables);
-
-    return this.multiSubscribe(this.variables);
-  }
-
-  private multiSubscribe(variables: DwSubscription[]) {
-    const abortController = new AbortController();
-    if (this.abortControllers.length) {
-      this.abortAllNotifications();
-    }
-    this.abortControllers.push(abortController);
-
-    const requestVariables = this.dwVariableArrayToMultiSubRequest(this.variables);
-
-    fetchStream(this.url + '/api', {
-      signal: abortController.signal,
+    return this.fetchObservable(this.url + '/api', {
       method: 'POST',
       body: JSON.stringify({
         command: 'multisubscribe',
@@ -126,87 +85,98 @@ export class DevicewiseMultisubscribeService {
         }
       }),
       credentials: 'include'
-    }).then((response) => {
-      const reader = response.body.getReader();
-      const chunks = '';
-      this.pump(reader, chunks);
-    }).catch((error) => {
-      console.warn('Abort Controller!', error);
-      setTimeout(() => {
-        console.log('reader error multisub');
-        this.multiSubscribe(this.variables);
-      }, 1000);
-    });
-  }
+    }).pipe(
+      tap((data) => buffer += data),
+      map(() => {
+        const objs: MultiSubscribeResponse[] = [];
+        while (buffer.length > 0) {
+          let obj: MultiSubscribeResponse;
+          let charactersToReadNumber = 0;
+          let charactersToReadStringLength = 0;
 
-  private pump(reader, chunks) {
-    let charactersToRead = 0;
-    let lengthOfCharactersToRead = 0;
-    let oldcharactersToRead = charactersToRead;
-
-    while (chunks.length > 0) {
-      oldcharactersToRead = charactersToRead;
-      if (isNaN((charactersToRead = parseInt(chunks, 10)))) {
-        console.warn('pump(): parseInt failure when reading length.', chunks);
-        charactersToRead = oldcharactersToRead;
-        lengthOfCharactersToRead = 0;
-        break;
-      } else {
-        lengthOfCharactersToRead = charactersToRead.toString().length;
-      }
-
-      try {
-        const subString = chunks.substring(lengthOfCharactersToRead, charactersToRead + lengthOfCharactersToRead);
-        const subObj = JSON.parse(subString);
-        if (subObj.success === false) {
-          console.warn('pump(): Aborting and getting notifications again.', subObj, chunks);
-          setTimeout(() => {
-            console.log('sub object timed out multisub');
-            this.multiSubscribe(this.variables);
-          });
-          return;
-        } else {
-          const activeSubscription = this.activeSubscriptions[subObj.params.device + '.' + subObj.params.variable];
-          if (activeSubscription) {
-            activeSubscription.next(subObj);
+          if (isNaN((charactersToReadNumber = parseInt(buffer, 10)))) {
+            charactersToReadNumber = lastCharactersToReadNumber;
+            charactersToReadStringLength = 0;
           } else {
-            console.log('Missing active subscription', subObj);
+            lastCharactersToReadNumber = charactersToReadNumber;
+            charactersToReadStringLength = charactersToReadNumber.toString().length;
           }
+
+          const subString = buffer.substring(charactersToReadStringLength, charactersToReadStringLength + charactersToReadNumber);
+
+          try {
+            obj = JSON.parse(subString);
+          } catch {
+            buffer = buffer.substring(charactersToReadStringLength);
+            break;
+          }
+
+          if (obj.success === true) {
+            objs.push(obj);
+          } else {
+            buffer = buffer.substring(charactersToReadStringLength + charactersToReadNumber);
+            throw obj;
+          }
+
+          buffer = buffer.substring(charactersToReadStringLength + charactersToReadNumber);
         }
-        const readLength = charactersToRead + charactersToRead.toString().length;
-        chunks = chunks.substr(readLength);
-      } catch {
-        break;
-      }
-    }
 
-    if (chunks.length >= 65536) {
-      console.log('Chunk too long! Resetting Chunk. You may be receving data faster than the system can process it. Aborting the stream. The data was lost.');
-      chunks = chunks.substring(0, 65536);
-    }
+        return objs;
+      }),
+      concatAll(),
+      retryWhen((errors) => errors.pipe(
+        switchMap((sourceErr) => {
+          if (sourceErr.success === false && (sourceErr.errorCodes[0] === -7002)) {
+            return of(true);
+          } else {
+            return throwError(sourceErr);
+          }
+        })
+      )),
+      map((data) => data.params),
+      share(),
+    );
+  }
 
-    reader.read().then(({ value, done }) => {
-      if (done) {
-        return;
-      }
-      chunks = chunks.concat(new TextDecoder('utf-8').decode(value));
-      return this.pump(reader, chunks);
-    }).catch(error => {
-      if (error.name === 'TypeError') {
-        console.log('MultiSubscribe Reader: There was a network error.');
-        setTimeout(() => {
-          console.log('Attempting to resubscribe...');
-          this.multiSubscribe(this.variables);
-        }, 3333);
-      }
+  private fetchObservable(input: RequestInfo, init?: RequestInit): Observable<string> {
+    let abortController = new AbortController();
+
+    return new Observable((observer) => {
+      abortController = new AbortController();
+      fetch(input, { signal: abortController.signal, ...init }).then((response) => {
+        const reader = response.body.getReader();
+        const stream = new ReadableStream({
+          start(controller: ReadableStreamDefaultController<any>) {
+            function push() {
+              reader.read().then((result: ReadableStreamReadResult<any>) => {
+                if (result.done) {
+                  controller.close();
+                  return;
+                }
+
+                const resultData: string = new TextDecoder('utf-8').decode(result.value);
+                observer.next(resultData);
+
+                controller.enqueue(result.value);
+                push();
+              }).catch((err) => {
+                if (err.code !== 20) { } // Ignore
+              });
+            }
+            push();
+          }
+        });
+      }).catch((err) => {
+        if (err.code !== 20) {
+          observer.error(err);
+        }
+      });
+
+      return () => {
+        abortController.abort();
+        observer.complete();
+      };
     });
   }
 
-  public abortAllNotifications() {
-    if (!this.abortControllers.length) {
-      return;
-    }
-    this.abortControllers.forEach((abortController) => abortController.abort());
-    this.abortControllers = [];
-  }
 }
