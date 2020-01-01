@@ -38,5 +38,8 @@
   "dependencies": {
     "fetch-readablestream": "^0.2.0",
     "ngx-cookie-service": "^2.2.0"
+  },
+  "devDependencies": {
+    "@angular/cli": "^8.3.21"
   }
 }
