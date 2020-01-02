@@ -11,7 +11,7 @@ import { DwType } from './models/dwconstants';
 describe('DevicewiseMultisubscribeNewService', () => {
   let service: DevicewiseMultisubscribeService;
   let authService: DevicewiseAngularService;
-  const endpoint = 'http://192.168.1.19:88';
+  const endpoint = 'http://localhost:88';
   const username = 'admin';
   const password = 'admin';
   const variables: any[] = [
