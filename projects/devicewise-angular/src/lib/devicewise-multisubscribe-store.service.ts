@@ -1,6 +1,9 @@
 import { finalize, share, multicast, refCount, publish, tap, findIndex, take } from 'rxjs/operators';
 import { Observable, Subscription, Subject, ReplaySubject, Observer } from 'rxjs';
-import { Variable, DevicewiseMultisubscribeService, MultiSubscribeResponse, MultiSubscribeParams } from './devicewise-multisubscribe.service';
+import {
+  Variable,
+  DevicewiseMultisubscribeService,
+  MultiSubscribeParams } from './devicewise-multisubscribe.service';
 import { DevicewiseApiService } from './devicewise-api.service';
 import { Injectable, OnDestroy } from '@angular/core';
 
