@@ -1,10 +1,14 @@
-
+[![npm version](https://badgen.net/npm/v/devicewise-angular?icon=npm)](https://badgen.net/npm/v/devicewise-angular?icon=npm)
+[![npm downloads](https://badgen.net/npm/dy/devicewise-angular?icon=npm)](https://badgen.net/npm/v/devicewise-angular?icon=npm)
 [![Build Status](https://travis-ci.com/astone2014/devicewise-angular.svg?branch=master)](https://travis-ci.com/astone2014/devicewise-angular)
 [![Known Vulnerabilities](https://snyk.io/test/github/astone2014/devicewise-angular/badge.svg?targetFile=projects/devicewise-angular/package.json)](https://snyk.io/test/github/astone2014/devicewise-angular?targetFile=projects/devicewise-angular/package.json)
 
 # DeviceWISE Angular API Service
 
 Angular services for communicating with deviceWISE.
+
+# DeviceWISE Angular API Service
+
 
 # Installation
 
@@ -129,7 +133,7 @@ ng serve --open
 
 Checking out the following resources usually solves most of the problems people seem to have with this devicewise service:
 
-* [DeviceWISE HELP](https://docs-engr.devicewise.com/)
+* [📚 DeviceWISE Docs](https://docs-engr.devicewise.com/)
 * [DeviceWISE Javascript Library](http://help.devicewise.com/display/M2MOpen/JavaScript+API+Library)
 * [DeviceWISE Postman Collection](https://web.postman.co/collections/4197967-d416fb5a-b10d-47fb-9bd4-b740c4842503?workspace=0a806903-4bd9-4c42-8f6a-a4cecdf162d1)
 

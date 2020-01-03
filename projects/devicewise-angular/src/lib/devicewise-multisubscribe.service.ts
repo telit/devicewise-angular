@@ -128,7 +128,7 @@ export class DevicewiseMultisubscribeService {
         })
       )),
       map((data) => data.params),
-      share(),
+      share()
     );
   }
 
