@@ -1,72 +1,127 @@
+
+[![Build Status](https://travis-ci.com/astone2014/devicewise-angular.svg?branch=master)](https://travis-ci.com/astone2014/devicewise-angular)
+[![Known Vulnerabilities](https://snyk.io/test/github/astone2014/devicewise-angular/badge.svg?targetFile=projects/devicewise-angular/package.json)](https://snyk.io/test/github/astone2014/devicewise-angular?targetFile=projects/devicewise-angular/package.json)
+
 # DeviceWISE Angular API Service
 
-An Angular (2+) service for communicating with deviceWISE.
+Angular services for communicating with deviceWISE.
 
 # Installation
 
-```bash
+```cli
 npm install devicewise-angular --save
-
-# or
-
-yarn add devicewise-angular
 ```
 
-Add the devicewise angular module to your `app.module.ts`:
+Import the devicewise angular module in your `app.module.ts`:
 
-```typescript
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-
-import { AppComponent } from './app.component';
+```ts
+...
 import { DevicewiseAngularModule } from 'devicewise-angular';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-  ],
   imports: [
-    BrowserModule,
-    DevicewiseAngularModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
-})
-export class AppModule { }
+    ...
+    DevicewiseAngularModule.forRoot()
 ```
 
 Then, import and inject the devicewise angular service into a component:
 
-```typescript
-import { Component, OnInit } from '@angular/core';
+```ts
+...
 import { DevicewiseAngularService } from 'devicewise-angular';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  ...
 })
 export class AppComponent implements OnInit {
   constructor(private devicewise: DevicewiseAngularService) {}
 
   ngOnInit() {
-    this.devicewise.login(location.origin, 'admin', 'admin').subscribe(loginResponse => {
-      console.log(loginResponse);
-      this.devicewise.deviceList().subscribe((deviceListResponse) => {
-        console.log(deviceListResponse);
-      });
-    });
+    this.dwAuthentication.easyLogin('http://localhost:88', 'admin', 'admin').pipe(
+      switchMap((e) => this.dwApi.deviceList())
+    ).subscribe((e) => console.log(e));
   }
-}
+  ...
+```
+The `easyLogin` method will automatically save the sessionId from the login request as a cookie. If a cookie already exists it will be checked for validity before emitting sucessful login.
+
+# MultiSubscribe
+Using HTTP fetch is a much more efficient way to communicate with devicewise. Consider using multisubscribe to subscribe to variable data rather than read a variable on an interval.
+
+
+```ts
+...
+import { DevicewiseAngularService } from 'devicewise-angular';
+
+@Component({
+  ...
+})
+export class AppComponent implements OnInit {
+  constructor(private devicewise: DevicewiseAngularService) {}
+
+  ngOnInit() {
+    const variables: Variable[] = [{ device: 'Machine1', variable: 'OEE', type: DwType.FLOAT4, count: 1, length: -1 }];
+
+    this.dwMultiSubscribeService.addRequestVariables(variables);    
+    this.dwAuthentication.easyLogin('http://localhost:88', 'admin', 'admin').pipe(
+      switchMap((e) => this.dwMultiSubscribeService.subscriptionAsObservable())
+    ).subscribe((e) => console.log(e));
+  }
+  ...
 ```
 
-That's it!
+Make sure you unsubscribe from the multisubscribe store obervable!
+
+It's also common to save the observable.
+```ts
+this.multisub$ = this.dwMultiSubscribeService.subscriptionAsObservable();
+```
+To get a specific variable out of the observable create a pipe containing filter.
+```ts
+this.multisub$.pipe(
+  filter((e) => e.device.name == 'Machine1' && e.variable.name = 'OEE')
+).subscribe((e) => console.log(e))
+```
+Anthoner possibility. Create an async pipe in your html template
+```html
+<div *ngIf="multisub$ | async as variable">
+  <p>Value: {{variable.data[0]}}</p>
+</div>
+```
+
+This multisubscribe store makes it easy to add, remove, and edit variables from a single stream from devicewise.
 
 # What to do now?
 
-* Run `npm run test` to run the tests for the devicewise service (located in the `app` folder)
+* Run `ng test devicewise-angular` to run the tests devicewise angular.
 * Have a look at and play around with the `app` to get to know the devicewise service with `ng serve --open`
 * Set up other users in deviceWISE (default credentials are admin/admin)
+
+# Running the Demo
+
+Clone the repository.
+
+```cli
+git clone https://github.com/astone2014/devicewise-angular.git
+```
+
+Navigate to the folder.
+
+```cli
+cd devicewise-angular
+```
+
+Install packages.
+
+```cli
+npm i
+```
+
+Run Demo.
+
+```cli
+ng serve --open
+```
 
 # FAQ
 
@@ -98,10 +153,8 @@ However, we will only accept pull requests that pass all tests and include some 
 
 # Author
 
-This service is provided to you free by [Telit IoT Platforms](https://telit.com/).
+This library is provided to you free by [Telit IoT Platforms](https://telit.com/).
 
 # License
 
 [MIT](https://github.com/astone2014/devicewise-angular/master/LICENSE)
-
-[![Build Status](https://travis-ci.com/astone2014/devicewise-angular.svg?branch=master)](https://travis-ci.com/astone2014/devicewise-angular)
