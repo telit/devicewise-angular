@@ -53,17 +53,20 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
    * @method getRequestVariables
    */
   public getRequestVariables(): Variable[] {
+    console.log('got request variables', this.requestVariables);
     return this.requestVariables;
   }
 
   /**
    * Add request variables to multisubscribe store.
    *
-   * @param requestVariables requestVariables Variables to add.
+   * @param variables requestVariables Variables to add.
    * @method addRequestVariables
    */
-  public addRequestVariables(requestVariables: Variable[]) {
-    this.requestVariables = this.requestVariables.concat(requestVariables);
+  public addRequestVariables(variables: Variable[]) {
+    console.log('adding request variables', this.requestVariables);
+    this.requestVariables = this.requestVariables.concat(variables);
+    console.log('added request variables', this.requestVariables);
     this.reSubscribe();
   }
 
@@ -74,12 +77,14 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
    * @method removeRequestVariables
    */
   public removeRequestVariables(variables: Variable[]) {
+    console.log('removing request variables', this.requestVariables);
     variables.forEach((variable) => {
       const foundIndex = this.requestVariables.findIndex(
         (requestVariable) => (requestVariable.device === variable.device) && (requestVariable.variable === variable.variable)
       );
       this.requestVariables.splice(foundIndex, 1);
     });
+    console.log('removed request variables', this.requestVariables);
     this.reSubscribe();
   }
 
