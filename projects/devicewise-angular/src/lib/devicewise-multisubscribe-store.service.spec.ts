@@ -260,7 +260,6 @@ describe('DevicewiseMultisubscribeStoreService', () => {
 
     const subscription = service.subscriptionAsObservable().subscribe((data) => {
       expect(data.device).toEqual(variables[0].device);
-      //expect(data.variable).toEqual(variables[0].variable);
       expect(data.data.length).toEqual(1);
       expect(data.data.length).toBeGreaterThanOrEqual(0);
       expect(data.data.length).toBeLessThanOrEqual(100);
@@ -272,7 +271,6 @@ describe('DevicewiseMultisubscribeStoreService', () => {
 
       const subscription2 = service.subscriptionAsObservable().subscribe((data) => {
         expect(data.device).toEqual(variables[0].device);
-        //expect(data.variable).toEqual(variables[0].variable);
         expect(data.data.length).toEqual(1);
         expect(data.data.length).toBeGreaterThanOrEqual(0);
         expect(data.data.length).toBeLessThanOrEqual(100);
