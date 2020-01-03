@@ -587,7 +587,7 @@
               </mat-form-field>
               <ngx-json-viewer [expanded]="false" *ngIf="multiSubscribeResponse" [json]="multiSubscribeResponse"></ngx-json-viewer>
               <mat-action-row>
-                <button mat-raised-button color="primary" (click)="multiSubscribe(multiSubscribeDevice.value, multiSubscribeVariable.value)">
+                <button mat-raised-button color="primary" (click)="multiSubscribe(multiSubscribeDevice.value, chipList.value)">
                   MultiSubscribe
                 </button>
               </mat-action-row>

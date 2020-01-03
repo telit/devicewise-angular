@@ -110,8 +110,8 @@ export class DevicewiseTestComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    // this.url = location.origin;
-    this.url = '';
+    this.url = location.origin;
+    // this.url = '';
     this.dataSource.paginator = this.paginator;
     this.devicewise.easyLogin(this.url, '', '').subscribe((login) => {
       console.log('logged in!');
@@ -614,6 +614,7 @@ export class DevicewiseTestComponent implements OnInit {
     this.currentDevice = input.value;
 
     this.dwApi.deviceInfo(this.currentDevice, 2).subscribe((data) => {
+      console.log(data);
       if (!data.params.variableInfo) {
         this.variables.next([]);
       } else {
