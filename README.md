@@ -8,7 +8,7 @@ Angular services for communicating with deviceWISE.
 
 # Installation
 
-```bash
+```cli
 npm install devicewise-angular --save
 ```
 
@@ -38,8 +38,8 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.dwAuthentication.easyLogin('http://localhost:88', 'admin', 'admin').pipe(
-      switchMap((loginResponse) => this.dwApi.deviceList())
-    ).subscribe((deviceListResponse) => console.log(deviceListResponse));
+      switchMap((e) => this.dwApi.deviceList())
+    ).subscribe((e) => console.log(e));
   }
   ...
 ```
@@ -64,13 +64,30 @@ export class AppComponent implements OnInit {
 
     this.dwMultiSubscribeService.addRequestVariables(variables);    
     this.dwAuthentication.easyLogin('http://localhost:88', 'admin', 'admin').pipe(
-      switchMap((loginResponse) => this.dwMultiSubscribeService.subscriptionAsObservable())
-    ).subscribe((deviceListResponse) => console.log(deviceListResponse));
+      switchMap((e) => this.dwMultiSubscribeService.subscriptionAsObservable())
+    ).subscribe((e) => console.log(e));
   }
   ...
 ```
 
 Make sure you unsubscribe from the multisubscribe store obervable!
+
+It's also common to save the observable.
+```ts
+this.multisub$ = this.dwMultiSubscribeService.subscriptionAsObservable();
+```
+To get a specific variable out of the observable create a pipe containing filter.
+```ts
+this.multisub$.pipe(
+  filter((e) => e.device.name == 'Machine1' && e.variable.name = 'OEE')
+).subscribe((e) => console.log(e))
+```
+Anthoner possibility. Create an async pipe in your html template
+```html
+<div *ngIf="multisub$ | async as variable">
+  <p>Value: {{variable.data[0]}}</p>
+</div>
+```
 
 This multisubscribe store makes it easy to add, remove, and edit variables from a single stream from devicewise.
 
@@ -84,25 +101,25 @@ This multisubscribe store makes it easy to add, remove, and edit variables from 
 
 Clone the repository.
 
-```bash
+```cli
 git clone https://github.com/astone2014/devicewise-angular.git
 ```
 
 Navigate to the folder.
 
-```bash
+```cli
 cd devicewise-angular
 ```
 
 Install packages.
 
-```bash
+```cli
 npm i
 ```
 
 Run Demo.
 
-```bash
+```cli
 ng serve --open
 ```
 
