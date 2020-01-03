@@ -8,7 +8,7 @@ import { filter } from 'rxjs/operators';
 fdescribe('DevicewiseMultisubscribeStoreService', () => {
   let service: DevicewiseMultisubscribeStoreService;
   let authService: DevicewiseAngularService;
-  const endpoint = 'http://192.168.1.18:88';
+  const endpoint = 'http://localhost:88';
   const username = 'admin';
   const password = 'admin';
   const variables: any[] = [
