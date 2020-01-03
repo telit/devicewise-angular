@@ -1,9 +1,10 @@
-import { finalize, share, multicast, refCount, publish, tap, findIndex, take } from 'rxjs/operators';
-import { Observable, Subscription, Subject, ReplaySubject, Observer } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+import { Observable, ReplaySubject } from 'rxjs';
 import {
   Variable,
   DevicewiseMultisubscribeService,
-  MultiSubscribeParams } from './devicewise-multisubscribe.service';
+  MultiSubscribeParams
+} from './devicewise-multisubscribe.service';
 import { DevicewiseApiService } from './devicewise-api.service';
 import { Injectable, OnDestroy } from '@angular/core';
 
@@ -11,80 +12,87 @@ import { Injectable, OnDestroy } from '@angular/core';
   providedIn: 'root'
 })
 export class DevicewiseMultisubscribeStoreService implements OnDestroy {
+  private multiSub$: ReplaySubject<MultiSubscribeParams> = new ReplaySubject<MultiSubscribeParams>(1);
+  private mutliSubRequest$: ReplaySubject<Observable<MultiSubscribeParams>> = new ReplaySubject<Observable<MultiSubscribeParams>>(1);
   public url = '';
-  requestVariables: Variable[] = [];
-  subject: ReplaySubject<MultiSubscribeParams> = new ReplaySubject<MultiSubscribeParams>(1);
-  subscription: Subscription;
-  status = 0;
+  public requestVariables: Variable[] = [];
 
   constructor(private devicewiseMultisubscribeService: DevicewiseMultisubscribeService, private apiService: DevicewiseApiService) {
-    this.apiService.getEndpointasObservable().subscribe((url) => this.url = url);
+    this.apiService.getEndpointasObservable().subscribe((url) => {
+      this.url = url;
+    });
   }
 
-  public subscriptionAsObservable() {
-    if (!this.subscription) {
-      this.startMultisubscribe(true);
-    }
-    return this.subject.asObservable().pipe(
-      share(),
-      finalize(() => this.stopMultisubscribe())
+  /**
+   * Returns an observable for a multisubscribe store which contains one multisubscribe stream.
+   * Emits on change of value.
+   *
+   * ## Example
+   * Subscribe to a variable 'CPU.CPU Usage' from device 'System Monitor' and then unsubscribe a second later.
+   * ```ts
+   * const variables = [{ device: 'System Monitor', variable: 'CPU.CPU Usage', type: DwType.INT1, count: 1, length: -1}];
+   * const subscription = service.subscriptionAsObservable().subscribe((data) => console.log(data));
+   *
+   * service.addRequestVariables(variables);
+   * setTimeout(() => { subscription.unsubscribe(); }, 1000);
+   * ```
+   *
+   * @returns observable of multisubscribe store stream.
+   * @method subscriptionAsObservable
+   */
+  public subscriptionAsObservable(): Observable<MultiSubscribeParams> {
+    return this.mutliSubRequest$.pipe(
+      switchMap((val) => val)
     );
   }
 
+  /**
+   * Get all variables in the multisubscribe store.
+   *
+   * @return Request variables from multisubscribe store.
+   * @method getRequestVariables
+   */
   public getRequestVariables(): Variable[] {
     return this.requestVariables;
   }
 
-  public addRequestVariables(variables: Variable[]) {
-    this.requestVariables = this.requestVariables.concat(variables);
-    // const newRequestVariables = this.requestVariables.concat(variables);
-    this.startMultisubscribe(false).pipe(take(1)).subscribe(
-      null,
-      (err) => console.log(err)
-    );
+  /**
+   * Add request variables to multisubscribe store.
+   *
+   * @param requestVariables requestVariables Variables to add.
+   * @method addRequestVariables
+   */
+  public addRequestVariables(requestVariables: Variable[]) {
+    this.requestVariables = this.requestVariables.concat(requestVariables);
+    this.reSubscribe();
   }
 
+  /**
+   * Remove request variables to multisubscribe store.
+   *
+   * @param requestVariables requestVariables Variables to remove.
+   * @method removeRequestVariables
+   */
   public removeRequestVariables(variables: Variable[]) {
-    variables.forEach((variable, index) => {
+    variables.forEach((variable) => {
       const foundIndex = this.requestVariables.findIndex(
-        (requestVariable) => {
-          return requestVariable.device === variable.device && requestVariable.variable === variable.variable;
-        }
+        (requestVariable) => (requestVariable.device === variable.device) && (requestVariable.variable === variable.variable)
       );
       this.requestVariables.splice(foundIndex, 1);
     });
-    this.startMultisubscribe(false);
+    this.reSubscribe();
   }
 
-  private clearRequestVariables(variables: Variable[]) {
-    this.requestVariables = [];
-  }
-
-  private startMultisubscribe(newSubject: boolean) {
-    this.stopMultisubscribe();
-    const sub = this.devicewiseMultisubscribeService.multiSubscribe(this.requestVariables); //.pipe(tap((x) => console.log('tap', x)));
-    if (newSubject === true || this.subject.observers.length > 0) {
-      this.subscription = sub.subscribe(this.subject);
-    }
-    return sub;
-  }
-
-  private stopMultisubscribe() {
-    if (this.subscription && !this.subscription.closed) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public getMultiSubscribeStatus() {
-    return this.status;
+  private reSubscribe() {
+    const sub: Observable<MultiSubscribeParams> = this.devicewiseMultisubscribeService.multiSubscribe(this.requestVariables);
+    this.mutliSubRequest$.next(sub);
   }
 
   ngOnDestroy(): void {
-    this.stopMultisubscribe();
-    if (this.subject) {
-      this.subject.complete();
-      this.subject.unsubscribe();
-    }
+    this.multiSub$.complete();
+    this.multiSub$.unsubscribe();
+    this.mutliSubRequest$.complete();
+    this.multiSub$.unsubscribe();
   }
 
 }

@@ -270,7 +270,10 @@ export interface DeviceInfoAttributes {
 }
 
 export class DeviceDataType {
+  success: boolean;
   params: DeviceDataTypeParams;
+  errorCodes?: number[];
+  errorMessages?: string[];
 }
 
 export interface DeviceDataTypeParams {

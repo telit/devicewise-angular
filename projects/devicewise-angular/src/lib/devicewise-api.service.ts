@@ -3,7 +3,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import * as DwResponse from './models/dwresponse';
 import { DwType } from './models/dwconstants';
-import { DevicewiseAngularService } from './devicewise-angular.service';
 
 const httpOptions = {
   headers: new HttpHeaders({}),

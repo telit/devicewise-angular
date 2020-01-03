@@ -5,10 +5,10 @@ import { DevicewiseMultisubscribeStoreService } from './devicewise-multisubscrib
 import { DwType } from './models/dwconstants';
 import { filter } from 'rxjs/operators';
 
-describe('DevicewiseMultisubscribeStoreService', () => {
+fdescribe('DevicewiseMultisubscribeStoreService', () => {
   let service: DevicewiseMultisubscribeStoreService;
   let authService: DevicewiseAngularService;
-  const endpoint = 'http://192.168.1.19:88';
+  const endpoint = 'http://192.168.1.18:88';
   const username = 'admin';
   const password = 'admin';
   const variables: any[] = [
@@ -87,7 +87,7 @@ describe('DevicewiseMultisubscribeStoreService', () => {
     const subscription = service.subscriptionAsObservable().subscribe((data) => {
       ++messagesReceived;
       expect(data.device).toEqual(variables[0].device);
-      // //expect(data.variable).toEqual(variables[0].variable);
+      // expect(data.variable).toEqual(variables[0].variable);
       expect(data.data.length).toEqual(1);
       expect(data.data.length).toBeGreaterThanOrEqual(0);
       expect(data.data.length).toBeLessThanOrEqual(100);
@@ -118,7 +118,7 @@ describe('DevicewiseMultisubscribeStoreService', () => {
     const subscription = service.subscriptionAsObservable().subscribe((data) => {
       ++messagesReceived;
       expect(data.device).toEqual(variables[0].device);
-      // //expect(data.variable).toEqual(variables[0].variable);
+      //expect(data.variable).toEqual(variables[0].variable);
       expect(data.data.length).toEqual(1);
       expect(data.data.length).toBeGreaterThanOrEqual(0);
       expect(data.data.length).toBeLessThanOrEqual(100);
@@ -173,7 +173,7 @@ describe('DevicewiseMultisubscribeStoreService', () => {
       filter((data) => data.variable === variables[0].variable)
     ).subscribe((data) => {
       expect(data.device).toEqual(variables[0].device);
-      //expect(data.variable).toEqual(variables[0].variable);
+      expect(data.variable).toEqual(variables[0].variable);
       expect(data.data.length).toEqual(1);
       expect(data.data.length).toBeGreaterThanOrEqual(0);
       expect(data.data.length).toBeLessThanOrEqual(100);
@@ -183,7 +183,7 @@ describe('DevicewiseMultisubscribeStoreService', () => {
       filter((data) => data.variable === variables[1].variable)
     ).subscribe((data) => {
       expect(data.device).toEqual(variables[1].device);
-      // expect(data.variable).toEqual(variables[1].variable);
+      expect(data.variable).toEqual(variables[1].variable);
       expect(data.data.length).toEqual(1);
       expect(data.data.length).toBeGreaterThanOrEqual(0);
       expect(data.data.length).toBeLessThanOrEqual(100);

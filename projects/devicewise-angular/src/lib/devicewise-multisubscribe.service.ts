@@ -3,10 +3,6 @@ import { Observable, throwError, of } from 'rxjs';
 import { DevicewiseApiService } from './devicewise-api.service';
 import { Injectable } from '@angular/core';
 
-interface FetchData {
-  buffer: string;
-}
-
 export interface Variable {
   device: string;
   variable: string;
@@ -43,8 +39,6 @@ export class DevicewiseMultisubscribeService {
  * Subscribe to multiple `requestVariables`. emits inital value and then on change of value.
  * Observable, and emits the resulting values as an Observable.
  *
- * See [Documentation](https://docs.devicewise.com/Content/home.htm)
- *
  * ## Example
  * Subscribe to a variable 'OEE' from device 'Machine1' and then unsubscribe a second later.
  * ```ts
@@ -52,7 +46,7 @@ export class DevicewiseMultisubscribeService {
  * import { DwSubscription } from './models/dwsubscription';
  * import { DwType } from './models/dwconstants';
  *
- * const variables = [new DwSubscription('Machine1', 'OEE', DwType.INT4, 1, -1).request.params];
+ * const variables = [{ device: 'System Monitor', variable: 'CPU.CPU Usage', type: DwType.INT4, count: 1, length: -1 }];
  * const multiSubscribe$ = service.multiSubscribe(variables);
  * const subscription = multiSubscribe$.subscribe({
  *   next: (data) => console.log('next', data),
