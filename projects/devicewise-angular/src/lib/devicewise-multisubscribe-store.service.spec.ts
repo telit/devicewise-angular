@@ -8,7 +8,7 @@ import { filter, take, finalize } from 'rxjs/operators';
 describe('DevicewiseMultisubscribeStoreService', () => {
   let service: DevicewiseMultisubscribeStoreService;
   let authService: DevicewiseAngularService;
-  const endpoint = 'http://localhost:88';
+  const endpoint = 'http://192.168.1.15:88';
   const username = 'admin';
   const password = 'admin';
   const variables: any[] = [

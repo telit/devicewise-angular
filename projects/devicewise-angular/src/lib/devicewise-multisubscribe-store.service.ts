@@ -65,7 +65,13 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
    */
   public addRequestVariables(variables: Variable[]) {
     console.log('adding request variables', this.requestVariables);
-    this.requestVariables = this.requestVariables.concat(variables);
+    variables.forEach((variable) => {
+      const foundVar = this.requestVariables.indexOf(variable);
+      if (foundVar  === -1) {
+        this.requestVariables.push(variable);
+      }
+    });
+    // this.requestVariables = this.requestVariables.concat(variables);
     console.log('added request variables', this.requestVariables);
     this.reSubscribe();
   }

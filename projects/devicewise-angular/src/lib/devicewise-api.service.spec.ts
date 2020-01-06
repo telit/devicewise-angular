@@ -11,7 +11,7 @@ import { DwRequest } from 'dist/devicewise-angular/public_api';
 describe('DevicewiseApiService', () => {
   let service: DevicewiseApiService;
   let authService: DevicewiseAngularService;
-  const endpoint = 'http://localhost:88';
+  const endpoint = 'http://192.168.1.15:88';
   const username = 'admin';
   const password = 'admin';
   const variables: any[] = [
