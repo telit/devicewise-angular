@@ -36,7 +36,7 @@ export class DevicewiseAngularService {
           const loginResponse: DwResponse.Login = {
             success: true,
             sessionId: this.cookieService.get('sessionId'),
-            roles: [''],
+            roles: [this.cookieService.get('roles')],
             requirePasswordChange: false
           };
           this.setLoginStatus(true);
@@ -55,6 +55,7 @@ export class DevicewiseAngularService {
         if (login.success) {
           this.cookieService.deleteAll();
           this.cookieService.set('sessionId', login.sessionId);
+          this.cookieService.set('roles', login.roles[0]);
         }
         return login;
       })
@@ -65,6 +66,7 @@ export class DevicewiseAngularService {
     return this.apiService.logout().pipe(
       tap((response) => {
         if (response.success) {
+          this.cookieService.deleteAll();
           this.setLoginStatus(false);
         }
       })

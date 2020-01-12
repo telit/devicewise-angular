@@ -1,5 +1,5 @@
-import { switchMap } from 'rxjs/operators';
-import { Observable, ReplaySubject } from 'rxjs';
+import { switchMap, filter, finalize, share } from 'rxjs/operators';
+import { Observable, ReplaySubject, merge } from 'rxjs';
 import {
   Variable,
   DevicewiseMultisubscribeService,
@@ -7,6 +7,10 @@ import {
 } from './devicewise-multisubscribe.service';
 import { DevicewiseApiService } from './devicewise-api.service';
 import { Injectable, OnDestroy } from '@angular/core';
+
+interface MultiSubscribePair {
+  [key: string]: Observable<MultiSubscribeParams>;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +20,7 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
   private mutliSubRequest$: ReplaySubject<Observable<MultiSubscribeParams>> = new ReplaySubject<Observable<MultiSubscribeParams>>(1);
   public url = '';
   public requestVariables: Variable[] = [];
+  public requestVariableSubscriptions: MultiSubscribePair = {};
 
   constructor(private devicewiseMultisubscribeService: DevicewiseMultisubscribeService, private apiService: DevicewiseApiService) {
     this.apiService.getEndpointasObservable().subscribe((url) => {
@@ -63,17 +68,33 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
    * @param variables requestVariables Variables to add.
    * @method addRequestVariables
    */
-  public addRequestVariables(variables: Variable[]) {
-    console.log('adding request variables', this.requestVariables);
+  public addRequestVariables(variables: Variable[]): Observable<MultiSubscribeParams> {
+    let foundVar = 0;
+    const streams: Observable<MultiSubscribeParams>[] = [];
+
     variables.forEach((variable) => {
-      const foundVar = this.requestVariables.indexOf(variable);
-      if (foundVar  === -1) {
-        this.requestVariables.push(variable);
+      foundVar = this.requestVariables.findIndex((v) => v.variable === variable.variable);
+      if (foundVar === -1) {
+        this.requestVariables.push(variable); // If variable doesn't exist add it.
       }
+
+      let stream = this.requestVariableSubscriptions[variable.variable];
+      if (!stream) { // If stream doesn't exist create it
+        stream = this.subscriptionAsObservable().pipe(
+          filter((v) => variable.variable === v.variable),
+          finalize(() => { // When stream done remove from variable list and stream list.
+            this.removeRequestVariables([variable]);
+            delete this.requestVariableSubscriptions[variable.variable];
+          }),
+          share() // Ensure observable is shared among multiple subscribers.
+        );
+        this.requestVariableSubscriptions[variable.variable] = stream;
+      }
+      streams.push(stream);
     });
-    // this.requestVariables = this.requestVariables.concat(variables);
-    console.log('added request variables', this.requestVariables);
+
     this.reSubscribe();
+    return merge(...streams);
   }
 
   /**
