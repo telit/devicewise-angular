@@ -72,6 +72,10 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
     let foundVar = 0;
     const streams: Observable<MultiSubscribeParams>[] = [];
 
+    if (!variables) {
+      return;
+    }
+
     variables.forEach((variable) => {
       foundVar = this.requestVariables.findIndex((v) => v.variable === variable.variable);
       if (foundVar === -1) {
