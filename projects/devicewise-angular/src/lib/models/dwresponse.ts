@@ -376,6 +376,7 @@ export interface SubTriggerFireParams {
   resultStatus: number;
   eventStatus: number;
   count: number;
+  output: SubscriptionParams[];
 }
 
 // Project
@@ -396,9 +397,9 @@ export interface ProjectListProject {
   lastmodified: number;
 }
 
-export class ProjectStart {}
+export class ProjectStart { }
 
-export class ProjectStop {}
+export class ProjectStop { }
 
 // Channel
 
