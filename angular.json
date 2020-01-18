@@ -13,6 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "aot": true,
             "outputPath": "dist/devicewise",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -50,6 +51,10 @@
                   "type": "initial",
                   "maximumWarning": "2mb",
                   "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
                 }
               ]
             }
@@ -143,6 +148,11 @@
           "options": {
             "tsConfig": "projects/devicewise-angular/tsconfig.lib.json",
             "project": "projects/devicewise-angular/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/devicewise-angular/tsconfig.lib.prod.json"
+            }
           }
         },
         "test": {
@@ -168,5 +178,8 @@
       }
     }
   },
-  "defaultProject": "devicewise"
+  "defaultProject": "devicewise",
+  "cli": {
+    "analytics": "db44a6f0-891e-468f-817d-5119906c1fd2"
+  }
 }
