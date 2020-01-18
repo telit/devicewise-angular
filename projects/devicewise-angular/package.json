@@ -33,11 +33,11 @@
     "@angular/common": "^8.2.14",
     "@angular/core": "^8.2.14",
     "fetch-readablestream": "^0.2.0",
-    "ngx-cookie-service": "^2.2.0"
+    "ngx-cookie-service": "^2.3.0"
   },
   "dependencies": {
     "fetch-readablestream": "^0.2.0",
-    "ngx-cookie-service": "^2.2.0"
+    "ngx-cookie-service": "^2.3.0"
   },
   "devDependencies": {
     "@angular/cli": "^8.3.21"

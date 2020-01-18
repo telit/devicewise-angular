@@ -26,7 +26,7 @@
     "fetch-readablestream": "^0.2.0",
     "hammerjs": "^2.0.8",
     "ng-packagr": "^5.7.1",
-    "ngx-cookie-service": "^2.2.0",
+    "ngx-cookie-service": "^2.3.0",
     "ngx-json-viewer": "^2.4.0",
     "rxjs": "~6.4.0",
     "tsickle": "^0.37.1",
