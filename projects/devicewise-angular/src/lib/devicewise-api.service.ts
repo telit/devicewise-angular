@@ -356,6 +356,10 @@ export class DevicewiseApiService {
         return DwType.BOOL;
       case 'STRING':
         return DwType.STRING;
+      case 'TIMESTAMP':
+        return DwType.TIMESTAMP;
+      case 'BINARY':
+        return DwType.BINARY;
       default:
         return DwType.UNKNOWN;
     }
@@ -387,6 +391,10 @@ export class DevicewiseApiService {
         return 'BOOL';
       case DwType.STRING:
         return 'STRING';
+      case DwType.TIMESTAMP:
+        return 'TIMESTAMP';
+      case DwType.BINARY:
+        return 'BINARY';
       default:
         return 'UNKNOWN';
     }

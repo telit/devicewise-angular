@@ -392,7 +392,7 @@ export interface ProjectListParams {
 }
 export interface ProjectListProject {
   name: string;
-  state: number;
+  state: string;
   laststatechange: number;
   lastmodified: number;
 }
