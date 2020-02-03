@@ -1,12 +1,8 @@
-import { switchMap, filter, finalize, share } from 'rxjs/operators';
-import { Observable, ReplaySubject, merge } from 'rxjs';
-import {
-  Variable,
-  DevicewiseMultisubscribeService,
-  MultiSubscribeParams
-} from './devicewise-multisubscribe.service';
-import { DevicewiseApiService } from './devicewise-api.service';
 import { Injectable, OnDestroy } from '@angular/core';
+import { merge, Observable, ReplaySubject } from 'rxjs';
+import { filter, finalize, share, switchMap } from 'rxjs/operators';
+import { DevicewiseApiService } from './devicewise-api.service';
+import { DevicewiseMultisubscribeService, MultiSubscribeParams, Variable } from './devicewise-multisubscribe.service';
 
 interface MultiSubscribePair {
   [key: string]: Observable<MultiSubscribeParams>;
@@ -82,17 +78,17 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
         this.requestVariables.push(variable); // If variable doesn't exist add it.
       }
 
-      let stream = this.requestVariableSubscriptions[variable.variable];
+      let stream = this.requestVariableSubscriptions[variable.device + '.' + variable.variable];
       if (!stream) { // If stream doesn't exist create it
         stream = this.subscriptionAsObservable().pipe(
           filter((v) => variable.variable === v.variable),
           finalize(() => { // When stream done remove from variable list and stream list.
             this.removeRequestVariables([variable]);
-            delete this.requestVariableSubscriptions[variable.variable];
+            delete this.requestVariableSubscriptions[variable.device + '.' + variable.variable];
           }),
           share() // Ensure observable is shared among multiple subscribers.
         );
-        this.requestVariableSubscriptions[variable.variable] = stream;
+        this.requestVariableSubscriptions[variable.device + '.' + variable.variable] = stream;
       }
       streams.push(stream);
     });
