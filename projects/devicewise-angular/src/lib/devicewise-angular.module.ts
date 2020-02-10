@@ -16,7 +16,7 @@ import { DevicewiseMultisubscribeStoreService } from './devicewise-multisubscrib
   providers: [CookieService, DevicewiseAngularService]
 })
 export class DevicewiseAngularModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<DevicewiseAngularModule> {
     return {
       ngModule: DevicewiseAngularModule,
       providers: [

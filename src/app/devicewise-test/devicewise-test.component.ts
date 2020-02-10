@@ -93,9 +93,9 @@ export class DevicewiseTestComponent implements OnInit {
 
   objectKeys = Object.keys;
   separatorKeysCodes: number[] = [ENTER, COMMA];
-  @ViewChild('subscriptionInput', { static: false }) subscriptionInput: ElementRef<HTMLInputElement>;
-  @ViewChild('multiSubscribeInput', { static: false }) multiSubscribeInput: ElementRef<HTMLInputElement>;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild('subscriptionInput') subscriptionInput: ElementRef<HTMLInputElement>;
+  @ViewChild('multiSubscribeInput') multiSubscribeInput: ElementRef<HTMLInputElement>;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   displayedColumns: string[] = [];
   dataSource: MatTableDataSource<any> = new MatTableDataSource();
