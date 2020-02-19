@@ -1,7 +1,7 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
-import { DevicewiseAngularService } from './devicewise-angular.service';
+import { DevicewiseAuthService } from './devicewise-auth.service';
 import { DevicewiseApiService } from './devicewise-api.service';
 import { DevicewiseSubscribeService } from './devicewise-subscribe.service';
 import { DevicewiseMultisubscribeService } from './devicewise-multisubscribe.service';
@@ -13,14 +13,14 @@ import { DevicewiseMultisubscribeStoreService } from './devicewise-multisubscrib
     HttpClientModule
   ],
   exports: [],
-  providers: [CookieService, DevicewiseAngularService]
+  providers: [CookieService, DevicewiseAuthService]
 })
 export class DevicewiseAngularModule {
   static forRoot(): ModuleWithProviders<DevicewiseAngularModule> {
     return {
       ngModule: DevicewiseAngularModule,
       providers: [
-        DevicewiseAngularService,
+        DevicewiseAuthService,
         DevicewiseApiService,
         DevicewiseSubscribeService,
         DevicewiseMultisubscribeService,

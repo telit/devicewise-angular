@@ -1,13 +1,13 @@
 import { TestBed, async } from '@angular/core/testing';
 import { DevicewiseAngularModule } from './devicewise-angular.module';
-import { DevicewiseAngularService } from './devicewise-angular.service';
+import { DevicewiseAuthService } from './devicewise-auth.service';
 import { DevicewiseMultisubscribeStoreService } from './devicewise-multisubscribe-store.service';
 import { DwType } from './models/dwconstants';
 import { filter, take, finalize } from 'rxjs/operators';
 
 fdescribe('DevicewiseMultisubscribeStoreService', () => {
   let service: DevicewiseMultisubscribeStoreService;
-  let authService: DevicewiseAngularService;
+  let authService: DevicewiseAuthService;
   const endpoint = 'http://192.168.1.15:88';
   const username = 'admin';
   const password = 'admin';
@@ -21,10 +21,10 @@ fdescribe('DevicewiseMultisubscribeStoreService', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [DevicewiseAngularModule],
-      providers: [DevicewiseMultisubscribeStoreService, DevicewiseAngularService]
+      providers: [DevicewiseMultisubscribeStoreService, DevicewiseAuthService]
     });
     service = TestBed.get(DevicewiseMultisubscribeStoreService);
-    authService = TestBed.get(DevicewiseAngularService);
+    authService = TestBed.get(DevicewiseAuthService);
     if (authService.getLoginStatus() === false) {
       authService.easyLogin(endpoint, username, password).subscribe((data) => { });
     }

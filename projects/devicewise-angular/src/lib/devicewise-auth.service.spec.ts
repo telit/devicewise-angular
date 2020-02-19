@@ -2,11 +2,11 @@ import { TestBed, async } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { DevicewiseAngularModule } from './devicewise-angular.module';
-import { DevicewiseAngularService } from './devicewise-angular.service';
+import { DevicewiseAuthService } from './devicewise-auth.service';
 
 
 describe('DevicewiseAngularService', () => {
-  let service: DevicewiseAngularService;
+  let service: DevicewiseAuthService;
   const endpoint = 'http://192.168.1.15:88';
   const username = 'admin';
   const password = 'admin';
@@ -14,9 +14,9 @@ describe('DevicewiseAngularService', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [DevicewiseAngularModule],
-      providers: [DevicewiseAngularService]
+      providers: [DevicewiseAuthService]
     });
-    service = TestBed.get(DevicewiseAngularService);
+    service = TestBed.get(DevicewiseAuthService);
 
     if (service.getLoginStatus() === false) {
       service.easyLogin(endpoint, username, password).subscribe((loginResponse) => { }, err => console.log(err));

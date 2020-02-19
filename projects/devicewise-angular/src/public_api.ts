@@ -2,7 +2,7 @@
  * Public API Surface of devicewise-angular
  */
 
-export * from './lib/devicewise-angular.service';
+export * from './lib/devicewise-auth.service';
 export * from './lib/devicewise-api.service';
 export * from './lib/devicewise-subscribe.service';
 export * from './lib/devicewise-multisubscribe.service';
