@@ -5,7 +5,7 @@ import { DevicewiseAngularModule } from './devicewise-angular.module';
 import { DevicewiseAuthService } from './devicewise-auth.service';
 
 
-describe('DevicewiseAngularService', () => {
+describe('DevicewiseAuthService', () => {
   let service: DevicewiseAuthService;
   const endpoint = 'http://192.168.1.15:88';
   const username = 'admin';

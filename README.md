@@ -32,13 +32,13 @@ Then, import and inject the devicewise angular service into a component:
 
 ```ts
 ...
-import { DevicewiseAngularService } from 'devicewise-angular';
+import { DevicewiseAuthService } from 'devicewise-angular';
 
 @Component({
   ...
 })
 export class AppComponent implements OnInit {
-  constructor(private devicewise: DevicewiseAngularService) {}
+  constructor(private devicewise: DevicewiseAuthService) {}
 
   ngOnInit() {
     this.dwAuthentication.easyLogin('http://localhost:88', 'admin', 'admin').pipe(
@@ -55,13 +55,13 @@ Using HTTP fetch is a much more efficient way to communicate with devicewise. Co
 
 ```ts
 ...
-import { DevicewiseAngularService } from 'devicewise-angular';
+import { DevicewiseAuthService } from 'devicewise-angular';
 
 @Component({
   ...
 })
 export class AppComponent implements OnInit {
-  constructor(private devicewise: DevicewiseAngularService) {}
+  constructor(private devicewise: DevicewiseAuthService) {}
 
   ngOnInit() {
     const variables: Variable[] = [{ device: 'Machine1', variable: 'OEE', type: DwType.FLOAT4, count: 1, length: -1 }];
@@ -133,9 +133,9 @@ ng serve --open
 
 Checking out the following resources usually solves most of the problems people seem to have with this devicewise service:
 
-* [📚 DeviceWISE Docs](https://docs-engr.devicewise.com/)
-* [DeviceWISE Javascript Library](http://help.devicewise.com/display/M2MOpen/JavaScript+API+Library)
-* [DeviceWISE Postman Collection](https://web.postman.co/collections/4197967-d416fb5a-b10d-47fb-9bd4-b740c4842503?workspace=0a806903-4bd9-4c42-8f6a-a4cecdf162d1)
+* [📚 DeviceWISE Docs](http://help.devicewise.com/display/M2MOpen/JavaScript+API+Library)
+* [DeviceWISE Javascript Library](https://docs.devicewise.com/Content/Products/GatewayDevelopersGuide/JavaScript-API-Library.htm?Highlight=javascript)
+* [DeviceWISE Postman Collection](https://documenter.getpostman.com/view/4197967/RzZDgvoy)
 
 The following general steps are usually very helpful when debugging problems with this service:
 
