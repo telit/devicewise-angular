@@ -50,7 +50,7 @@ export class AppComponent implements OnInit {
 The `easyLogin` method will automatically save the sessionId from the login request as a cookie. If a cookie already exists it will be checked for validity before emitting sucessful login.
 
 # MultiSubscribe
-Using HTTP fetch is a much more efficient way to communicate with devicewise. Consider using multisubscribe to subscribe to variable data rather than read a variable on an interval.
+Using HTTP fetch is a much more efficient way to communicate with devicewise. Consider using the multisubscribe store service to subscribe to a variable rather than poll a variable on an interval.
 
 
 ```ts
@@ -94,6 +94,18 @@ Anthoner possibility. Create an async pipe in your html template
 ```
 
 This multisubscribe store makes it easy to add, remove, and edit variables from a single stream from devicewise.
+
+# Cross Origin Resource Sharing (CORS)
+Cross-Origin Resource Sharing (CORS) is a mechanism that uses additional HTTP headers to tell browsers to give a web application running at one origin, access to selected resources from a different origin.
+
+Run these steps to enable CORS on deviceWISE.
+
+* Navigate to your deviceWISE install directory
+* Open the file "deviceWISE\Runtime\dwcore\dwcore.properties"
+* Add the line "#http.allow_origin=http://localhost:4200" anywhere in the file (where http://localhost:4200 is the origin to allow access)
+* Save the file
+* Restart deviceWISE
+
 
 # What to do now?
 
