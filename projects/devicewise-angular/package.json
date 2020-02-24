@@ -1,7 +1,7 @@
 {
   "name": "devicewise-angular",
   "description": "Angular2+ library to communicate with deviceWISE.",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build_lib": "ng build devicewise-angular",
@@ -19,7 +19,7 @@
     "url": "https://github.com/astone2014/devicewise-angular.git"
   },
   "keywords": [
-    "Iot",
+    "IoT",
     "DeviceWISE",
     "Telit"
   ],

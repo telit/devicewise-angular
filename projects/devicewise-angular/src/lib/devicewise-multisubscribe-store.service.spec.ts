@@ -1,14 +1,14 @@
-import { TestBed, async } from '@angular/core/testing';
+import { async, TestBed } from '@angular/core/testing';
+import { filter, finalize, take } from 'rxjs/operators';
 import { DevicewiseAngularModule } from './devicewise-angular.module';
 import { DevicewiseAngularService } from './devicewise-angular.service';
 import { DevicewiseMultisubscribeStoreService } from './devicewise-multisubscribe-store.service';
 import { DwType } from './models/dwconstants';
-import { filter, take, finalize } from 'rxjs/operators';
 
 fdescribe('DevicewiseMultisubscribeStoreService', () => {
   let service: DevicewiseMultisubscribeStoreService;
   let authService: DevicewiseAngularService;
-  const endpoint = 'http://192.168.1.15:88';
+  const endpoint = 'http://10.120.21.5:88';
   const username = 'admin';
   const password = 'admin';
   const variables: any[] = [
@@ -16,6 +16,10 @@ fdescribe('DevicewiseMultisubscribeStoreService', () => {
     { device: 'OEE', variable: 'Quality', type: DwType.FLOAT4, count: 1, length: -1, testData: [[0], [1], [2], [3], [4]] },
     { device: 'OEE', variable: 'Performance', type: DwType.FLOAT4, count: 1, length: -1, testData: [[0], [1], [2], [3], [4]] },
     { device: 'OEE', variable: 'OEE', type: DwType.FLOAT4, count: 1, length: -1, testData: [[0], [1], [2], [3], [4]] }
+  ];
+  const variables2: any[] = [
+    { device: 'RECIPE', variable: 'PEZZI_CAMERA', type: DwType.INT2, count: 1, length: -1},
+    { device: 'CURING', variable: 'PEZZI_CAMERA', type: DwType.INT2, count: 1, length: -1}
   ];
 
   beforeEach(async(() => {
@@ -28,6 +32,7 @@ fdescribe('DevicewiseMultisubscribeStoreService', () => {
     if (authService.getLoginStatus() === false) {
       authService.easyLogin(endpoint, username, password).subscribe((data) => { });
     }
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 500000;
   }));
 
   it('should be created', () => {
@@ -81,6 +86,24 @@ fdescribe('DevicewiseMultisubscribeStoreService', () => {
     expect(requestVariables.length).toEqual(0);
   });
 
+  fit('start multisubscribe works', (done: DoneFn) => {
+    let messagesReceived = 0;
+
+    const subscription = service.addRequestVariables(variables2).subscribe((data) => {
+      console.log('1', data.device, data.variable, data.data);
+      ++messagesReceived;
+      expect(data.device).toEqual(variables2[0].device);
+      expect(data.variable).toEqual(variables2[0].variable);
+      expect(data.data.length).toEqual(1);
+      expect(data.data.length).toBeGreaterThanOrEqual(0);
+      expect(data.data.length).toBeLessThanOrEqual(100);
+    });
+
+    setTimeout(() => {
+      done();
+    }, jasmine.DEFAULT_TIMEOUT_INTERVAL - 1000);
+  });
+
   it('start multisubscribe works', (done: DoneFn) => {
     let messagesReceived = 0;
 
@@ -98,11 +121,7 @@ fdescribe('DevicewiseMultisubscribeStoreService', () => {
     expect(requestVariables[0]).toEqual(variables[0]);
 
     setTimeout(() => {
-      subscription.unsubscribe();
-      expect(subscription.closed).toBeTruthy();
-      expect(messagesReceived).toBeGreaterThanOrEqual(requestVariables.length);
-      done();
-    }, 4000);
+    }, jasmine.DEFAULT_TIMEOUT_INTERVAL);
   });
 
   it('add vars then start multisubscribe works', (done: DoneFn) => {
@@ -405,7 +424,7 @@ fdescribe('DevicewiseMultisubscribeStoreService', () => {
     }, 1000);
   });
 
-  fit('add vars, sub, unsub, resub', (done: DoneFn) => {
+  it('add vars, sub, unsub, resub', (done: DoneFn) => {
     const subscription1 = service.addRequestVariables([variables[0]]).subscribe((data) => {
       console.log('1', data);
       expect(data.device).toEqual(variables[0].device);
