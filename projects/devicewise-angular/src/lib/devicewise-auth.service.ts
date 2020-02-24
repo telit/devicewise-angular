@@ -8,7 +8,7 @@ import * as DwResponse from './models/dwresponse';
 @Injectable({
   providedIn: 'root'
 })
-export class DevicewiseAngularService {
+export class DevicewiseAuthService {
   public url = '';
   private loggedIn = false;
 

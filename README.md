@@ -32,13 +32,13 @@ Then, import and inject the devicewise angular service into a component:
 
 ```ts
 ...
-import { DevicewiseAngularService } from 'devicewise-angular';
+import { DevicewiseAuthService } from 'devicewise-angular';
 
 @Component({
   ...
 })
 export class AppComponent implements OnInit {
-  constructor(private devicewise: DevicewiseAngularService) {}
+  constructor(private devicewise: DevicewiseAuthService) {}
 
   ngOnInit() {
     this.dwAuthentication.easyLogin('http://localhost:88', 'admin', 'admin').pipe(
@@ -50,18 +50,18 @@ export class AppComponent implements OnInit {
 The `easyLogin` method will automatically save the sessionId from the login request as a cookie. If a cookie already exists it will be checked for validity before emitting sucessful login.
 
 # MultiSubscribe
-Using HTTP fetch is a much more efficient way to communicate with devicewise. Consider using multisubscribe to subscribe to variable data rather than read a variable on an interval.
+Using HTTP fetch is a much more efficient way to communicate with devicewise. Consider using the multisubscribe store service to subscribe to a variable rather than poll a variable on an interval.
 
 
 ```ts
 ...
-import { DevicewiseAngularService } from 'devicewise-angular';
+import { DevicewiseAuthService } from 'devicewise-angular';
 
 @Component({
   ...
 })
 export class AppComponent implements OnInit {
-  constructor(private devicewise: DevicewiseAngularService) {}
+  constructor(private devicewise: DevicewiseAuthService) {}
 
   ngOnInit() {
     const variables: Variable[] = [{ device: 'Machine1', variable: 'OEE', type: DwType.FLOAT4, count: 1, length: -1 }];
@@ -94,6 +94,18 @@ Anthoner possibility. Create an async pipe in your html template
 ```
 
 This multisubscribe store makes it easy to add, remove, and edit variables from a single stream from devicewise.
+
+# Cross Origin Resource Sharing (CORS)
+Cross-Origin Resource Sharing (CORS) is a mechanism that uses additional HTTP headers to tell browsers to give a web application running at one origin, access to selected resources from a different origin.
+
+Run these steps to enable CORS on deviceWISE.
+
+* Navigate to your deviceWISE install directory
+* Open the file "deviceWISE\Runtime\dwcore\dwcore.properties"
+* Add the line "#http.allow_origin=http://localhost:4200" anywhere in the file (where http://localhost:4200 is the origin to allow access)
+* Save the file
+* Restart deviceWISE
+
 
 # What to do now?
 
@@ -133,9 +145,9 @@ ng serve --open
 
 Checking out the following resources usually solves most of the problems people seem to have with this devicewise service:
 
-* [📚 DeviceWISE Docs](https://docs-engr.devicewise.com/)
-* [DeviceWISE Javascript Library](http://help.devicewise.com/display/M2MOpen/JavaScript+API+Library)
-* [DeviceWISE Postman Collection](https://web.postman.co/collections/4197967-d416fb5a-b10d-47fb-9bd4-b740c4842503?workspace=0a806903-4bd9-4c42-8f6a-a4cecdf162d1)
+* [📚 DeviceWISE Docs](http://help.devicewise.com/display/M2MOpen/JavaScript+API+Library)
+* [DeviceWISE Javascript Library](https://docs.devicewise.com/Content/Products/GatewayDevelopersGuide/JavaScript-API-Library.htm?Highlight=javascript)
+* [DeviceWISE Postman Collection](https://documenter.getpostman.com/view/4197967/RzZDgvoy)
 
 The following general steps are usually very helpful when debugging problems with this service:
 

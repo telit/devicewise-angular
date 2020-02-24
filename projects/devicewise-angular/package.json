@@ -1,10 +1,10 @@
 {
   "name": "devicewise-angular",
   "description": "Angular2+ library to communicate with deviceWISE.",
-  "version": "3.0.5",
+  "version": "3.1.2",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build_lib": "ng build devicewise-angular",
+    "build_lib": "ng build devicewise-angular --prod",
     "copy-license": "copy .\\LICENSE .\\..\\..\\dist\\devicewise-angular",
     "copy-readme": "copy .\\README.md .\\..\\..\\dist\\devicewise-angular",
     "copy-files": "npm run copy-license && npm run copy-readme",

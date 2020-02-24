@@ -4,7 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import fetchStream from 'fetch-readablestream';
 import * as DwResponse from './models/dwresponse';
 import * as DwSubscription from './models/dwsubscription';
-import { DevicewiseAngularService } from './devicewise-angular.service';
+import { DevicewiseAuthService } from './devicewise-auth.service';
 import { DevicewiseApiService } from './devicewise-api.service';
 
 @Injectable({

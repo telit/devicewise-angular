@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject, ElementRef, ViewChild } from '@angular/core';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import {
-  DevicewiseAngularService,
+  DevicewiseAuthService,
   DevicewiseApiService,
   DevicewiseSubscribeService,
   DevicewiseMultisubscribeService,
@@ -12,17 +12,15 @@ import {
   Variable
 } from 'devicewise-angular';
 import { BehaviorSubject, forkJoin } from 'rxjs';
-import {
-  MatBottomSheet,
-  MatBottomSheetRef,
-  MAT_BOTTOM_SHEET_DATA,
-  MatSnackBar,
-  MatPaginator,
-  MatTableDataSource,
-  MatAutocompleteSelectedEvent
-} from '@angular/material';
+import {MatBottomSheetModule, MatBottomSheet, MatBottomSheetRef, MAT_BOTTOM_SHEET_DATA} from '@angular/material/bottom-sheet';
+import {MatSnackBarModule, MatSnackBar} from '@angular/material/snack-bar';
+import {MatPaginatorModule, MatPaginator} from '@angular/material/paginator';
 import { SubTriggerPipe } from './custom-pipes.pipe';
 import { tap } from 'rxjs/operators';
+import {
+  MatTableDataSource
+} from '@angular/material/table';
+import {MatAutocompleteModule, MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-devicewise-test',
@@ -101,7 +99,7 @@ export class DevicewiseTestComponent implements OnInit {
   dataSource: MatTableDataSource<any> = new MatTableDataSource();
 
   constructor(
-    private devicewise: DevicewiseAngularService,
+    private devicewise: DevicewiseAuthService,
     private dwApi: DevicewiseApiService,
     private dwSubscribe: DevicewiseSubscribeService,
     private dwMultiSubscribe: DevicewiseMultisubscribeService,

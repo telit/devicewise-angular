@@ -1,7 +1,7 @@
 import { ReferenceList } from './models/dwresponse';
 import { forkJoin } from 'rxjs';
 import { DwType } from './models/dwconstants';
-import { DevicewiseAngularService } from './devicewise-angular.service';
+import { DevicewiseAuthService } from './devicewise-auth.service';
 import { DevicewiseAngularModule } from './devicewise-angular.module';
 import { TestBed, async } from '@angular/core/testing';
 
@@ -10,7 +10,7 @@ import { DwRequest } from 'dist/devicewise-angular/public_api';
 
 describe('DevicewiseApiService', () => {
   let service: DevicewiseApiService;
-  let authService: DevicewiseAngularService;
+  let authService: DevicewiseAuthService;
   const endpoint = 'http://192.168.1.15:88';
   const username = 'admin';
   const password = 'admin';
@@ -24,10 +24,10 @@ describe('DevicewiseApiService', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [DevicewiseAngularModule],
-      providers: [DevicewiseApiService, DevicewiseAngularService]
+      providers: [DevicewiseApiService, DevicewiseAuthService]
     });
     service = TestBed.get(DevicewiseApiService);
-    authService = TestBed.get(DevicewiseAngularService);
+    authService = TestBed.get(DevicewiseAuthService);
     if (authService.getLoginStatus() === false) {
       authService.easyLogin(endpoint, username, password).subscribe((data) => { });
     }
