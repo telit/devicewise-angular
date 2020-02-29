@@ -1,25 +1,24 @@
 // Authentication
 
-export class Login {
+export class Response {
   success: boolean;
+  errorCodes?: number[];
+  errorMessages?: string[];
+}
+
+export class Login extends Response {
   sessionId: string;
   roles: [string];
   requirePasswordChange: boolean;
-  errorCodes?: [number];
-  errorMessages?: [string];
 }
 
-export class Logout {
-  success: boolean;
+export class Logout extends Response {
 }
 
 // Variable
 
-export class Read {
-  success: boolean;
+export class Read extends Response {
   params: ReadParams;
-  errorCodes?: number[];
-  errorMessages?: string[];
 }
 
 export interface ReadParams {
@@ -31,17 +30,11 @@ export interface ReadParams {
   data: any[];
 }
 
-export class Write {
-  success: boolean;
-  errorCodes?: number[];
-  errorMessages?: string[];
+export class Write extends Response {
 }
 
-export class Subscription {
-  success: boolean;
+export class Subscription extends Response {
   params: SubscriptionParams;
-  errorCodes?: number[];
-  errorMessages?: string[];
 }
 
 interface SubscriptionParams {
@@ -54,30 +47,20 @@ interface SubscriptionParams {
   id: number;
 }
 
-export class Subscribe {
-  success: boolean;
+export class Subscribe extends Response {
   params: SubscribeParams;
-  errorCodes?: number[];
-  errorMessages?: string[];
 }
 export interface SubscribeParams {
   id: number;
 }
 
-export class Unubscribe {
-  success: boolean;
-  errorCodes?: number[];
-  errorMessages?: string[];
+export class Unubscribe extends Response {
 }
 
-export class UnubscribeAll {
-  success: boolean;
-  errorCodes?: number[];
-  errorMessages?: string[];
+export class UnubscribeAll extends Response {
 }
 
-export class NotificationCount {
-  success: boolean;
+export class NotificationCount extends Response {
   params: NotificationCountParams;
 }
 
@@ -85,20 +68,17 @@ export interface NotificationCountParams {
   count: number;
 }
 
-export class UnsubscribeAll {
-  success: boolean;
+export class UnsubscribeAll extends Response {
   params: UnsubscribeAllParams;
 }
 export interface UnsubscribeAllParams {
   removed: number;
 }
 
-export class Unsubscribe {
-  success: boolean;
+export class Unsubscribe extends Response {
 }
 
-export class ActionTypeList {
-  success: boolean;
+export class ActionTypeList extends Response {
   params: ActionTypeListParams;
 }
 
@@ -139,26 +119,20 @@ export interface ActionType {
   type: string;
 }
 
-export class ActionList {
-  success: boolean;
+export class ActionList extends Response {
   params: ActionTypeListParams;
 }
 
 export interface ActionListActions {
   actions: ActionType[];
 }
-
-
-
-export class EventTypeList {
-  success: boolean;
+export class EventTypeList extends Response {
   params: EventTypeListParams;
 }
 
 export interface EventTypeListParams {
   eventTypes: EventType[];
 }
-
 export interface EventType {
   defaultErrorRoute: number;
   descNlsId: number;
@@ -173,20 +147,14 @@ export interface EventType {
   results: Results[];
   type: string;
 }
-
-export class EventList {
-  success: boolean;
+export class EventList extends Response {
   params: EventTypeListParams;
 }
 
 export interface EventListEvents {
   Events: EventType[];
 }
-
-
-
-export class DeviceTypeList {
-  success: boolean;
+export class DeviceTypeList extends Response {
   params: DeviceTypeListParams;
 }
 
@@ -205,8 +173,7 @@ export interface DeviceType {
   exstatus: number;
 }
 
-export class DeviceList {
-  success: boolean;
+export class DeviceList extends Response {
   params: DeviceTypeListParams;
 }
 
@@ -214,8 +181,7 @@ export interface DeviceListDevices {
   devices: DeviceType[];
 }
 
-export class DeviceInfo {
-  success: boolean;
+export class DeviceInfo extends Response {
   params: DeviceInfoParameters;
 }
 
@@ -269,11 +235,8 @@ export interface DeviceInfoAttributes {
   value: string;
 }
 
-export class DeviceDataType {
-  success: boolean;
+export class DeviceDataType extends Response {
   params: DeviceDataTypeParams;
-  errorCodes?: number[];
-  errorMessages?: string[];
 }
 
 export interface DeviceDataTypeParams {
@@ -301,27 +264,18 @@ export interface DeviceDataTypeProperty {
   type: string;
 }
 
-export class DeviceStart {
-  success: boolean;
+export class DeviceStart extends Response {
   params: any;
-  errorCodes?: number[];
-  errorMessages?: string[];
 }
 
-export class DeviceStop {
-  success: boolean;
+export class DeviceStop extends Response {
   params: any;
-  errorCodes?: number[];
-  errorMessages?: string[];
 }
 
 // Trigger
 
-export class TriggerList {
-  success: boolean;
+export class TriggerList extends Response {
   params: TriggerListParams;
-  errorCodes?: number[];
-  errorMessages?: string[];
 }
 export interface TriggerListParams {
   triggers: TriggerListTrigger[];
@@ -348,29 +302,17 @@ export interface TriggerListTrigger {
   queueWatermarkTimestamp: number;
 }
 
-export class TriggerStart {
-  success: boolean;
-  errorCodes?: number[];
-  errorMessages?: string[];
+export class TriggerStart extends Response {
 }
 
-export class TriggerFire {
-  success: boolean;
-  errorCodes?: number[];
-  errorMessages?: string[];
+export class TriggerFire extends Response {
 }
 
-export class TriggerStop {
-  success: boolean;
-  errorCodes?: number[];
-  errorMessages?: string[];
+export class TriggerStop extends Response {
 }
 
-export class SubTriggerFire {
-  success: boolean;
+export class SubTriggerFire extends Response {
   params: SubTriggerFireParams;
-  errorCodes?: number[];
-  errorMessages?: string[];
 }
 export interface SubTriggerFireParams {
   resultStatus: number;
@@ -381,11 +323,8 @@ export interface SubTriggerFireParams {
 
 // Project
 
-export class ProjectList {
-  success: boolean;
+export class ProjectList extends Response {
   params: ProjectListParams;
-  errorCodes?: number[];
-  errorMessages?: string[];
 }
 export interface ProjectListParams {
   projects: ProjectListProject[];
@@ -403,35 +342,23 @@ export class ProjectStop { }
 
 // Channel
 
-export class ChannelSubscribe {
-  success: boolean;
+export class ChannelSubscribe extends Response {
   params: ChannelSubscribeParams;
-  errorCodes?: number[];
-  errorMessages?: string[];
 }
 export interface ChannelSubscribeParams {
   id: number;
 }
 
-export class ChannelUnsubscribe {
-  success: boolean;
-  errorCodes?: number[];
-  errorMessages?: string[];
+export class ChannelUnsubscribe extends Response {
 }
 
-export class ChannelUnsubscribeAll {
-  success: boolean;
-  errorCodes?: number[];
-  errorMessages?: string[];
+export class ChannelUnsubscribeAll extends Response {
 }
 
 // Diagnostics
 
-export class Ping {
-  success: true;
+export class Ping extends Response {
   params: PingParams;
-  errorCodes?: number[];
-  errorMessages?: string[];
 }
 
 export interface PingParams {
@@ -440,11 +367,8 @@ export interface PingParams {
 
 // SQLite
 
-export class Sql {
-  success: boolean;
+export class Sql extends Response {
   params: SqlParams;
-  errorCodes?: number[];
-  errorMessages?: string[];
 }
 
 export interface SqlParams {
@@ -456,11 +380,8 @@ export interface SqlParams {
 
 // System
 
-export class ReferenceList {
-  success: boolean;
+export class ReferenceList extends Response {
   // params: ReferenceListParams;
-  errorCodes?: number[];
-  errorMessages?: string[];
 }
 
 // export interface ReferenceListParams {}
