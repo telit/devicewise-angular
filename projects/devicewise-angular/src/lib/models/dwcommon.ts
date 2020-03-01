@@ -15,3 +15,11 @@ export enum DwType {
   TIMESTAMP = 17,
   BINARY = 19
 }
+
+export interface DwVariable {
+  device: string;
+  variable: string;
+  type: number;
+  count: number;
+  length: number;
+}

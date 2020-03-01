@@ -12,7 +12,7 @@ import { DevicewiseApiService } from './devicewise-api.service';
 })
 
 export class DevicewiseSubscribeService {
-  private activeSubscriptions: { [key: string]: Subject<DwResponse.Subscription> } = {};
+  private activeSubscriptions: { [key: string]: Subject<DwResponse.SubscribeDataResponse> } = {};
   private notificationsController;
   private url = '';
 
@@ -20,8 +20,8 @@ export class DevicewiseSubscribeService {
     this.apiService.getEndpointasObservable().subscribe((url) => this.url = url);
   }
 
-  public getSubscription(variable: DwSubscription.DwSubscription): Observable<DwResponse.Subscribe> {
-    const newSubscription: Subject<DwResponse.Subscription> = new Subject();
+  public getSubscription(variable: DwSubscription.DwSubscription): Observable<DwResponse.SubscribeResponse> {
+    const newSubscription: Subject<DwResponse.SubscribeDataResponse> = new Subject();
     variable.subscription = newSubscription.asObservable();
 
     return this.apiService.subscribe(
@@ -77,11 +77,11 @@ export class DevicewiseSubscribeService {
     );
   }
 
-  public unsubscribeAll(): Observable<DwResponse.UnsubscribeAll> {
+  public unsubscribeAll(): Observable<DwResponse.UnsubscribeAllResponse> {
     return this.apiService.unsubscribeAll();
   }
 
-  public unsubscribe(id: number): Observable<DwResponse.Unsubscribe> {
+  public unsubscribe(id: number): Observable<DwResponse.UnsubscribeResponse> {
     return this.apiService.unsubscribe(id);
   }
 

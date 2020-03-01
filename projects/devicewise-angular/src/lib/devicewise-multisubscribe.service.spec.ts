@@ -5,7 +5,7 @@ import { DevicewiseAngularModule } from './devicewise-angular.module';
 import { DevicewiseAuthService } from './devicewise-auth.service';
 import { DevicewiseMultisubscribeService } from './devicewise-multisubscribe.service';
 import { DwSubscription } from './models/dwsubscription';
-import { DwType } from './models/dwconstants';
+import { DwType } from './models/dwcommon';
 
 
 describe('DevicewiseMultisubscribeNewService', () => {

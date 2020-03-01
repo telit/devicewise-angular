@@ -1,6 +1,12 @@
+import { DwVariable } from './dwcommon';
+
 // Authentication
 
-export class Login {
+export interface DwRequest {
+  command: string;
+}
+
+export interface LoginRequest {
   auth: LoginAuth;
 }
 
@@ -9,66 +15,48 @@ export interface LoginAuth {
   password: string;
 }
 
-export class Logout {}
-
 // Variable
 
-export class Read {}
+export interface ReadRequest extends DwRequest {
+  params: DwVariable;
+}
 
-export class Write {
-  command: string;
+export interface WriteRequest extends DwRequest {
   params: WriteParams;
 }
-export  interface WriteParams {
-  device: string;
-  variable: string;
-  type: string;
-  count: string;
-  length: string;
+
+export  interface WriteParams extends DwVariable {
   data: string;
 }
 
-export class Subscribe {
-  command: string;
-  params: SubscribeParams;
-}
-export interface SubscribeParams {
-  device: string;
-  variable: string;
-  type: number;
-  count: number;
-  length: number;
+
+export interface SubscribeRequest extends DwRequest {
+  params:  DwVariable;
 }
 
-export class Unubscribe {}
 
-export class UnubscribeAll {}
+export interface UnubscribeRequest extends DwRequest {
+  params: UnubscribeParams;
+}
 
-export class NotificationCount {}
+export interface UnubscribeParams {
+  id: string;
+}
 
 // MultiSubscribe
 
-export class DwmultisubscribeRequest {
-  command: string;
+export interface DwMultisubscribeRequest extends DwRequest {
   params: DwmultisubscribeRequestParams;
 }
 
-export class DwmultisubscribeRequestParams {
+export interface DwmultisubscribeRequestParams {
   minimal: boolean;
   subscriptions: DwmultisubscribeRequestSubscriptions;
 }
 
 export interface DwmultisubscribeRequestSubscriptions {
-  variable: DwmultisubscribeRequestVariableSubscription[];
+  variable: DwVariable[];
   channel: DwmultisubscribeRequestChannelSubscription[];
-}
-
-export interface DwmultisubscribeRequestVariableSubscription {
-  device: string;
-  variable: string;
-  type: number|string;
-  count: number|string;
-  length: number|string;
 }
 
 export interface DwmultisubscribeRequestChannelSubscription {
@@ -77,40 +65,100 @@ export interface DwmultisubscribeRequestChannelSubscription {
 
 // Device
 
-export class DeviceList {}
+export interface DeviceInfoRequest extends DwRequest {
+  params: DeviceInfoParams;
+}
 
-export class DeviceInfo {}
+export interface DeviceInfoParams {
+  name: string;
+  opts: number;
+}
 
-export class DeviceTypeList {}
 
-export class DeviceStart {}
+export interface DeviceStartRequest extends DwRequest {
+  params: DeviceNameParams;
+}
 
-export class DeviceStop {}
+
+export interface DeviceStopRequest extends DwRequest {
+  params: DeviceNameParams;
+}
+
+export interface DeviceNameParams {
+  name: string;
+}
 
 // Trigger
 
-export class TriggerList {}
-export class TriggerStart {}
-export class TriggerFire {}
-export class TriggerStop {}
-export class SubTriggerFire {}
+export interface TriggerListRequestRequest extends DwRequest {
+  params: TriggerListParams;
+}
 
-export class SubTriggerFireParams {
-  name: string;
+export interface TriggerListParams {
   project: string;
+}
+
+
+export interface TriggerStartRequest extends DwRequest {
+  params: TriggerParams;
+}
+
+export interface TriggerParams {
+  project: string;
+  trigger: string;
+}
+
+
+export interface TriggerFireRequest extends DwRequest {
+  params: TriggerParams;
+}
+
+
+export interface TriggerStopRequest extends DwRequest {
+  params: TriggerParams;
+}
+
+
+export interface SubTriggerFireRequest extends DwRequest {
+  params: TriggerParams;
+}
+
+export interface SubTriggerFireParams extends TriggerParams {
   reportingEnabled: boolean;
   input: any[];
 }
 
-
 // Project
 
-export class ProjectList {}
+export interface ProjectStartRequest extends DwRequest {
+  params: ProjectNameParams;
+}
+
+export interface ProjectStopRequest extends DwRequest {
+  params: ProjectNameParams;
+}
+
+export interface ProjectNameParams {
+  name: string;
+}
 
 // Diagnostics
 
-export class Ping {}
+export interface PingRequest extends DwRequest {
+  params: PingParams;
+}
+
+export interface PingParams {
+  address: string;
+  count: string;
+}
 
 // SQLite
 
-export class Sql {}
+export interface Sql extends DwRequest {
+  params: SqlParams;
+}
+
+export interface SqlParams {
+  query: string;
+}

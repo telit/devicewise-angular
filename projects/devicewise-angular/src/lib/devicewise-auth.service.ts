@@ -27,13 +27,13 @@ export class DevicewiseAuthService {
     return this.loggedIn;
   }
 
-  public easyLogin(endpoint: string, username: string, password: string): Observable<DwResponse.Login> {
+  public easyLogin(endpoint: string, username: string, password: string): Observable<DwResponse.LoginResponse> {
     console.log('logging in...', endpoint);
     this.apiService.setEndpoint(endpoint);
     return this.apiService.channelUnsubscribeAll().pipe(
       flatMap((channelUnsubscribeResponse: any) => {
         if (channelUnsubscribeResponse.success) {
-          const loginResponse: DwResponse.Login = {
+          const loginResponse: DwResponse.LoginResponse = {
             success: true,
             sessionId: this.cookieService.get('sessionId'),
             roles: [this.cookieService.get('roles')],
@@ -62,7 +62,7 @@ export class DevicewiseAuthService {
     );
   }
 
-  public logout(): Observable<DwResponse.Logout> {
+  public logout(): Observable<DwResponse.LogoutResponse> {
     return this.apiService.logout().pipe(
       tap((response) => {
         if (response.success) {

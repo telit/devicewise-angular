@@ -21,6 +21,12 @@
     "paths": {
       "devicewise-angular": [
         "dist/devicewise-angular"
+      ],
+      "rxjs": [
+        "node_modules/rxjs"
+      ],
+      "rxjs/*": [
+        "node_modules/rxjs/*"
       ]
     }
   }

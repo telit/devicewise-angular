@@ -2,7 +2,8 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { merge, Observable, ReplaySubject } from 'rxjs';
 import { filter, finalize, share, switchMap } from 'rxjs/operators';
 import { DevicewiseApiService } from './devicewise-api.service';
-import { DevicewiseMultisubscribeService, MultiSubscribeParams, Variable } from './devicewise-multisubscribe.service';
+import { DevicewiseMultisubscribeService, MultiSubscribeParams } from './devicewise-multisubscribe.service';
+import { DwVariable } from './models/dwcommon';
 
 interface MultiSubscribePair {
   [key: string]: Observable<MultiSubscribeParams>;
@@ -15,7 +16,7 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
   private multiSub$: ReplaySubject<MultiSubscribeParams> = new ReplaySubject<MultiSubscribeParams>(1);
   private mutliSubRequest$: ReplaySubject<Observable<MultiSubscribeParams>> = new ReplaySubject<Observable<MultiSubscribeParams>>(1);
   public url = '';
-  public requestVariables: Variable[] = [];
+  public requestVariables: DwVariable[] = [];
   public requestVariableSubscriptions: MultiSubscribePair = {};
 
   constructor(private devicewiseMultisubscribeService: DevicewiseMultisubscribeService, private apiService: DevicewiseApiService) {
@@ -53,7 +54,7 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
    * @return Request variables from multisubscribe store.
    * @method getRequestVariables
    */
-  public getRequestVariables(): Variable[] {
+  public getRequestVariables(): DwVariable[] {
     console.log('got request variables', this.requestVariables);
     return this.requestVariables;
   }
@@ -64,7 +65,7 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
    * @param variables requestVariables Variables to add.
    * @method addRequestVariables
    */
-  public addRequestVariables(variables: Variable[]): Observable<MultiSubscribeParams> {
+  public addRequestVariables(variables: DwVariable[]): Observable<MultiSubscribeParams> {
     let foundVar = 0;
     const streams: Observable<MultiSubscribeParams>[] = [];
 
@@ -103,7 +104,7 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
    * @param requestVariables requestVariables Variables to remove.
    * @method removeRequestVariables
    */
-  public removeRequestVariables(variables: Variable[]) {
+  public removeRequestVariables(variables: DwVariable[]) {
     console.log('removing request variables', this.requestVariables);
     variables.forEach((variable) => {
       const foundIndex = this.requestVariables.findIndex(

@@ -2,14 +2,7 @@ import { map, tap, share, concatAll, retryWhen, switchMap } from 'rxjs/operators
 import { Observable, throwError, of } from 'rxjs';
 import { DevicewiseApiService } from './devicewise-api.service';
 import { Injectable } from '@angular/core';
-
-export interface Variable {
-  device: string;
-  variable: string;
-  type: number;
-  count: number;
-  length: number;
-}
+import { DwVariable } from './models/dwcommon';
 
 export interface MultiSubscribeResponse {
   success: boolean;
@@ -44,7 +37,7 @@ export class DevicewiseMultisubscribeService {
  * ```ts
  * import { DevicewiseMultisubscribeNewService } from './devicewise-multisubscribe-new.service';
  * import { DwSubscription } from './models/dwsubscription';
- * import { DwType } from './models/dwconstants';
+ * import { DwType } from './models/dwcommon';
  *
  * const variables = [{ device: 'System Monitor', variable: 'CPU.CPU Usage', type: DwType.INT4, count: 1, length: -1 }];
  * const multiSubscribe$ = service.multiSubscribe(variables);
@@ -63,7 +56,7 @@ export class DevicewiseMultisubscribeService {
  * @method map
  * @owner Observable
  */
-  public multiSubscribe(requestVariables: Variable[]): Observable<MultiSubscribeParams> {
+  public multiSubscribe(requestVariables: DwVariable[]): Observable<MultiSubscribeParams> {
     let buffer = '';
     let lastCharactersToReadNumber = 0;
 

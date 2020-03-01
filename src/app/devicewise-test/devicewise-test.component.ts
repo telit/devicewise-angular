@@ -4,23 +4,21 @@ import {
   DevicewiseAuthService,
   DevicewiseApiService,
   DevicewiseSubscribeService,
-  DevicewiseMultisubscribeService,
-  DwRequest,
   DwResponse,
   DwSubscription,
   DwType,
   Variable
 } from 'devicewise-angular';
 import { BehaviorSubject, forkJoin } from 'rxjs';
-import {MatBottomSheetModule, MatBottomSheet, MatBottomSheetRef, MAT_BOTTOM_SHEET_DATA} from '@angular/material/bottom-sheet';
-import {MatSnackBarModule, MatSnackBar} from '@angular/material/snack-bar';
-import {MatPaginatorModule, MatPaginator} from '@angular/material/paginator';
+import { MatBottomSheet, MatBottomSheetRef, MAT_BOTTOM_SHEET_DATA} from '@angular/material/bottom-sheet';
 import { SubTriggerPipe } from './custom-pipes.pipe';
-import { tap } from 'rxjs/operators';
 import {
   MatTableDataSource
 } from '@angular/material/table';
-import {MatAutocompleteModule, MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
+import { MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
+import { DevicewiseMultisubscribeStoreService } from 'projects/devicewise-angular/src/public_api';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-devicewise-test',
@@ -102,14 +100,13 @@ export class DevicewiseTestComponent implements OnInit {
     private devicewise: DevicewiseAuthService,
     private dwApi: DevicewiseApiService,
     private dwSubscribe: DevicewiseSubscribeService,
-    private dwMultiSubscribe: DevicewiseMultisubscribeService,
+    private dwMultiSubscribe: DevicewiseMultisubscribeStoreService,
     public snackBar: MatSnackBar,
     private bottomSheet: MatBottomSheet
   ) { }
 
   ngOnInit() {
-    this.url = location.origin;
-    // this.url = '';
+    this.url = 'http://192.168.1.22:8080'; // location.origin;
     this.dataSource.paginator = this.paginator;
     this.devicewise.easyLogin(this.url, '', '').subscribe((login) => {
       console.log('logged in!');
@@ -132,14 +129,6 @@ export class DevicewiseTestComponent implements OnInit {
     this.dwApi.deviceList().subscribe(data2 => {
       this.devices.next(data2.params.devices);
     });
-
-    // const observables = [this.dwApi.projectList(), this.dwApi.deviceList()];
-    // return forkJoin(observables).pipe(
-    //   tap((response) => {
-    //     this.projects.next(response[0].params.projects);
-    //     this.devices.next(response[1].params.devices);
-    //   })
-    // )
   }
 
   login(endpoint: string, username: string, password: string) {
@@ -169,7 +158,7 @@ export class DevicewiseTestComponent implements OnInit {
 
   read(device, variable, type?, count?, length?) {
     if (!type) {
-      type = this.dwTypeToNumber(this.selectedVariable.type);
+      type = this.dwApi.dwTypeToNumber(this.selectedVariable.type);
     }
     if (!count) {
       count = this.selectedVariable.xdim ? this.selectedVariable.xdim : 1;
@@ -188,7 +177,7 @@ export class DevicewiseTestComponent implements OnInit {
 
   write(device, variable, type?, count?, length?, varData?) {
     if (!type) {
-      type = this.dwTypeToNumber(this.selectedVariable.type);
+      type = this.dwApi.dwTypeToNumber(this.selectedVariable.type);
     }
     if (!count) {
       count = this.selectedVariable.xdim ? this.selectedVariable.xdim : 1;
@@ -221,7 +210,7 @@ export class DevicewiseTestComponent implements OnInit {
       length = -1;
     }
 
-    this.subscribe(this.currentDevice, event.option.viewValue, 1, this.dwTypeToNumber(this.selectedVariable.type), count, length);
+    this.subscribe(this.currentDevice, event.option.viewValue, 1, this.dwApi.dwTypeToNumber(this.selectedVariable.type), count, length);
     this.subscriptionInput.nativeElement.value = '';
   }
 
@@ -238,13 +227,13 @@ export class DevicewiseTestComponent implements OnInit {
       length = -1;
     }
 
-    this.multiSubscribe(this.currentDevice, event.option.viewValue, 1, this.dwTypeToNumber(this.selectedVariable.type), count, length);
+    this.multiSubscribe(this.currentDevice, event.option.viewValue, 1, this.dwApi.dwTypeToNumber(this.selectedVariable.type), count, length);
     this.multiSubscribeInput.nativeElement.value = '';
   }
 
   subscribe(device, variable, rate?, type?, count?, length?) {
     if (!type) {
-      type = this.dwTypeToNumber(this.selectedVariable.type);
+      type = this.dwApi.dwTypeToNumber(this.selectedVariable.type);
     }
     if (!count) {
       count = this.selectedVariable.xdim ? this.selectedVariable.xdim : 1;
@@ -294,7 +283,7 @@ export class DevicewiseTestComponent implements OnInit {
 
   multiSubscribe(device, variable, rate?, type?, count?, length?) {
     if (!type) {
-      type = this.dwTypeToNumber(this.selectedVariable.type);
+      type = this.dwApi.dwTypeToNumber(this.selectedVariable.type);
     }
     if (!count) {
       count = this.selectedVariable.xdim ? this.selectedVariable.xdim : 1;
@@ -315,7 +304,7 @@ export class DevicewiseTestComponent implements OnInit {
   };
     this.multiSubscribeVariables.push(newSubscription);
 
-    this.dwMultiSubscribe.multiSubscribe(this.multiSubscribeVariables).subscribe((data) => {
+    this.dwMultiSubscribe.addRequestVariables(this.multiSubscribeVariables).subscribe((data) => {
     }, (error) => this.openSnackError(error)
     );
   }
@@ -654,37 +643,6 @@ export class DevicewiseTestComponent implements OnInit {
     this.snackBar.open(message, 'ACKNOWLEDGE', {
       duration: 10000
     });
-  }
-
-  dwTypeToNumber(dwType: string) {
-    switch (dwType) {
-      case 'INT1':
-        return DwType.INT1;
-      case 'INT2':
-        return DwType.INT2;
-      case 'INT4':
-        return DwType.INT4;
-      case 'INT8':
-        return DwType.INT8;
-      case 'UINT1':
-        return DwType.UINT1;
-      case 'UINT2':
-        return DwType.UINT2;
-      case 'UINT4':
-        return DwType.UINT4;
-      case 'UINT8':
-        return DwType.UINT8;
-      case 'FLOAT4':
-        return DwType.FLOAT4;
-      case 'FLOAT8':
-        return DwType.FLOAT8;
-      case 'BOOL':
-        return DwType.BOOL;
-      case 'STRING':
-        return DwType.STRING;
-      default:
-        return DwType.UNKNOWN;
-    }
   }
 }
 

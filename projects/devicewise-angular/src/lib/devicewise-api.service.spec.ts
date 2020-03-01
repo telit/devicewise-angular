@@ -1,17 +1,17 @@
-import { ReferenceList } from './models/dwresponse';
+import { ReferenceListResponse } from './models/dwresponse';
 import { forkJoin } from 'rxjs';
-import { DwType } from './models/dwconstants';
+import { DwType } from './models/dwcommon';
 import { DevicewiseAuthService } from './devicewise-auth.service';
 import { DevicewiseAngularModule } from './devicewise-angular.module';
 import { TestBed, async } from '@angular/core/testing';
 
 import { DevicewiseApiService } from './devicewise-api.service';
-import { DwRequest } from 'dist/devicewise-angular/public_api';
+import { CookieService } from 'ngx-cookie-service';
 
-describe('DevicewiseApiService', () => {
+fdescribe('DevicewiseApiService', () => {
   let service: DevicewiseApiService;
   let authService: DevicewiseAuthService;
-  const endpoint = 'http://192.168.1.15:88';
+  const endpoint = 'http://192.168.1.22:8080';
   const username = 'admin';
   const password = 'admin';
   const variables: any[] = [
@@ -24,7 +24,7 @@ describe('DevicewiseApiService', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [DevicewiseAngularModule],
-      providers: [DevicewiseApiService, DevicewiseAuthService]
+      providers: [CookieService, DevicewiseApiService, DevicewiseAuthService]
     });
     service = TestBed.get(DevicewiseApiService);
     authService = TestBed.get(DevicewiseAuthService);

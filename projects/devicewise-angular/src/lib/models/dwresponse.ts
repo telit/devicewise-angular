@@ -1,43 +1,45 @@
-// Authentication
+import { DwVariable } from './dwcommon';
 
-export class Response {
+export interface DwResponse {
   success: boolean;
   errorCodes?: number[];
   errorMessages?: string[];
 }
 
-export class Login extends Response {
+// Authentication
+
+export interface LoginResponse extends DwResponse {
   sessionId: string;
   roles: [string];
   requirePasswordChange: boolean;
 }
 
-export class Logout extends Response {
+
+export interface LogoutResponse extends DwResponse {
 }
 
 // Variable
 
-export class Read extends Response {
+export interface Response extends DwResponse {
   params: ReadParams;
 }
 
-export interface ReadParams {
-  variable: string;
-  length: number;
-  count: number;
+
+export interface ReadParams extends DwVariable {
   status: number;
-  type: number;
   data: any[];
 }
 
-export class Write extends Response {
+
+export interface WriteResponse extends DwResponse {
 }
 
-export class Subscription extends Response {
-  params: SubscriptionParams;
+
+export interface SubscribeDataResponse extends DwResponse {
+  params: SubscribeDataParams;
 }
 
-interface SubscriptionParams {
+export interface SubscribeDataParams {
   variable: string;
   length: number;
   count: number;
@@ -47,20 +49,25 @@ interface SubscriptionParams {
   id: number;
 }
 
-export class Subscribe extends Response {
+
+export interface SubscribeResponse extends DwResponse {
   params: SubscribeParams;
 }
+
 export interface SubscribeParams {
   id: number;
 }
 
-export class Unubscribe extends Response {
+
+export interface UnubscribeResponse extends DwResponse {
 }
 
-export class UnubscribeAll extends Response {
+
+export interface UnubscribeAllResponse extends DwResponse {
 }
 
-export class NotificationCount extends Response {
+
+export interface NotificationCountResponse extends DwResponse {
   params: NotificationCountParams;
 }
 
@@ -68,19 +75,24 @@ export interface NotificationCountParams {
   count: number;
 }
 
-export class UnsubscribeAll extends Response {
+
+export interface UnsubscribeAllResponse extends DwResponse {
   params: UnsubscribeAllParams;
 }
+
 export interface UnsubscribeAllParams {
   removed: number;
 }
 
-export class Unsubscribe extends Response {
+
+export interface UnsubscribeResponse extends DwResponse {
 }
 
-export class ActionTypeList extends Response {
+
+export interface ActionTypeListResponse extends DwResponse {
   params: ActionTypeListParams;
 }
+
 
 export interface ActionTypeListParams {
   actionTypes: ActionType[];
@@ -119,20 +131,24 @@ export interface ActionType {
   type: string;
 }
 
-export class ActionList extends Response {
+
+export interface ActionListResponse extends DwResponse {
   params: ActionTypeListParams;
 }
 
 export interface ActionListActions {
   actions: ActionType[];
 }
-export class EventTypeList extends Response {
+
+
+export interface EventTypeListResponse extends DwResponse {
   params: EventTypeListParams;
 }
 
 export interface EventTypeListParams {
   eventTypes: EventType[];
 }
+
 export interface EventType {
   defaultErrorRoute: number;
   descNlsId: number;
@@ -147,14 +163,18 @@ export interface EventType {
   results: Results[];
   type: string;
 }
-export class EventList extends Response {
+
+
+export interface EventListResponse extends DwResponse {
   params: EventTypeListParams;
 }
 
 export interface EventListEvents {
   Events: EventType[];
 }
-export class DeviceTypeList extends Response {
+
+
+export interface DeviceTypeListResponse extends DwResponse {
   params: DeviceTypeListParams;
 }
 
@@ -173,7 +193,8 @@ export interface DeviceType {
   exstatus: number;
 }
 
-export class DeviceList extends Response {
+
+export interface DeviceListResponse extends DwResponse {
   params: DeviceTypeListParams;
 }
 
@@ -181,7 +202,8 @@ export interface DeviceListDevices {
   devices: DeviceType[];
 }
 
-export class DeviceInfo extends Response {
+
+export interface DeviceInfoResponse extends DwResponse {
   params: DeviceInfoParameters;
 }
 
@@ -235,7 +257,8 @@ export interface DeviceInfoAttributes {
   value: string;
 }
 
-export class DeviceDataType extends Response {
+
+export interface DeviceDataTypeResponse extends DwResponse {
   params: DeviceDataTypeParams;
 }
 
@@ -264,22 +287,26 @@ export interface DeviceDataTypeProperty {
   type: string;
 }
 
-export class DeviceStart extends Response {
+
+export interface DeviceStartResponse extends DwResponse {
   params: any;
 }
 
-export class DeviceStop extends Response {
+
+export interface DeviceStopResponse extends DwResponse {
   params: any;
 }
 
 // Trigger
 
-export class TriggerList extends Response {
+export interface TriggerListResponse extends DwResponse {
   params: TriggerListParams;
 }
+
 export interface TriggerListParams {
   triggers: TriggerListTrigger[];
 }
+
 export interface TriggerListTrigger {
   name: string;
   state: number;
@@ -302,33 +329,40 @@ export interface TriggerListTrigger {
   queueWatermarkTimestamp: number;
 }
 
-export class TriggerStart extends Response {
+
+export interface TriggerStartResponse extends DwResponse {
 }
 
-export class TriggerFire extends Response {
+
+export interface TriggerFireResponse extends DwResponse {
 }
 
-export class TriggerStop extends Response {
+
+export interface TriggerStopResponse extends DwResponse {
 }
 
-export class SubTriggerFire extends Response {
+
+export interface SubTriggerFireResponse extends DwResponse {
   params: SubTriggerFireParams;
 }
+
 export interface SubTriggerFireParams {
   resultStatus: number;
   eventStatus: number;
   count: number;
-  output: SubscriptionParams[];
+  output: SubscribeDataParams[];
 }
 
 // Project
 
-export class ProjectList extends Response {
+export interface ProjectListResponse extends DwResponse {
   params: ProjectListParams;
 }
+
 export interface ProjectListParams {
   projects: ProjectListProject[];
 }
+
 export interface ProjectListProject {
   name: string;
   state: string;
@@ -336,28 +370,31 @@ export interface ProjectListProject {
   lastmodified: number;
 }
 
-export class ProjectStart { }
+export interface ProjectStartResponse extends DwResponse { }
 
-export class ProjectStop { }
+export interface ProjectStopResponse extends DwResponse { }
 
 // Channel
 
-export class ChannelSubscribe extends Response {
+export interface ChannelSubscribeResponse extends DwResponse {
   params: ChannelSubscribeParams;
 }
+
 export interface ChannelSubscribeParams {
   id: number;
 }
 
-export class ChannelUnsubscribe extends Response {
+
+export interface ChannelUnsubscribeResponse extends DwResponse {
 }
 
-export class ChannelUnsubscribeAll extends Response {
+
+export interface ChannelUnsubscribeAllResponse extends DwResponse {
 }
 
 // Diagnostics
 
-export class Ping extends Response {
+export interface PingResponse extends DwResponse {
   params: PingParams;
 }
 
@@ -367,7 +404,7 @@ export interface PingParams {
 
 // SQLite
 
-export class Sql extends Response {
+export interface SqlResponse extends DwResponse {
   params: SqlParams;
 }
 
@@ -380,8 +417,6 @@ export interface SqlParams {
 
 // System
 
-export class ReferenceList extends Response {
-  // params: ReferenceListParams;
+export interface ReferenceListResponse extends DwResponse {
+  params: any;
 }
-
-// export interface ReferenceListParams {}

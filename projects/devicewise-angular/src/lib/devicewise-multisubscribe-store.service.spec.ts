@@ -3,9 +3,9 @@ import { filter, finalize, take } from 'rxjs/operators';
 import { DevicewiseAngularModule } from './devicewise-angular.module';
 import { DevicewiseAuthService } from './devicewise-auth.service';
 import { DevicewiseMultisubscribeStoreService } from './devicewise-multisubscribe-store.service';
-import { DwType } from './models/dwconstants';
+import { DwType } from './models/dwcommon';
 
-fdescribe('DevicewiseMultisubscribeStoreService', () => {
+describe('DevicewiseMultisubscribeStoreService', () => {
   let service: DevicewiseMultisubscribeStoreService;
   let authService: DevicewiseAuthService;
   const endpoint = 'http://192.168.1.15:88';
