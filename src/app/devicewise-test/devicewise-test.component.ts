@@ -7,7 +7,7 @@ import {
   DwResponse,
   DwSubscription,
   DwType,
-  Variable
+  DwVariable
 } from 'devicewise-angular';
 import { BehaviorSubject, forkJoin } from 'rxjs';
 import { MatBottomSheet, MatBottomSheetRef, MAT_BOTTOM_SHEET_DATA} from '@angular/material/bottom-sheet';
@@ -52,7 +52,7 @@ export class DevicewiseTestComponent implements OnInit {
   subTriggerVariablesSubject: BehaviorSubject<any[]> = new BehaviorSubject([]);
   subscriptions = {};
   subscriptionsSubject: BehaviorSubject<{}> = new BehaviorSubject({});
-  multiSubscribeVariables: Variable[] = [];
+  multiSubscribeVariables: DwVariable[] = [];
   multiSubsciptionsSubject: BehaviorSubject<{}> = new BehaviorSubject({});
   loginResponse;
   logoutResponse;
@@ -73,8 +73,8 @@ export class DevicewiseTestComponent implements OnInit {
   triggerFireResponse;
   triggerStopResponse;
   subTriggerFireResponse;
-  actionTypeResponse: DwResponse.ActionTypeList;
-  eventTypeResponse: DwResponse.EventTypeList;
+  actionTypeResponse: DwResponse.ActionTypeListResponse;
+  eventTypeResponse: DwResponse.EventTypeListResponse;
   projectListResponse;
   projectStartResponse;
   projectStopResponse;
@@ -295,7 +295,7 @@ export class DevicewiseTestComponent implements OnInit {
       rate = 1;
     }
 
-    const newSubscription: Variable = {
+    const newSubscription: DwVariable = {
       device: device,
       variable: variable,
       type: type,
@@ -601,7 +601,6 @@ export class DevicewiseTestComponent implements OnInit {
     this.currentDevice = input.value;
 
     this.dwApi.deviceInfo(this.currentDevice, 2).subscribe((data) => {
-      console.log(data);
       if (!data.params.variableInfo) {
         this.variables.next([]);
       } else {

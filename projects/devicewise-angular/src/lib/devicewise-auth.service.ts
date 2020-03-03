@@ -23,37 +23,41 @@ export class DevicewiseAuthService {
     this.loggedIn = status;
   }
 
-  public getLoginStatus(): boolean {
-    return this.loggedIn;
+  public getSessionInfo(): Observable<DwResponse.SessionInfo> {
+    return this.apiService.sessionInfo();
   }
 
   public easyLogin(endpoint: string, username: string, password: string): Observable<DwResponse.LoginResponse> {
-    console.log('logging in...', endpoint);
     this.apiService.setEndpoint(endpoint);
-    return this.apiService.channelUnsubscribeAll().pipe(
-      flatMap((channelUnsubscribeResponse: any) => {
-        if (channelUnsubscribeResponse.success) {
-          const loginResponse: DwResponse.LoginResponse = {
-            success: true,
-            sessionId: this.cookieService.get('sessionId'),
-            roles: [this.cookieService.get('roles')],
-            requirePasswordChange: false
-          };
+    return this.getSessionInfo().pipe(
+      flatMap((sessionInfo: DwResponse.SessionInfo) => {
+        if (sessionInfo.success) {
           this.setLoginStatus(true);
-          return of(loginResponse);
+          return of({
+            success: sessionInfo.success,
+            sessionId: null,
+            roles: sessionInfo.params.roles,
+            requirePasswordChange: sessionInfo.params.requirePasswordChange
+          });
+        } else {
+          return of({
+            success: sessionInfo.success,
+            errorCodes: sessionInfo.errorCodes,
+            errorMessages: sessionInfo.errorMessages
+          });
+          return this.login(endpoint, username, password);
         }
-        return this.login(endpoint, username, password);
       }),
       catchError((err) => this.login(endpoint, username, password))
     );
   }
 
-  private login(endpoint: string, username: string, password: string) {
+  public login(endpoint: string, username: string, password: string): Observable<DwResponse.LoginResponse> {
+    this.apiService.setEndpoint(endpoint);
     return this.apiService.login(endpoint, username, password).pipe(
       tap((login) => {
         this.setLoginStatus(login.success);
         if (login.success) {
-          this.cookieService.deleteAll();
           this.cookieService.set('sessionId', login.sessionId);
           this.cookieService.set('roles', login.roles[0]);
         }
@@ -66,7 +70,6 @@ export class DevicewiseAuthService {
     return this.apiService.logout().pipe(
       tap((response) => {
         if (response.success) {
-          this.cookieService.deleteAll();
           this.setLoginStatus(false);
         }
       })

@@ -61,14 +61,14 @@ export class DevicewiseSubscribeService {
           });
         } else {
           if (response.errorCodes[0] === -6428) {
-            console.warn('DeviceWISE subscription error. Subscription Already Exists.');
+            console.warn('DeviceWISE subscription error. Subscription Already Exists.', response);
           } else {
             console.warn('Variable name: ' + variable.request.params.variable);
             console.warn(response);
           }
         }
       }, (error) => {
-        console.log('subError', error);
+        console.warn('DeviceWISE subscription error.', error);
         if (error.status === 401) {
           this.apiService.logout().subscribe();
         }
@@ -88,7 +88,6 @@ export class DevicewiseSubscribeService {
   public getNotifications() {
     this.notificationsController = new AbortController();
 
-    console.log('Getting notifications...');
     fetchStream(this.url + '/api', {
       signal: this.notificationsController.signal,
       method: 'POST',
@@ -103,7 +102,7 @@ export class DevicewiseSubscribeService {
         this.pump(reader, chunks);
       })
       .catch(error => {
-        console.log('FETCH STREAM ERROR');
+        console.warn('FETCH STREAM ERROR', error);
       });
   }
 
@@ -151,7 +150,7 @@ export class DevicewiseSubscribeService {
           }
         }
       } catch {
-        console.log('failed to parse', subString);
+        console.log('Failed to parse', subString);
       }
       if (chunks.length >= 65536) {
         console.warn('Chunk too long! Resetting Chunk.');

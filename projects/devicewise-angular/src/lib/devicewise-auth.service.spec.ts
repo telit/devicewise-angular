@@ -18,7 +18,7 @@ describe('DevicewiseAuthService', () => {
     });
     service = TestBed.get(DevicewiseAuthService);
 
-    if (service.getLoginStatus() === false) {
+    if (service.getSessionInfo() === false) {
       service.easyLogin(endpoint, username, password).subscribe((loginResponse) => { }, err => console.log(err));
     }
   }));
@@ -37,7 +37,7 @@ describe('DevicewiseAuthService', () => {
   });
 
   it('login status should be true after login', (done: DoneFn) => {
-    expect(service.getLoginStatus()).toEqual(true);
+    expect(service.getSessionInfo()).toEqual(true);
 
     service.logout().subscribe((logoutResponse) => {
       expect(logoutResponse).toEqual(jasmine.objectContaining({
@@ -57,7 +57,7 @@ describe('DevicewiseAuthService', () => {
         expect(logoutResponse).toEqual(jasmine.objectContaining({
           success: true
         }));
-        expect(service.getLoginStatus()).toEqual(false);
+        expect(service.getSessionInfo()).toEqual(false);
         done();
       });
 

@@ -9,13 +9,23 @@ export interface DwResponse {
 // Authentication
 
 export interface LoginResponse extends DwResponse {
-  sessionId: string;
-  roles: [string];
-  requirePasswordChange: boolean;
+  sessionId?: string;
+  roles?: [string];
+  requirePasswordChange?: boolean;
 }
 
 
 export interface LogoutResponse extends DwResponse {
+}
+
+
+export interface SessionInfo extends DwResponse {
+  params: SessionInfoParams;
+}
+
+export interface SessionInfoParams {
+  roles: [string];
+  requirePasswordChange: boolean;
 }
 
 // Variable

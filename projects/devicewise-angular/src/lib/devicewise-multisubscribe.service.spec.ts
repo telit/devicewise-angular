@@ -28,9 +28,7 @@ describe('DevicewiseMultisubscribeNewService', () => {
     });
     service = TestBed.get(DevicewiseMultisubscribeService);
     authService = TestBed.get(DevicewiseAuthService);
-    if (authService.getLoginStatus() === false) {
-      authService.easyLogin(endpoint, username, password).subscribe((data) => { });
-    }
+    authService.easyLogin(endpoint, username, password).subscribe((data) => { });
   }));
 
   it('should be created', () => {

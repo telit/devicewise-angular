@@ -46,6 +46,16 @@ export class DevicewiseApiService {
     return this.http.post<DwResponse.LogoutResponse>(this.url + '/api/logout', null, httpOptions);
   }
 
+  public sessionInfo(): Observable<DwResponse.SessionInfo> {
+    return this.http.post<DwResponse.SessionInfo>(
+      this.url + '/api',
+      {
+        command: 'session.info'
+      },
+      httpOptions
+    );
+  }
+
   // Variable
   public read(device: string, variable: string, type: number, count: number, length: number): Observable<DwResponse.Response> {
     return this.http.post<DwResponse.Response>(

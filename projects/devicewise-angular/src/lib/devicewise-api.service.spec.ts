@@ -28,7 +28,7 @@ fdescribe('DevicewiseApiService', () => {
     });
     service = TestBed.get(DevicewiseApiService);
     authService = TestBed.get(DevicewiseAuthService);
-    if (authService.getLoginStatus() === false) {
+    if (authService.getSessionInfo() === false) {
       authService.easyLogin(endpoint, username, password).subscribe((data) => { });
     }
   }));
