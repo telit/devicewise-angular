@@ -1,16 +1,16 @@
 {
   "name": "devicewise-angular",
   "description": "Angular2+ library to communicate with deviceWISE.",
-  "version": "3.1.4",
+  "version": "3.1.5",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build_lib": "ng build devicewise-angular --prod",
-    "copy-license": "copy .\\LICENSE .\\..\\..\\dist\\devicewise-angular",
-    "copy-readme": "copy .\\README.md .\\..\\..\\dist\\devicewise-angular",
+    "copy-license": "cp ./LICENSE ./../../dist/devicewise-angular",
+    "copy-readme": "cp ./README.md ./../../dist/devicewise-angular",
     "copy-files": "npm run copy-license && npm run copy-readme",
-    "npm_pack": "cd .\\..\\..\\dist\\devicewise-angular && npm pack",
-    "npm_publish": "cd .\\..\\..\\dist\\devicewise-angular && npm publish",
-    "git_push": "cd .\\..\\..\\dist\\devicewise-angular && git push",
+    "npm_pack": "cd ./../../dist/devicewise-angular && npm pack",
+    "npm_publish": "cd ./../../dist/devicewise-angular && npm publish",
+    "git_push": "cd ./../../dist/devicewise-angular && git push",
     "package": "npm run build_lib && npm run copy-files && npm run npm_pack",
     "publish": "npm run package && npm run npm_publish"
   },
