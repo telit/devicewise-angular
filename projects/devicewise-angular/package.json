@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/astone2014/devicewise-angular.git"
+    "url": "https://github.com/telit/devicewise-angular.git"
   },
   "keywords": [
     "IoT",
@@ -26,9 +26,9 @@
   "author": "Telit IoT Platforms",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/astone2014/devicewise-angular/issues"
+    "url": "https://github.com/telit/devicewise-angular/issues"
   },
-  "homepage": "https://github.com/astone2014/devicewise-angular",
+  "homepage": "https://github.com/telit/devicewise-angular",
   "peerDependencies": {
     "@angular/common": "~9.0.4",
     "@angular/core": "~9.0.4",

@@ -118,7 +118,7 @@ Run these steps to enable CORS on deviceWISE.
 Clone the repository.
 
 ```cli
-git clone https://github.com/astone2014/devicewise-angular.git
+git clone https://github.com/telit/devicewise-angular.git
 ```
 
 Navigate to the folder.
@@ -151,7 +151,7 @@ Checking out the following resources usually solves most of the problems people 
 
 The following general steps are usually very helpful when debugging problems with this service:
 
-* check out if there are any [open](https://github.com/astone2014/devicewise-angular/issues) or [closed](https://github.com/astone2014/devicewise-angular/issues?q=is%3Aissue+is%3Aclosed) issues that answer your question
+* check out if there are any [open](https://github.com/telit/devicewise-angular/issues) or [closed](https://github.com/telit/devicewise-angular/issues?q=is%3Aissue+is%3Aclosed) issues that answer your question
 * ensure you have a valid sessionID cookie.
 * [explain to your local rubber duck why your code should work and why it (probably) does not](https://en.wikipedia.org/wiki/Rubber_duck_debugging)
 
@@ -165,7 +165,7 @@ We are happy to accept pull requests or test cases for things that do not work. 
 
 However, we will only accept pull requests that pass all tests and include some new ones (as long as it makes sense to add them, of course).
 
-* [Open a new pull request](https://github.com/astone2014/devicewise-angular/compare)
+* [Open a new pull request](https://github.com/telit/devicewise-angular/compare)
 
 # Author
 
@@ -173,4 +173,4 @@ This library is provided to you free by [Telit IoT Platforms](https://telit.com/
 
 # License
 
-[MIT](https://github.com/astone2014/devicewise-angular/master/LICENSE)
+[MIT](https://github.com/telit/devicewise-angular/master/LICENSE)
