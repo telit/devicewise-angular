@@ -7,9 +7,6 @@
 
 Angular services for communicating with deviceWISE.
 
-# DeviceWISE Angular API Service
-
-
 # Installation
 
 ```cli
