@@ -1,7 +1,7 @@
 {
   "name": "devicewise-angular",
   "description": "Angular2+ library to communicate with deviceWISE.",
-  "version": "3.1.5",
+  "version": "3.1.6",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build_lib": "ng build devicewise-angular --prod",
