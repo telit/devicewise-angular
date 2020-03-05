@@ -324,7 +324,7 @@ export class DevicewiseApiService {
     );
   }
 
-  // Diagnostics
+  // Misc
   public ping(address: string, count: number): Observable<DwResponse.PingResponse> {
     return this.http.post<DwResponse.PingResponse>(
       this.url + '/api',
@@ -334,6 +334,17 @@ export class DevicewiseApiService {
           address: address,
           count: count
         }
+      },
+      httpOptions
+    );
+  }
+
+  public stagingFileList(path: string): Observable<DwResponse.StagingFileListResponse> {
+    return this.http.post<DwResponse.StagingFileListResponse>(
+      this.url + '/api',
+      {
+        command: 'filesystem.staging.dir.list',
+        params: { path: path }
       },
       httpOptions
     );

@@ -430,3 +430,19 @@ export interface SqlParams {
 export interface ReferenceListResponse extends DwResponse {
   params: any;
 }
+
+export interface StagingFileListResponse extends DwResponse {
+  params: StagingFileListParams;
+}
+
+export interface StagingFileListParams {
+  files: StagingFile[];
+}
+
+export interface StagingFile {
+  type: string;
+  name: string;
+  size: number;
+  created: number;
+  modified: number;
+}
