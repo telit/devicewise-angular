@@ -8,7 +8,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "publish": "cd projects/devicewise-angular && npm run publish",
+    "publish": "cd ./projects/devicewise-angular && npm run publish",
     "postinstall": "ngcc"
   },
   "private": true,
