@@ -170,4 +170,4 @@ This library is provided to you free by [Telit IoT Platforms](https://telit.com/
 
 # License
 
-[MIT](https://github.com/telit/devicewise-angular/master/LICENSE)
+[MIT](https://github.com/telit/devicewise-angular/blob/master/LICENSE)
