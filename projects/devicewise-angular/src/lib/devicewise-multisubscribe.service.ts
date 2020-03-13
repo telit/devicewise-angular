@@ -113,9 +113,11 @@ export class DevicewiseMultisubscribeService {
       concatAll(),
       retryWhen((errors) => errors.pipe(
         switchMap((sourceErr) => {
+          console.log('Looking to retry...', errors, sourceErr);
           if (sourceErr.success === false && (sourceErr.errorCodes[0] === -7002)) {
             return of(true);
           } else {
+            console.log('Not going to retry...');
             return throwError(sourceErr);
           }
         })
@@ -147,7 +149,9 @@ export class DevicewiseMultisubscribeService {
                 controller.enqueue(result.value);
                 push();
               }).catch((err) => {
+                console.warn('catch reader.read', err);
                 if (err.code !== 20) { } // Ignore
+                observer.error(err);
               });
             }
             push();
@@ -156,10 +160,13 @@ export class DevicewiseMultisubscribeService {
       }).catch((err) => {
         if (err.code !== 20) {
           observer.error(err);
+        } else {
+          console.warn('err.code !== 20', err);
         }
       });
 
       return () => {
+        console.warn('complete fetch');
         abortController.abort();
         observer.complete();
       };
