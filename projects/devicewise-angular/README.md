@@ -29,16 +29,20 @@ Then, import and inject the devicewise angular service into a component:
 
 ```ts
 ...
-import { DevicewiseAuthService } from 'devicewise-angular';
+import { DevicewiseAuthService, DevicewiseApiService } from 'devicewise-angular';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   ...
 })
 export class AppComponent implements OnInit {
-  constructor(private devicewise: DevicewiseAuthService) {}
-
-  ngOnInit() {
-    this.dwAuthentication.easyLogin('http://localhost:88', 'admin', 'admin').pipe(
+  constructor(
+    private dwAuthentication: DevicewiseAuthService,
+    private dwApi: DevicewiseApiService
+  ) {}
+ 
+  ngOnInit(): void {
+    this.dwAuthentication.easyLogin('http://localhost:8080', 'admin', 'admin').pipe(
       switchMap((e) => this.dwApi.deviceList())
     ).subscribe((e) => console.log(e));
   }
@@ -58,15 +62,17 @@ import { DevicewiseAuthService } from 'devicewise-angular';
   ...
 })
 export class AppComponent implements OnInit {
-  constructor(private devicewise: DevicewiseAuthService) {}
+  constructor(
+    private dwAuthentication: DevicewiseAuthService,
+    private dwMultiSubscribeService: DevicewiseMultisubscribeStoreService
+  ) { }
 
-  ngOnInit() {
-    const variables: Variable[] = [{ device: 'Machine1', variable: 'OEE', type: DwType.FLOAT4, count: 1, length: -1 }];
+  variables: DwVariable[] = [{ device: 'System Monitor', variable: 'CPU.CPU Usage', type: DwType.UINT1, count: 1, length: -1 }];
 
-    this.dwMultiSubscribeService.addRequestVariables(variables);    
-    this.dwAuthentication.easyLogin('http://localhost:88', 'admin', 'admin').pipe(
-      switchMap((e) => this.dwMultiSubscribeService.subscriptionAsObservable())
-    ).subscribe((e) => console.log(e));
+  ngOnInit(): void {
+    this.dwAuthentication.easyLogin('http://localhost:8080', 'admin', 'admin').pipe(
+      switchMap((e) => this.dwMultiSubscribeService.addRequestVariables(this.variables))
+    ).subscribe((e) => console.log('value changed:', e));
   }
   ...
 ```
@@ -80,10 +86,10 @@ this.multisub$ = this.dwMultiSubscribeService.subscriptionAsObservable();
 To get a specific variable out of the observable create a pipe containing filter.
 ```ts
 this.multisub$.pipe(
-  filter((e) => e.device.name == 'Machine1' && e.variable.name = 'OEE')
+  filter((e) => e.device.name == 'System Monitor' && e.variable.name = 'CPU.CPU Usage')
 ).subscribe((e) => console.log(e))
 ```
-Anthoner possibility. Create an async pipe in your html template
+Another possibility. Create an async pipe in your html template
 ```html
 <div *ngIf="multisub$ | async as variable">
   <p>Value: {{variable.data[0]}}</p>
@@ -103,7 +109,20 @@ Run these steps to enable CORS on deviceWISE.
 * Save the file
 * Restart deviceWISE
 
-
+# Polyfills
+At the bottom of `polyfills.ts` under `APPLICATION IMPORTS` add the following and run the command in the comment.
+```ts
+/**
+ * Fetch Readablestream Polyfills
+ * https://github.com/jonnyreeves/fetch-readablestream
+ * Run `npm install --save web-streams-polyfill text-encoding babel-polyfill abortcontroller-polyfill`.
+ * This is used for subscriptions in IE11.
+ */
+import 'web-streams-polyfill';
+import 'text-encoding';
+import 'babel-polyfill';
+import 'abortcontroller-polyfill';
+```
 # What to do now?
 
 * Run `ng test devicewise-angular` to run the tests devicewise angular.

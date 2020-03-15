@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import * as DwResponse from './models/dwresponse';
 import { DwType } from './models/dwcommon';
+import { tap } from 'rxjs/operators';
 
 const httpOptions = {
   headers: new HttpHeaders({}),
@@ -39,7 +40,13 @@ export class DevicewiseApiService {
           username: username,
           password: password
         }
-      }, httpOptions);
+      }, httpOptions).pipe(
+        tap((e) => {
+          if (e.success) {
+            this.setEndpoint(endpoint);
+          }
+        })
+      );
   }
 
   public logout(): Observable<DwResponse.LogoutResponse> {
