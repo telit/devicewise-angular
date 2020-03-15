@@ -58,8 +58,9 @@ export class DevicewiseAuthService {
       tap((login) => {
         this.setLoginStatus(login.success);
         if (login.success) {
-          this.cookieService.set('sessionId', login.sessionId);
-          this.cookieService.set('roles', login.roles[0]);
+          console.log('login success', login);
+          this.cookieService.set('sessionId', login.sessionId, (new Date).getHours() + 1, null, null, false, 'Strict');
+          this.cookieService.set('roles', login.roles[0], (new Date).getHours() + 1, null, null, false, 'Strict');
         }
         return login;
       })
