@@ -1,5 +1,5 @@
-[![npm version](https://badgen.net/npm/v/devicewise-angular?icon=npm)](https://badgen.net/npm/v/devicewise-angular?icon=npm)
-[![npm downloads](https://badgen.net/npm/dy/devicewise-angular?icon=npm)](https://badgen.net/npm/v/devicewise-angular?icon=npm)
+[![npm version](https://badgen.net/npm/v/devicewise-angular?icon=npm)](https://www.npmjs.com/package/devicewise-angular)
+[![npm downloads](https://badgen.net/npm/dy/devicewise-angular?icon=npm)](https://www.npmtrends.com/devicewise-angular)
 [![Build Status](https://travis-ci.com/astone2014/devicewise-angular.svg?branch=master)](https://travis-ci.com/astone2014/devicewise-angular)
 [![Known Vulnerabilities](https://snyk.io/test/github/astone2014/devicewise-angular/badge.svg?targetFile=projects/devicewise-angular/package.json)](https://snyk.io/test/github/astone2014/devicewise-angular?targetFile=projects/devicewise-angular/package.json)
 
@@ -102,10 +102,9 @@ This multisubscribe store makes it easy to add, remove, and edit variables from 
 Cross-Origin Resource Sharing (CORS) is a mechanism that uses additional HTTP headers to tell browsers to give a web application running at one origin, access to selected resources from a different origin.
 
 Run these steps to enable CORS on deviceWISE.
-
 * Navigate to your deviceWISE install directory
 * Open the file "deviceWISE\Runtime\dwcore\dwcore.properties"
-* Add the line "#http.allow_origin=http://localhost:4200" anywhere in the file (where http://localhost:4200 is the origin to allow access)
+* Add the line `#http.allow_origin=http://localhost:4200` anywhere in the file (where `http://localhost:4200` is the origin to allow access)
 * Save the file
 * Restart deviceWISE
 
@@ -115,13 +114,19 @@ At the bottom of `polyfills.ts` under `APPLICATION IMPORTS` add the following an
 /**
  * Fetch Readablestream Polyfills
  * https://github.com/jonnyreeves/fetch-readablestream
- * Run `npm install --save web-streams-polyfill text-encoding babel-polyfill abortcontroller-polyfill`.
+ * Run `npm install --save web-streams-polyfill text-encoding babel-polyfill whatwg-fetch abortcontroller-polyfill`.
  * This is used for subscriptions in IE11.
  */
 import 'web-streams-polyfill';
 import 'text-encoding';
 import 'babel-polyfill';
+import 'whatwg-fetch';
 import 'abortcontroller-polyfill';
+
+```
+I can't find a good polyfill for TextEncoder/Decoder. Add this [CDN](https://stomp-js.github.io/guide/stompjs/rx-stomp/ng2-stompjs/pollyfils-for-stompjs-v5.html) to your `index.html`.
+```html
+<script src="https://cdn.jsdelivr.net/npm/text-encoding@0.6.4/lib/encoding.min.js"></script>
 ```
 # What to do now?
 
