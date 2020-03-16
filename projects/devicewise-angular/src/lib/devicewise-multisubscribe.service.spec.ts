@@ -11,7 +11,7 @@ import { DwType } from './models/dwcommon';
 describe('DevicewiseMultisubscribeNewService', () => {
   let service: DevicewiseMultisubscribeService;
   let authService: DevicewiseAuthService;
-  const endpoint = 'http://192.168.1.15:88';
+  const endpoint = 'http://localhost:8080';
   const username = 'admin';
   const password = 'admin';
   const variables: any[] = [
@@ -26,8 +26,8 @@ describe('DevicewiseMultisubscribeNewService', () => {
       imports: [DevicewiseAngularModule],
       providers: [DevicewiseMultisubscribeService, DevicewiseAuthService]
     });
-    service = TestBed.get(DevicewiseMultisubscribeService);
-    authService = TestBed.get(DevicewiseAuthService);
+    service = TestBed.inject(DevicewiseMultisubscribeService);
+    authService = TestBed.inject(DevicewiseAuthService);
     authService.easyLogin(endpoint, username, password).subscribe((data) => { });
   }));
 

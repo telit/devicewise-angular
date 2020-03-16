@@ -7,7 +7,7 @@ import { DevicewiseAuthService } from './devicewise-auth.service';
 
 describe('DevicewiseAuthService', () => {
   let service: DevicewiseAuthService;
-  const endpoint = 'http://192.168.1.15:88';
+  const endpoint = 'http://localhost:8080';
   const username = 'admin';
   const password = 'admin';
 
@@ -18,7 +18,7 @@ describe('DevicewiseAuthService', () => {
     });
     service = TestBed.get(DevicewiseAuthService);
 
-    if (service.getSessionInfo() === false) {
+    if (service.getLoginStatus() === false) {
       service.easyLogin(endpoint, username, password).subscribe((loginResponse) => { }, err => console.log(err));
     }
   }));
@@ -37,7 +37,7 @@ describe('DevicewiseAuthService', () => {
   });
 
   it('login status should be true after login', (done: DoneFn) => {
-    expect(service.getSessionInfo()).toEqual(true);
+    expect(service.getLoginStatus()).toEqual(true);
 
     service.logout().subscribe((logoutResponse) => {
       expect(logoutResponse).toEqual(jasmine.objectContaining({
@@ -57,7 +57,7 @@ describe('DevicewiseAuthService', () => {
         expect(logoutResponse).toEqual(jasmine.objectContaining({
           success: true
         }));
-        expect(service.getSessionInfo()).toEqual(false);
+        expect(service.getLoginStatus()).toEqual(false);
         done();
       });
 

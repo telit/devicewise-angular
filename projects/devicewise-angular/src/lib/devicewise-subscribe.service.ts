@@ -95,16 +95,14 @@ export class DevicewiseSubscribeService {
         command: 'notification.get'
       }),
       credentials: 'include'
-    })
-      .then(response => {
-        console.log('response', response);
-        const reader = response.body.getReader();
-        const chunks = '';
-        this.pump(reader, chunks);
-      })
-      .catch(error => {
-        console.warn('FETCH STREAM ERROR', error);
-      });
+    }).then(response => {
+      console.log('response', response);
+      const reader = response.body.getReader();
+      const chunks = '';
+      this.pump(reader, chunks);
+    }).catch(error => {
+      console.warn('FETCH STREAM ERROR', error);
+    });
   }
 
   private pump(reader, chunks) {

@@ -8,10 +8,10 @@ import { TestBed, async } from '@angular/core/testing';
 import { DevicewiseApiService } from './devicewise-api.service';
 import { CookieService } from 'ngx-cookie-service';
 
-fdescribe('DevicewiseApiService', () => {
+describe('DevicewiseApiService', () => {
   let service: DevicewiseApiService;
   let authService: DevicewiseAuthService;
-  const endpoint = 'http://192.168.1.22:8080';
+  const endpoint = 'http://localhost:8080';
   const username = 'admin';
   const password = 'admin';
   const variables: any[] = [
@@ -28,7 +28,7 @@ fdescribe('DevicewiseApiService', () => {
     });
     service = TestBed.get(DevicewiseApiService);
     authService = TestBed.get(DevicewiseAuthService);
-    if (authService.getSessionInfo() === false) {
+    if (authService.getLoginStatus() === false) {
       authService.easyLogin(endpoint, username, password).subscribe((data) => { });
     }
   }));

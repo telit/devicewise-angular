@@ -23,6 +23,10 @@ export class DevicewiseAuthService {
     this.loggedIn = status;
   }
 
+  public getLoginStatus(): boolean {
+    return this.loggedIn;
+  }
+
   public getSessionInfo(): Observable<DwResponse.SessionInfo> {
     return this.apiService.sessionInfo();
   }

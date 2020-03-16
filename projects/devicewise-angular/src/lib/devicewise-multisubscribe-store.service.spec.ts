@@ -8,7 +8,7 @@ import { DwType } from './models/dwcommon';
 describe('DevicewiseMultisubscribeStoreService', () => {
   let service: DevicewiseMultisubscribeStoreService;
   let authService: DevicewiseAuthService;
-  const endpoint = 'http://192.168.1.15:88';
+  const endpoint = 'http://localhost:8080';
   const username = 'admin';
   const password = 'admin';
   const variables: any[] = [
@@ -18,8 +18,8 @@ describe('DevicewiseMultisubscribeStoreService', () => {
     { device: 'OEE', variable: 'OEE', type: DwType.FLOAT4, count: 1, length: -1, testData: [[0], [1], [2], [3], [4]] }
   ];
   const variables2: any[] = [
-    { device: 'RECIPE', variable: 'PEZZI_CAMERA', type: DwType.INT2, count: 1, length: -1},
-    { device: 'CURING', variable: 'PEZZI_CAMERA', type: DwType.INT2, count: 1, length: -1}
+    { device: 'OEE', variable: 'Performance', type: DwType.FLOAT4, count: 1, length: -1},
+    { device: 'OEE', variable: 'OEE', type: DwType.FLOAT4, count: 1, length: -1}
   ];
 
   beforeEach(async(() => {
@@ -27,12 +27,12 @@ describe('DevicewiseMultisubscribeStoreService', () => {
       imports: [DevicewiseAngularModule],
       providers: [DevicewiseMultisubscribeStoreService, DevicewiseAuthService]
     });
-    service = TestBed.get(DevicewiseMultisubscribeStoreService);
-    authService = TestBed.get(DevicewiseAuthService);
-    if (authService.getSessionInfo() === false) {
+    service = TestBed.inject(DevicewiseMultisubscribeStoreService);
+    authService = TestBed.inject(DevicewiseAuthService);
+    if (authService.getLoginStatus() === false) {
       authService.easyLogin(endpoint, username, password).subscribe((data) => { });
     }
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 500000;
+    // jasmine.DEFAULT_TIMEOUT_INTERVAL = 500000;
   }));
 
   it('should be created', () => {
@@ -86,7 +86,7 @@ describe('DevicewiseMultisubscribeStoreService', () => {
     expect(requestVariables.length).toEqual(0);
   });
 
-  fit('start multisubscribe works', (done: DoneFn) => {
+  it('start multisubscribe works', (done: DoneFn) => {
     let messagesReceived = 0;
 
     const subscription = service.addRequestVariables(variables2).subscribe((data) => {
