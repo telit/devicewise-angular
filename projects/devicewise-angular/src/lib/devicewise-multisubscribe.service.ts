@@ -3,6 +3,7 @@ import { Observable, throwError, of } from 'rxjs';
 import { DevicewiseApiService } from './devicewise-api.service';
 import { Injectable } from '@angular/core';
 import { DwVariable } from './models/dwcommon';
+import fetchStream from 'fetch-readablestream';
 
 export interface MultiSubscribeResponse {
   success: boolean;
@@ -21,41 +22,41 @@ export interface MultiSubscribeParams {
   providedIn: 'root'
 })
 export class DevicewiseMultisubscribeService {
-  public url = '';
   public multiSubscribeShared: Observable<MultiSubscribeParams>;
+  private url = '';
 
   constructor(private apiService: DevicewiseApiService) {
     this.apiService.getEndpointasObservable().subscribe((url) => this.url = url);
   }
 
-/**
- * Subscribe to multiple `requestVariables`. emits inital value and then on change of value.
- * Observable, and emits the resulting values as an Observable.
- *
- * ## Example
- * Subscribe to a variable 'OEE' from device 'Machine1' and then unsubscribe a second later.
- * ```ts
- * import { DevicewiseMultisubscribeNewService } from './devicewise-multisubscribe-new.service';
- * import { DwSubscription } from './models/dwsubscription';
- * import { DwType } from './models/dwcommon';
- *
- * const variables = [{ device: 'System Monitor', variable: 'CPU.CPU Usage', type: DwType.INT4, count: 1, length: -1 }];
- * const multiSubscribe$ = service.multiSubscribe(variables);
- * const subscription = multiSubscribe$.subscribe({
- *   next: (data) => console.log('next', data),
- *   error: (err) => console.log('error', err),
- *   complete: () => console.log('complete')
- * });
- *
- * setTimeout(() => {
- *   subscription.unsubscribe();
- * }, 1000);
- * ```
- *
- * @param requestVariables requestVariables Variables to subscribe to.
- * @method map
- * @owner Observable
- */
+  /**
+   * Subscribe to multiple `requestVariables`. emits inital value and then on change of value.
+   * Observable, and emits the resulting values as an Observable.
+   *
+   * ## Example
+   * Subscribe to a variable 'OEE' from device 'Machine1' and then unsubscribe a second later.
+   * ```ts
+   * import { DevicewiseMultisubscribeNewService } from './devicewise-multisubscribe-new.service';
+   * import { DwSubscription } from './models/dwsubscription';
+   * import { DwType } from './models/dwcommon';
+   *
+   * const variables = [{ device: 'System Monitor', variable: 'CPU.CPU Usage', type: DwType.INT4, count: 1, length: -1 }];
+   * const multiSubscribe$ = service.multiSubscribe(variables);
+   * const subscription = multiSubscribe$.subscribe({
+   *   next: (data) => console.log('next', data),
+   *   error: (err) => console.log('error', err),
+   *   complete: () => console.log('complete')
+   * });
+   *
+   * setTimeout(() => {
+   *   subscription.unsubscribe();
+   * }, 1000);
+   * ```
+   *
+   * @param requestVariables requestVariables Variables to subscribe to.
+   * @method map
+   * @owner Observable
+   */
   public multiSubscribe(requestVariables: DwVariable[]): Observable<MultiSubscribeParams> {
     let buffer = '';
     let lastCharactersToReadNumber = 0;
@@ -132,6 +133,36 @@ export class DevicewiseMultisubscribeService {
 
     return new Observable((observer) => {
       abortController = new AbortController();
+      fetchStream(
+        input,
+        { signal: abortController.signal, ...init }
+      ).then(response => {
+        const reader = response.body.getReader();
+        function pump() {
+          return reader.read().then(({ value, done }) => {
+            if (done) {
+              return;
+            }
+
+            const resultData: string = new TextDecoder('utf-8').decode(value);
+            observer.next(resultData);
+
+            return pump();
+          });
+        }
+        pump();
+      }).catch((err) => {
+        console.warn('catch reader.read', err);
+        if (err.code !== 20) { } // Ignore
+        observer.error(err);
+      });
+
+      return () => {
+        console.warn('complete fetch');
+        abortController.abort();
+        observer.complete();
+      };
+
       fetch(input, { signal: abortController.signal, ...init }).then((response) => {
         console.log('response', response);
         const reader = response.body.getReader();
@@ -171,6 +202,7 @@ export class DevicewiseMultisubscribeService {
         abortController.abort();
         observer.complete();
       };
+
     });
   }
 

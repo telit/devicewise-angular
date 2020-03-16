@@ -4,21 +4,22 @@ import {
   DevicewiseAuthService,
   DevicewiseApiService,
   DevicewiseSubscribeService,
+  DevicewiseMultisubscribeStoreService,
   DwResponse,
   DwSubscription,
   DwType,
   DwVariable
 } from 'devicewise-angular';
 import { BehaviorSubject, forkJoin } from 'rxjs';
-import { MatBottomSheet, MatBottomSheetRef, MAT_BOTTOM_SHEET_DATA} from '@angular/material/bottom-sheet';
+import { MatBottomSheet, MatBottomSheetRef, MAT_BOTTOM_SHEET_DATA } from '@angular/material/bottom-sheet';
 import { SubTriggerPipe } from './custom-pipes.pipe';
 import {
   MatTableDataSource
 } from '@angular/material/table';
-import { MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
-import { DevicewiseMultisubscribeStoreService } from 'projects/devicewise-angular/src/public_api';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatPaginator } from '@angular/material/paginator';
+import { MultiSubscribeParams } from 'projects/devicewise-angular/src/lib/devicewise-multisubscribe.service';
 
 @Component({
   selector: 'app-devicewise-test',
@@ -227,7 +228,10 @@ export class DevicewiseTestComponent implements OnInit {
       length = -1;
     }
 
-    this.multiSubscribe(this.currentDevice, event.option.viewValue, 1, this.dwApi.dwTypeToNumber(this.selectedVariable.type), count, length);
+    const requestVariables: DwVariable[] = [
+      {device: this.currentDevice, variable: event.option.viewValue, type: this.dwApi.dwTypeToNumber(this.selectedVariable.type), count: count, length: length}
+    ];
+    this.dwMultiSubscribe.addRequestVariables(requestVariables).subscribe((d) => console.log('data', d));
     this.multiSubscribeInput.nativeElement.value = '';
   }
 
@@ -271,7 +275,8 @@ export class DevicewiseTestComponent implements OnInit {
       this.subscriptions[data.params.id] = newSubscription;
       this.subscriptionsSubject.next(this.subscriptions);
 
-      newSubscription.subscription.subscribe(() => {
+      newSubscription.subscription.subscribe((d) => {
+        console.log(JSON.stringify(d));
         this.messageCount++;
       });
 
@@ -301,10 +306,11 @@ export class DevicewiseTestComponent implements OnInit {
       type: type,
       count: count,
       length: length,
-  };
+    };
     this.multiSubscribeVariables.push(newSubscription);
 
     this.dwMultiSubscribe.addRequestVariables(this.multiSubscribeVariables).subscribe((data) => {
+      console.log('multisubdata', data);
     }, (error) => this.openSnackError(error)
     );
   }

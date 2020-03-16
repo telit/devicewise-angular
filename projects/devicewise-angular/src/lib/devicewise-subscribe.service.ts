@@ -96,7 +96,6 @@ export class DevicewiseSubscribeService {
       }),
       credentials: 'include'
     }).then(response => {
-      console.log('response', response);
       const reader = response.body.getReader();
       const chunks = '';
       this.pump(reader, chunks);
@@ -149,7 +148,7 @@ export class DevicewiseSubscribeService {
           }
         }
       } catch {
-        console.log('Failed to parse', subString);
+        console.warn('Failed to parse', subString);
       }
       if (chunks.length >= 65536) {
         console.warn('Chunk too long! Resetting Chunk.');

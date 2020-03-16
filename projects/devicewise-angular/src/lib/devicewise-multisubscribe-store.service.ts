@@ -20,9 +20,7 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
   public requestVariableSubscriptions: MultiSubscribePair = {};
 
   constructor(private devicewiseMultisubscribeService: DevicewiseMultisubscribeService, private apiService: DevicewiseApiService) {
-    this.apiService.getEndpointasObservable().subscribe((url) => {
-      this.url = url;
-    });
+    this.apiService.getEndpointasObservable().subscribe((url) => this.url = url);
   }
 
   /**

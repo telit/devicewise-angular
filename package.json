@@ -9,6 +9,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "publish": "cd ./projects/devicewise-angular && npm run publish",
+    "build-copy": "ng build --prod && rm -r /e/Downloads/nginx-1.17.9/nginx-1.17.9/html/* && cp -r dist/devicewise/* /e/Downloads/nginx-1.17.9/nginx-1.17.9/html",
     "postinstall": "ngcc"
   },
   "private": true,
@@ -24,13 +25,20 @@
     "@angular/platform-browser": "~9.0.5",
     "@angular/platform-browser-dynamic": "~9.0.5",
     "@angular/router": "~9.0.5",
+    "abortcontroller-polyfill": "^1.4.0",
+    "babel-polyfill": "^6.26.0",
+    "classlist.js": "^1.1.20150312",
     "fetch-readablestream": "^0.2.0",
     "hammerjs": "^2.0.8",
     "ng-packagr": "^9.0.2",
     "ngx-cookie-service": "^2.4.0",
     "ngx-json-viewer": "^2.4.0",
     "rxjs": "~6.5.4",
+    "text-encoding": "^0.7.0",
     "tslib": "^1.11.1",
+    "web-animations-js": "^2.3.2",
+    "web-streams-polyfill": "^2.1.0",
+    "whatwg-fetch": "^3.0.0",
     "zone.js": "~0.10.2"
   },
   "devDependencies": {

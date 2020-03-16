@@ -16,7 +16,7 @@ describe('DevicewiseAuthService', () => {
       imports: [DevicewiseAngularModule],
       providers: [DevicewiseAuthService]
     });
-    service = TestBed.get(DevicewiseAuthService);
+    service = TestBed.inject(DevicewiseAuthService);
 
     if (service.getLoginStatus() === false) {
       service.easyLogin(endpoint, username, password).subscribe((loginResponse) => { }, err => console.log(err));

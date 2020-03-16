@@ -56,6 +56,9 @@
                   "maximumWarning": "6kb"
                 }
               ]
+            },
+            "es5": {
+              "tsConfig": "./tsconfig.es5.json"
             }
           }
         },
@@ -67,6 +70,9 @@
           "configurations": {
             "production": {
               "browserTarget": "devicewise:build:production"
+            },
+            "es5": {
+              "browserTarget": "devicewise:build:es5"
             }
           }
         },

@@ -36,6 +36,7 @@ export class DevicewiseAuthService {
     return this.getSessionInfo().pipe(
       flatMap((sessionInfo: DwResponse.SessionInfo) => {
         if (sessionInfo.success) {
+          this.apiService.setEndpoint(endpoint);
           this.setLoginStatus(true);
           return of({
             success: sessionInfo.success,
@@ -62,7 +63,6 @@ export class DevicewiseAuthService {
       tap((login) => {
         this.setLoginStatus(login.success);
         if (login.success) {
-          console.log('login success', login);
           this.cookieService.set('sessionId', login.sessionId, (new Date).getHours() + 1, null, null, false, 'Strict');
           this.cookieService.set('roles', login.roles[0], (new Date).getHours() + 1, null, null, false, 'Strict');
         }

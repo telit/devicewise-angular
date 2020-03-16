@@ -60,6 +60,12 @@ export class DevicewiseApiService {
         command: 'session.info'
       },
       httpOptions
+    ).pipe(
+      tap((e) => {
+        if (e.success) {
+          this.setEndpoint(this.url);
+        }
+      })
     );
   }
 

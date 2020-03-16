@@ -26,8 +26,8 @@ describe('DevicewiseApiService', () => {
       imports: [DevicewiseAngularModule],
       providers: [CookieService, DevicewiseApiService, DevicewiseAuthService]
     });
-    service = TestBed.get(DevicewiseApiService);
-    authService = TestBed.get(DevicewiseAuthService);
+    service = TestBed.inject(DevicewiseApiService);
+    authService = TestBed.inject(DevicewiseAuthService);
     if (authService.getLoginStatus() === false) {
       authService.easyLogin(endpoint, username, password).subscribe((data) => { });
     }
