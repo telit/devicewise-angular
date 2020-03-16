@@ -97,6 +97,7 @@ export class DevicewiseSubscribeService {
       credentials: 'include'
     })
       .then(response => {
+        console.log('response', response);
         const reader = response.body.getReader();
         const chunks = '';
         this.pump(reader, chunks);

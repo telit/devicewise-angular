@@ -133,6 +133,7 @@ export class DevicewiseMultisubscribeService {
     return new Observable((observer) => {
       abortController = new AbortController();
       fetch(input, { signal: abortController.signal, ...init }).then((response) => {
+        console.log('response', response);
         const reader = response.body.getReader();
         const stream = new ReadableStream({
           start(controller: ReadableStreamDefaultController<any>) {
