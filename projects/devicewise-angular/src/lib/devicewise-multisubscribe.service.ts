@@ -148,11 +148,15 @@ export class DevicewiseMultisubscribeService {
             observer.next(resultData);
 
             return pump();
+          }).catch((err) => {
+            console.warn('catch reader.read', err);
+            if (err.code !== 20) { } // Ignore
+            observer.error(err);
           });
         }
         pump();
       }).catch((err) => {
-        console.warn('catch reader.read', err);
+        console.warn('catch fetchStream', err);
         if (err.code !== 20) { } // Ignore
         observer.error(err);
       });
