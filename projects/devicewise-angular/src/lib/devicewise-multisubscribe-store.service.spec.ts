@@ -18,8 +18,8 @@ describe('DevicewiseMultisubscribeStoreService', () => {
     { device: 'OEE', variable: 'OEE', type: DwType.FLOAT4, count: 1, length: -1, testData: [[0], [1], [2], [3], [4]] }
   ];
   const variables2: any[] = [
-    { device: 'OEE', variable: 'Performance', type: DwType.FLOAT4, count: 1, length: -1},
-    { device: 'OEE', variable: 'OEE', type: DwType.FLOAT4, count: 1, length: -1}
+    { device: 'OEE', variable: 'Performance', type: DwType.FLOAT4, count: 1, length: -1 },
+    { device: 'OEE', variable: 'OEE', type: DwType.FLOAT4, count: 1, length: -1 }
   ];
 
   beforeEach(async(() => {
@@ -134,7 +134,7 @@ describe('DevicewiseMultisubscribeStoreService', () => {
       expect(data.data.length).toEqual(1);
       expect(data.data.length).toBeGreaterThanOrEqual(0);
       expect(data.data.length).toBeLessThanOrEqual(100);
-    });;
+    });
     const requestVariables = service.getRequestVariables();
     expect(requestVariables.length).toEqual(1);
     expect(requestVariables[0]).toEqual(variables[0]);
@@ -148,6 +148,7 @@ describe('DevicewiseMultisubscribeStoreService', () => {
   });
 
   it('start multisubscribe works2', (done: DoneFn) => {
+    let messagesReceived = 0;
     let subscription2;
     const subscription = service.addRequestVariables([variables[0]]).subscribe((data) => {
       ++messagesReceived;
@@ -159,7 +160,6 @@ describe('DevicewiseMultisubscribeStoreService', () => {
     let requestVariables = service.getRequestVariables();
     expect(requestVariables.length).toEqual(1);
     expect(requestVariables[0]).toEqual(variables[0]);
-    let messagesReceived = 0;
 
     setTimeout(() => {
       subscription2 = service.addRequestVariables([variables[1]]).subscribe((data) => {
@@ -186,6 +186,8 @@ describe('DevicewiseMultisubscribeStoreService', () => {
 
   it('start multisubscribe works3', (done: DoneFn) => {
     let subscription2;
+    let messagesReceived = 0;
+
     const subscription = service.addRequestVariables([variables[0]]).subscribe((data) => {
       console.log('got it', data);
       ++messagesReceived;
@@ -197,7 +199,6 @@ describe('DevicewiseMultisubscribeStoreService', () => {
     let requestVariables = service.getRequestVariables();
     expect(requestVariables.length).toEqual(1);
     expect(requestVariables[0]).toEqual(variables[0]);
-    let messagesReceived = 0;
 
     setTimeout(() => {
       subscription2 = service.addRequestVariables([variables[0]]).subscribe((data) => {
@@ -226,6 +227,7 @@ describe('DevicewiseMultisubscribeStoreService', () => {
   it('start multisubscribe works4', (done: DoneFn) => {
     let subscription2;
     let subscription3;
+    let messagesReceived = 0;
     const subscription = service.addRequestVariables([variables[0]]).subscribe((data) => {
       console.log('got it', data);
       ++messagesReceived;
@@ -237,7 +239,6 @@ describe('DevicewiseMultisubscribeStoreService', () => {
     let requestVariables = service.getRequestVariables();
     expect(requestVariables.length).toEqual(1);
     expect(requestVariables[0]).toEqual(variables[0]);
-    let messagesReceived = 0;
 
     setTimeout(() => {
       subscription2 = service.addRequestVariables([variables[0]]).subscribe((data) => {
@@ -280,6 +281,7 @@ describe('DevicewiseMultisubscribeStoreService', () => {
   });
 
   it('start multisubscribe works0', (done: DoneFn) => {
+    let messagesReceived = 0;
     const subscription = service.addRequestVariables([variables[0]]).subscribe((data) => {
       console.log('got it', data);
       ++messagesReceived;
@@ -291,7 +293,6 @@ describe('DevicewiseMultisubscribeStoreService', () => {
     const requestVariables = service.getRequestVariables();
     expect(requestVariables.length).toEqual(1);
     expect(requestVariables[0]).toEqual(variables[0]);
-    let messagesReceived = 0;
 
     setTimeout(() => {
       subscription.unsubscribe();

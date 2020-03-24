@@ -1,4 +1,5 @@
 import { DwVariable } from './dwcommon';
+import { DwType } from '../../public_api';
 
 export interface DwResponse {
   success: boolean;
@@ -54,7 +55,7 @@ export interface SubscribeDataParams {
   length: number;
   count: number;
   status: number;
-  type: number;
+  type: DwType;
   data: any[];
   id: number;
 }
@@ -185,33 +186,26 @@ export interface EventListEvents {
 
 
 export interface DeviceTypeListResponse extends DwResponse {
-  params: DeviceTypeListParams;
+  params: DeviceListParams;
 }
 
-export interface DeviceTypeListParams {
-  devices: DeviceType[];
-}
-
-export interface DeviceType {
+export interface DwDevice {
   name: string;
-  type: number;
+  type: DwType;
   state: number;
   lastStateChange: number;
   lastModified: number;
-  options: number;
-  status: number;
-  exstatus: number;
+  options?: number;
+  status?: number;
+  exstatus?: number;
 }
-
 
 export interface DeviceListResponse extends DwResponse {
-  params: DeviceTypeListParams;
+  params: DeviceListParams;
 }
-
-export interface DeviceListDevices {
-  devices: DeviceType[];
+export interface DeviceListParams {
+  devices: DwDevice[];
 }
-
 
 export interface DeviceInfoResponse extends DwResponse {
   params: DeviceInfoParameters;
@@ -222,18 +216,18 @@ export interface DeviceInfoParameters {
   name: string;
   options: number;
   state: number;
-  type: number;
+  type: DwType;
   typeName: string;
-  deviceProperties?: DeviceInfoProperties[];
+  deviceProperties?: DeviceInfoProperty[];
   variableInfo?: DeviceInfoVariable[];
-  structures?: DeviceInfoStructures[];
-  attributes?: DeviceInfoAttributes[];
+  structures?: DeviceInfoStructure[];
+  attributes?: DeviceInfoAttribute[];
   commands?: DeviceInfoVariable[];
   mappedDescriptions?: DeviceInfoVariable[];
   runtimeStatus?: number[];
 }
 
-export interface DeviceInfoProperties {
+export interface DeviceInfoProperty {
   name: string;
   value: string;
 }
@@ -253,7 +247,7 @@ export interface DeviceInfoVariable {
   zstart?: number;
 }
 
-export interface DeviceInfoStructures {
+export interface DeviceInfoStructure {
   length: number;
   name: string;
   options: number;
@@ -261,7 +255,7 @@ export interface DeviceInfoStructures {
   vinfo: DeviceInfoVariable[];
 }
 
-export interface DeviceInfoAttributes {
+export interface DeviceInfoAttribute {
   name: string;
   nameNls: string;
   value: string;

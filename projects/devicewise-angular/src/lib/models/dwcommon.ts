@@ -15,11 +15,12 @@ export enum DwType {
   TIMESTAMP = 17,
   BINARY = 19
 }
+// 'INT1' | 'INT2' | 'INT4' | 'INT8' | 'UINT1' | 'UINT2' | 'UINT4' | 'UINT8' | 'FLOAT4' | 'FLOAT8' | 'BOOL' | 'STRING' | 'TIMESTAMP' | 'BINARY' | 'UNKNOWN'
 
-export interface DwVariable {
+export class DwVariable {
   device: string;
   variable: string;
-  type: number;
+  type: DwType;
   count: number;
   length: number;
 }

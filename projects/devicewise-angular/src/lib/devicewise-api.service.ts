@@ -70,7 +70,7 @@ export class DevicewiseApiService {
   }
 
   // Variable
-  public read(device: string, variable: string, type: number, count: number, length: number): Observable<DwResponse.Response> {
+  public read(device: string, variable: string, type: DwType, count: number, length: number): Observable<DwResponse.Response> {
     return this.http.post<DwResponse.Response>(
       this.url + '/api',
       {
@@ -87,7 +87,7 @@ export class DevicewiseApiService {
     );
   }
 
-  public write(device: string, variable: string, type: number, count: number, length: number, data: any): Observable<DwResponse.WriteResponse> {
+  public write(device: string, variable: string, type: DwType, count: number, length: number, data: any): Observable<DwResponse.WriteResponse> {
     return this.http.post<DwResponse.WriteResponse>(
       this.url + '/api',
       {
@@ -110,7 +110,7 @@ export class DevicewiseApiService {
     device: string,
     variable: string,
     rate: number,
-    type: number,
+    type: DwType,
     count: number,
     length: number
   ): Observable<DwResponse.SubscribeResponse> {
@@ -364,7 +364,7 @@ export class DevicewiseApiService {
   }
 
   // Util
-  public dwTypeToNumber(dwType: string) {
+  public dwTypeToNumber(dwType: string): DwType {
     switch (dwType) {
       case 'INT1':
         return DwType.INT1;
@@ -399,7 +399,7 @@ export class DevicewiseApiService {
     }
   }
 
-  public dwTypeToString(number: number) {
+  public dwTypeToString(number: number): string {
     switch (number) {
       case DwType.INT1:
         return 'INT1';
@@ -434,3 +434,4 @@ export class DevicewiseApiService {
     }
   }
 }
+

@@ -76,17 +76,17 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
         this.requestVariables.push(variable); // If variable doesn't exist add it.
       }
 
-      let stream = this.requestVariableSubscriptions[variable.device + '.' + variable.variable];
+      let stream = this.requestVariableSubscriptions[`${variable.device}.${variable.variable}`];
       if (!stream) { // If stream doesn't exist create it
         stream = this.subscriptionAsObservable().pipe(
           filter((v) => variable.device === v.device && variable.variable === v.variable),
           finalize(() => { // When stream done remove from variable list and stream list.
             this.removeRequestVariables([variable]);
-            delete this.requestVariableSubscriptions[variable.device + '.' + variable.variable];
+            delete this.requestVariableSubscriptions[`${variable.device}.${variable.variable}`];
           }),
           share() // Ensure observable is shared among multiple subscribers.
         );
-        this.requestVariableSubscriptions[variable.device + '.' + variable.variable] = stream;
+        this.requestVariableSubscriptions[`${variable.device}.${variable.variable}`] = stream;
       }
       streams.push(stream);
     });

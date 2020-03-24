@@ -1,13 +1,14 @@
 import * as DwResponse from './dwresponse';
 import * as DwRequest from './dwrequest';
 import { Observable } from 'rxjs';
+import { DwType } from '../../public_api';
 
 export class DwSubscription {
   request: DwRequest.SubscribeRequest;
   response: DwResponse.SubscribeResponse;
   subscription: Observable<DwResponse.SubscribeDataResponse>;
 
-  constructor(device: string, variable: string, type: number, count: number, length: number) {
+  constructor(device: string, variable: string, type: DwType, count: number, length: number) {
     this.request = {
       command: 'variable.subscribe',
       params: {

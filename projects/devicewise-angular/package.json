@@ -1,7 +1,7 @@
 {
   "name": "devicewise-angular",
   "description": "Angular2+ library to communicate with deviceWISE.",
-  "version": "3.2.2",
+  "version": "3.3.0",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build_lib": "ng build devicewise-angular --prod",
@@ -30,10 +30,10 @@
   },
   "homepage": "https://github.com/telit/devicewise-angular",
   "peerDependencies": {
-    "@angular/common": "~9.0.4",
-    "@angular/core": "~9.0.4",
+    "@angular/common": "~9.0.7",
+    "@angular/core": "~9.0.7",
     "fetch-readablestream": "^0.2.0",
-    "ngx-cookie-service": "^2.4.0"
+    "ngx-cookie-service": "^3.0.3"
   },
   "dependencies": {
     "fetch-readablestream": "^0.2.0",
