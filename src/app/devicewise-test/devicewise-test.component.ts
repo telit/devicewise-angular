@@ -42,7 +42,7 @@ export class DevicewiseTestComponent implements OnInit {
   subscriptionSelection: BehaviorSubject<boolean> = new BehaviorSubject(true);
   triggerSelection: BehaviorSubject<boolean> = new BehaviorSubject(true);
   projectSelection: BehaviorSubject<boolean> = new BehaviorSubject(true);
-  devices: BehaviorSubject<DwResponse.DeviceType[]> = new BehaviorSubject([]);
+  devices: BehaviorSubject<DwResponse.DwDevice[]> = new BehaviorSubject([]);
   triggers: BehaviorSubject<DwResponse.TriggerListTrigger[]> = new BehaviorSubject([]);
   projects: BehaviorSubject<DwResponse.ProjectListProject[]> = new BehaviorSubject([]);
   variables: BehaviorSubject<DwResponse.DeviceInfoVariable[]> = new BehaviorSubject([]);
@@ -229,7 +229,7 @@ export class DevicewiseTestComponent implements OnInit {
     }
 
     const requestVariables: DwVariable[] = [
-      {device: this.currentDevice, variable: event.option.viewValue, type: this.dwApi.dwTypeToNumber(this.selectedVariable.type), count: count, length: length}
+      { device: this.currentDevice, variable: event.option.viewValue, type: this.dwApi.dwTypeToNumber(this.selectedVariable.type), count: count, length: length }
     ];
     this.dwMultiSubscribe.addRequestVariables(requestVariables).subscribe((d) => console.log('data', d));
     this.multiSubscribeInput.nativeElement.value = '';

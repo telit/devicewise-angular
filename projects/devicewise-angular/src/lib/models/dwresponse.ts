@@ -262,7 +262,7 @@ export interface DeviceInfoAttribute {
 }
 
 
-export interface DeviceDataTypeResponse extends DwResponse {
+export interface DeviceTypeListResponse extends DwResponse {
   params: DeviceDataTypeParams;
 }
 
