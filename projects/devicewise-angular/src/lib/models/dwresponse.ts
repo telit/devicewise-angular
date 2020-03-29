@@ -261,11 +261,6 @@ export interface DeviceInfoAttribute {
   value: string;
 }
 
-
-export interface DeviceTypeListResponse extends DwResponse {
-  params: DeviceDataTypeParams;
-}
-
 export interface DeviceDataTypeParams {
   deviceTypes: DeviceDataType[];
 }
