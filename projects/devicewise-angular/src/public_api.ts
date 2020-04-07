@@ -2,6 +2,8 @@
  * Public API Surface of devicewise-angular
  */
 
+export * from 'ngx-cookie-service';
+
 export * from './lib/devicewise-auth.service';
 export * from './lib/devicewise-api.service';
 export * from './lib/devicewise-subscribe.service';
