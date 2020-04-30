@@ -78,9 +78,9 @@ export class DevicewiseApiService {
         params: {
           device: device,
           variable: variable,
-          type: type,
-          count: count,
-          length: length
+          type: JSON.stringify(type),
+          count: JSON.stringify(count),
+          length: JSON.stringify(length)
         }
       },
       httpOptions
@@ -95,9 +95,9 @@ export class DevicewiseApiService {
         params: {
           device: device,
           variable: variable,
-          type: type,
-          count: count,
-          length: length,
+          type: JSON.stringify(type),
+          count: JSON.stringify(count),
+          length: JSON.stringify(length),
           data: JSON.stringify(data)
         }
       },
