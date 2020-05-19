@@ -31,7 +31,7 @@ export interface SessionInfoParams {
 
 // Variable
 
-export interface Response extends DwResponse {
+export interface ReadResponse extends DwResponse {
   params: ReadParams;
 }
 

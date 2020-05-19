@@ -172,7 +172,7 @@ describe('DevicewiseApiService', () => {
       expect(deviceTypeListResponse).toEqual(jasmine.objectContaining({
         success: true
       }));
-      expect(deviceTypeListResponse.params.deviceTypes.length).toBeGreaterThan(1);
+      expect(deviceTypeListResponse.params.devices.length).toBeGreaterThan(1);
       done();
     }));
   });

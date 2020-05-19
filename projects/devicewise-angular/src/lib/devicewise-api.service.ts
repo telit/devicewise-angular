@@ -70,8 +70,8 @@ export class DevicewiseApiService {
   }
 
   // Variable
-  public read(device: string, variable: string, type: DwType, count: number, length: number): Observable<DwResponse.Response> {
-    return this.http.post<DwResponse.Response>(
+  public read(device: string, variable: string, type: DwType, count: number, length: number): Observable<DwResponse.ReadResponse> {
+    return this.http.post<DwResponse.ReadResponse>(
       this.url + '/api',
       {
         command: 'variable.read',
