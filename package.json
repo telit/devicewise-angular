@@ -12,7 +12,6 @@
     "build-copy": "ng build --prod && rm -r /e/Downloads/nginx-1.17.9/nginx-1.17.9/html/* && cp -r dist/devicewise/* /e/Downloads/nginx-1.17.9/nginx-1.17.9/html",
     "postinstall": "ngcc"
   },
-  "private": true,
   "dependencies": {
     "@angular-devkit/build-ng-packagr": "~0.901.6",
     "@angular/animations": "~9.1.7",
