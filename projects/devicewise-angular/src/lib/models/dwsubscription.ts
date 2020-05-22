@@ -10,7 +10,7 @@ export class DwSubscription {
 
   constructor(device: string, variable: string, type: DwType, count: number, length: number) {
     this.request = {
-      command: 'variable.subscribe',
+      command: 'variable.subscribe.v2',
       params: {
         device: device,
         variable: variable,

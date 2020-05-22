@@ -74,7 +74,7 @@ export class DevicewiseApiService {
     return this.http.post<DwResponse.ReadResponse>(
       this.url + '/api',
       {
-        command: 'variable.read',
+        command: 'variable.read.v2',
         params: {
           device: device,
           variable: variable,
@@ -91,7 +91,7 @@ export class DevicewiseApiService {
     return this.http.post<DwResponse.WriteResponse>(
       this.url + '/api',
       {
-        command: 'variable.write',
+        command: 'variable.write.v2',
         params: {
           device: device,
           variable: variable,
@@ -117,7 +117,7 @@ export class DevicewiseApiService {
     return this.http.post<DwResponse.SubscribeResponse>(
       this.url + '/api',
       {
-        command: 'variable.subscribe',
+        command: 'variable.subscribe.v2',
         params: {
           device: device,
           variable: variable,

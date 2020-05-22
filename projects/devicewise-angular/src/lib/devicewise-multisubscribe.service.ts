@@ -64,7 +64,7 @@ export class DevicewiseMultisubscribeService {
     return this.fetchObservable(this.url + '/api', {
       method: 'POST',
       body: JSON.stringify({
-        command: 'multisubscribe',
+        command: 'multisubscribe.v2',
         params: {
           minimal: true,
           subscriptions: {
