@@ -1,6 +1,6 @@
 [![npm version](https://badgen.net/npm/v/devicewise-angular?icon=npm)](https://www.npmjs.com/package/devicewise-angular)
 [![npm downloads](https://badgen.net/npm/dy/devicewise-angular?icon=npm)](https://www.npmtrends.com/devicewise-angular)
-[![Build Status](https://travis-ci.com/astone2014/devicewise-angular.svg?branch=master)](https://travis-ci.com/astone2014/devicewise-angular)
+![CI](https://github.com/telit/devicewise-angular/workflows/CI/badge.svg)
 [![Known Vulnerabilities](https://snyk.io/test/github/astone2014/devicewise-angular/badge.svg?targetFile=projects/devicewise-angular/package.json)](https://snyk.io/test/github/astone2014/devicewise-angular?targetFile=projects/devicewise-angular/package.json)
 
 # DeviceWISE Angular API Service
