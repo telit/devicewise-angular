@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { merge, Observable, ReplaySubject } from 'rxjs';
-import { filter, finalize, share, switchMap } from 'rxjs/operators';
+import { merge, Observable, ReplaySubject, timer } from 'rxjs';
+import { filter, finalize, share, switchMap, tap, retryWhen, delayWhen, map } from 'rxjs/operators';
 import { DevicewiseApiService } from './devicewise-api.service';
 import { DevicewiseMultisubscribeService, MultiSubscribeParams } from './devicewise-multisubscribe.service';
 import { DwVariable } from './models/dwcommon';
@@ -81,6 +81,7 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
         stream = this.subscriptionAsObservable().pipe(
           filter((v) => variable.device === v.device && variable.variable === v.variable),
           finalize(() => { // When stream done remove from variable list and stream list.
+            console.log('ALL DONE');
             this.removeRequestVariables([variable]);
             delete this.requestVariableSubscriptions[`${variable.device}.${variable.variable}`];
           }),
@@ -112,7 +113,21 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
   }
 
   private reSubscribe() {
-    const sub: Observable<MultiSubscribeParams> = this.devicewiseMultisubscribeService.multiSubscribe(this.requestVariables);
+    const sub: Observable<MultiSubscribeParams> = this.devicewiseMultisubscribeService.multiSubscribe(this.requestVariables)
+    // .pipe(
+    //   tap({
+    //     error: (err) => {
+    //       console.log("OH NO!!", err);
+    //       err.errorMessages.forEach(errorMessage => {
+    //         if (errorMessage.startsWith("Invalid parameter failure for variable subscription: ")) {
+    //           const json = errorMessage.replace("Invalid parameter failure for variable subscription: ", "")
+    //           const invalidVariables = JSON.parse(json);
+    //           this.removeRequestVariables(invalidVariables)
+    //         }
+    //       });
+    //     }
+    //   })
+    // );
     this.mutliSubRequest$.next(sub);
   }
 

@@ -21,7 +21,7 @@ export interface LogoutResponse extends DwResponse {
 
 
 export interface SessionInfo extends DwResponse {
-  params: SessionInfoParams;
+  params?: SessionInfoParams;
 }
 
 export interface SessionInfoParams {
@@ -32,7 +32,7 @@ export interface SessionInfoParams {
 // Variable
 
 export interface ReadResponse extends DwResponse {
-  params: ReadParams;
+  params?: ReadParams;
 }
 
 
@@ -47,7 +47,7 @@ export interface WriteResponse extends DwResponse {
 
 
 export interface SubscribeDataResponse extends DwResponse {
-  params: SubscribeDataParams;
+  params?: SubscribeDataParams;
 }
 
 export interface SubscribeDataParams {
@@ -62,7 +62,7 @@ export interface SubscribeDataParams {
 
 
 export interface SubscribeResponse extends DwResponse {
-  params: SubscribeParams;
+  params?: SubscribeParams;
 }
 
 export interface SubscribeParams {
@@ -79,7 +79,7 @@ export interface UnubscribeAllResponse extends DwResponse {
 
 
 export interface NotificationCountResponse extends DwResponse {
-  params: NotificationCountParams;
+  params?: NotificationCountParams;
 }
 
 export interface NotificationCountParams {
@@ -88,7 +88,7 @@ export interface NotificationCountParams {
 
 
 export interface UnsubscribeAllResponse extends DwResponse {
-  params: UnsubscribeAllParams;
+  params?: UnsubscribeAllParams;
 }
 
 export interface UnsubscribeAllParams {
@@ -101,7 +101,7 @@ export interface UnsubscribeResponse extends DwResponse {
 
 
 export interface ActionTypeListResponse extends DwResponse {
-  params: ActionTypeListParams;
+  params?: ActionTypeListParams;
 }
 
 
@@ -144,7 +144,7 @@ export interface ActionType {
 
 
 export interface ActionListResponse extends DwResponse {
-  params: ActionTypeListParams;
+  params?: ActionTypeListParams;
 }
 
 export interface ActionListActions {
@@ -153,7 +153,7 @@ export interface ActionListActions {
 
 
 export interface EventTypeListResponse extends DwResponse {
-  params: EventTypeListParams;
+  params?: EventTypeListParams;
 }
 
 export interface EventTypeListParams {
@@ -177,7 +177,7 @@ export interface EventType {
 
 
 export interface EventListResponse extends DwResponse {
-  params: EventTypeListParams;
+  params?: EventTypeListParams;
 }
 
 export interface EventListEvents {
@@ -186,7 +186,7 @@ export interface EventListEvents {
 
 
 export interface DeviceTypeListResponse extends DwResponse {
-  params: DeviceListParams;
+  params?: DeviceListParams;
 }
 
 export interface DwDevice {
@@ -201,16 +201,15 @@ export interface DwDevice {
 }
 
 export interface DeviceListResponse extends DwResponse {
-  params: DeviceListParams;
+  params?: DeviceListParams;
 }
 export interface DeviceListParams {
   devices: DwDevice[];
 }
 
 export interface DeviceInfoResponse extends DwResponse {
-  params: DeviceInfoParameters;
+  params?: DeviceInfoParameters;
 }
-
 export interface DeviceInfoParameters {
   description: string;
   name: string;
@@ -226,12 +225,10 @@ export interface DeviceInfoParameters {
   mappedDescriptions?: DeviceInfoVariable[];
   runtimeStatus?: number[];
 }
-
 export interface DeviceInfoProperty {
   name: string;
   value: string;
 }
-
 export interface DeviceInfoVariable {
   name: string;
   options: number;
@@ -246,7 +243,6 @@ export interface DeviceInfoVariable {
   zdim?: number;
   zstart?: number;
 }
-
 export interface DeviceInfoStructure {
   length: number;
   name: string;
@@ -254,7 +250,6 @@ export interface DeviceInfoStructure {
   structId: number;
   vinfo: DeviceInfoVariable[];
 }
-
 export interface DeviceInfoAttribute {
   name: string;
   nameNls: string;
@@ -287,19 +282,25 @@ export interface DeviceDataTypeProperty {
 }
 
 
-export interface DeviceStartResponse extends DwResponse {
-  params: any;
+export interface DeviceVariablesResponse extends DwResponse {
+  params?: DeviceVariablesParams;
+}
+export interface DeviceVariablesParams {
+  variables: DwVariable[];
 }
 
+export interface DeviceStartResponse extends DwResponse {
+  params?: any;
+}
 
 export interface DeviceStopResponse extends DwResponse {
-  params: any;
+  params?: any;
 }
 
 // Trigger
 
 export interface TriggerListResponse extends DwResponse {
-  params: TriggerListParams;
+  params?: TriggerListParams;
 }
 
 export interface TriggerListParams {
@@ -311,6 +312,8 @@ export interface TriggerListTrigger {
   state: number;
   lastStateChange: number;
   lastMofified: number;
+  inputVariables?: DwVariable[];
+  outputVariables?: DwVariable[];
   context: string;
   lastFired: number;
   countSuccess: number;
@@ -342,7 +345,7 @@ export interface TriggerStopResponse extends DwResponse {
 
 
 export interface SubTriggerFireResponse extends DwResponse {
-  params: SubTriggerFireParams;
+  params?: SubTriggerFireParams;
 }
 
 export interface SubTriggerFireParams {
@@ -355,7 +358,7 @@ export interface SubTriggerFireParams {
 // Project
 
 export interface ProjectListResponse extends DwResponse {
-  params: ProjectListParams;
+  params?: ProjectListParams;
 }
 
 export interface ProjectListParams {
@@ -376,7 +379,7 @@ export interface ProjectStopResponse extends DwResponse { }
 // Channel
 
 export interface ChannelSubscribeResponse extends DwResponse {
-  params: ChannelSubscribeParams;
+  params?: ChannelSubscribeParams;
 }
 
 export interface ChannelSubscribeParams {
@@ -394,7 +397,7 @@ export interface ChannelUnsubscribeAllResponse extends DwResponse {
 // Diagnostics
 
 export interface PingResponse extends DwResponse {
-  params: PingParams;
+  params?: PingParams;
 }
 
 export interface PingParams {
@@ -404,7 +407,7 @@ export interface PingParams {
 // SQLite
 
 export interface SqlResponse extends DwResponse {
-  params: SqlParams;
+  params?: SqlParams;
 }
 
 export interface SqlParams {
@@ -417,11 +420,11 @@ export interface SqlParams {
 // System
 
 export interface ReferenceListResponse extends DwResponse {
-  params: any;
+  params?: any;
 }
 
 export interface StagingFileListResponse extends DwResponse {
-  params: StagingFileListParams;
+  params?: StagingFileListParams;
 }
 
 export interface StagingFileListParams {
