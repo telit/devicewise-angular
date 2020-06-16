@@ -104,9 +104,22 @@ Cross-Origin Resource Sharing (CORS) is a mechanism that uses additional HTTP he
 Run these steps to enable CORS on deviceWISE.
 * Navigate to your deviceWISE install directory
 * Open the file "deviceWISE\Runtime\dwcore\dwcore.properties"
-* Add the line `#http.allow_origin=http://localhost:4200` anywhere in the file (where `http://localhost:4200` is the origin to allow access)
+* Add the line `http.allow_origin=http://localhost:4200` anywhere in the file (where `http://localhost:4200` is the origin to allow access. Use `*` for all origins.)
 * Save the file
 * Restart deviceWISE
+
+| Name | Description | Example |
+| :---         |  :---                         |   :---        |
+| git status   | git status     | git status    |
+| http.rootdirectory | Root directory of web server. | |	 
+| http.ssl.cert_file | Certificate to use for web server.	| |
+| http.ssl.cert_pass |	Certificate password, if necessary.	 |  |
+| httpsvr.404.redirect | Redirect here instead of returning 404 error. | /index.html |
+| CORS allowed origins. | Comma separated or wildcard to allow all origins. | * |
+| rewrite.source.# | Source to trigger rewrite | /.*\.html |
+| rewrite.destination.# | Destination to write over source | /index.html |
+| tryfiles.source.# | Source to trigger tryfiles | /.* |
+| tryfiles.destination.# |Destination to write if file isn't found | /index.html |
 
 # Polyfills
 At the bottom of `polyfills.ts` under `APPLICATION IMPORTS` add the following and run the command in the comment.
