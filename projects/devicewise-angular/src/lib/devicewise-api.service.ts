@@ -52,12 +52,15 @@ export class DevicewiseApiService {
   }
 
   private dwHandleError(e): Error {
-    let errorString = ``;
-    if (e.errorMessages[0]) {
-      errorString += `${e.errorMessages[0]} `;
-    }
-    if (e.errorCodes) {
-      errorString += `(${e.errorCodes[0]})`;
+    let errorString;
+    e.errorMessages.forEach((errorMessage, i) => {
+      errorString += `${e.errorMessages[i]} `;
+      if (e.errorCodes[i]) {
+        errorString += `(${e.errorCodes[0]})`;
+      }
+    });
+    if (!errorString) {
+      errorString = `Unknown Error ${JSON.stringify(e)}`;
     }
     return new Error(errorString);
   }
