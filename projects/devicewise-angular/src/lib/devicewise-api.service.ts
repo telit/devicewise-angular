@@ -53,12 +53,14 @@ export class DevicewiseApiService {
 
   private dwHandleError(e): Error {
     let errorString;
-    e.errorMessages.forEach((errorMessage, i) => {
-      errorString += `${e.errorMessages[i]} `;
-      if (e.errorCodes[i]) {
-        errorString += `(${e.errorCodes[0]})`;
-      }
-    });
+    if (e.errorMessages) {
+      e.errorMessages.forEach((errorMessage, i) => {
+        errorString += `${e.errorMessages[i]} `;
+        if (e.errorCodes[i]) {
+          errorString += `(${e.errorCodes[0]})`;
+        }
+      });
+    }
     if (!errorString) {
       errorString = `Unknown Error ${JSON.stringify(e)}`;
     }
@@ -75,7 +77,7 @@ export class DevicewiseApiService {
         }
       }, httpOptions).pipe(
         map((e) => {
-          if (e.success) {
+          if (e.success === false) {
             const error = this.dwHandleError(e);
             throw error;
           }
