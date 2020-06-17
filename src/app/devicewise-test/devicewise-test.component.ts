@@ -107,7 +107,7 @@ export class DevicewiseTestComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.url = 'http://localhost:8080'; // location.origin;
+    this.url = 'https://localhost:8443'; // location.origin;
     this.dataSource.paginator = this.paginator;
     this.devicewise.easyLogin(this.url, '', '').subscribe((login) => {
       console.log('logged in!');
@@ -159,6 +159,7 @@ export class DevicewiseTestComponent implements OnInit {
 
   read(device, variable, type?, count?, length?) {
     if (!type) {
+      if (!this.selectedVariable) throw new Error('No variable selected.');
       type = this.dwApi.dwTypeToNumber(this.selectedVariable.type);
     }
     if (!count) {
@@ -635,17 +636,8 @@ export class DevicewiseTestComponent implements OnInit {
     });
   }
 
-  openSnackError(error: any) {
-    let message = '';
-
-    if (error.error.errorMessages) {
-      message = 'ERROR: ' + error.error.errorMessages;
-    } else if (error.message) {
-      message = 'ERROR: ' + error.message;
-    } else {
-      message = 'ERROR: Unknown';
-    }
-    this.snackBar.open(message, 'ACKNOWLEDGE', {
+  openSnackError(error: string) {
+    this.snackBar.open(error, 'ACKNOWLEDGE', {
       duration: 10000
     });
   }

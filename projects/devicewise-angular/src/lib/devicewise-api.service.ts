@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, throwError } from 'rxjs';
 import * as DwResponse from './models/dwresponse';
 import { DwType } from './models/dwcommon';
-import { tap } from 'rxjs/operators';
+import { tap, map } from 'rxjs/operators';
 
 const httpOptions = {
   headers: new HttpHeaders({}),
@@ -40,7 +40,26 @@ export class DevicewiseApiService {
         params: params
       },
       httpOptions
+    ).pipe(
+      map((e) => {
+        if (e.success === false) {
+          const error = this.dwHandleError(e);
+          throw error;
+        }
+        return e;
+      })
     );
+  }
+
+  private dwHandleError(e): Error {
+    let errorString = ``;
+    if (e.errorMessages[0]) {
+      errorString += `${e.errorMessages[0]} `;
+    }
+    if (e.errorCodes) {
+      errorString += `(${e.errorCodes[0]})`;
+    }
+    return new Error(errorString);
   }
 
   // Authentication
@@ -52,10 +71,13 @@ export class DevicewiseApiService {
           password: password
         }
       }, httpOptions).pipe(
-        tap((e) => {
+        map((e) => {
           if (e.success) {
-            this.setEndpoint(endpoint);
+            const error = this.dwHandleError(e);
+            throw error;
           }
+          this.setEndpoint(endpoint);
+          return e;
         })
       );
   }
@@ -67,9 +89,7 @@ export class DevicewiseApiService {
   public sessionInfo(): Observable<DwResponse.SessionInfo> {
     return this.dwApiSend('session.info').pipe(
       tap((e) => {
-        if (e.success) {
-          this.setEndpoint(this.url);
-        }
+        this.setEndpoint(this.url);
       })
     );
   }
