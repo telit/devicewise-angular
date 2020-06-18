@@ -1,6 +1,6 @@
+[![CI](https://github.com/telit/devicewise-angular/workflows/CI/badge.svg)](https://github.com/telit/devicewise-angular/actions)
 [![npm version](https://badgen.net/npm/v/devicewise-angular?icon=npm)](https://www.npmjs.com/package/devicewise-angular)
 [![npm downloads](https://badgen.net/npm/dy/devicewise-angular?icon=npm)](https://www.npmtrends.com/devicewise-angular)
-[![Build Status](https://travis-ci.com/astone2014/devicewise-angular.svg?branch=master)](https://travis-ci.com/astone2014/devicewise-angular)
 [![Known Vulnerabilities](https://snyk.io/test/github/astone2014/devicewise-angular/badge.svg?targetFile=projects/devicewise-angular/package.json)](https://snyk.io/test/github/astone2014/devicewise-angular?targetFile=projects/devicewise-angular/package.json)
 
 # DeviceWISE Angular API Service
@@ -10,7 +10,7 @@ Angular services for communicating with deviceWISE.
 # Installation
 
 ```cli
-npm install devicewise-angular --save
+npm install devicewise-angular ngx-cookie-service fetch-readablestream --save
 ```
 
 Import the devicewise angular module in your `app.module.ts`:
@@ -40,7 +40,7 @@ export class AppComponent implements OnInit {
     private dwAuthentication: DevicewiseAuthService,
     private dwApi: DevicewiseApiService
   ) {}
- 
+
   ngOnInit(): void {
     this.dwAuthentication.easyLogin('http://localhost:8080', 'admin', 'admin').pipe(
       switchMap((e) => this.dwApi.deviceList())
@@ -48,11 +48,12 @@ export class AppComponent implements OnInit {
   }
   ...
 ```
+
 The `easyLogin` method will automatically save the sessionId from the login request as a cookie. If a cookie already exists it will be checked for validity before emitting sucessful login.
 
 # MultiSubscribe
-Using HTTP fetch is a much more efficient way to communicate with devicewise. Consider using the multisubscribe store service to subscribe to a variable rather than poll a variable on an interval.
 
+Using HTTP fetch is a much more efficient way to communicate with devicewise. Consider using the multisubscribe store service to subscribe to a variable rather than poll a variable on an interval.
 
 ```ts
 ...
@@ -80,16 +81,21 @@ export class AppComponent implements OnInit {
 Make sure you unsubscribe from the multisubscribe store obervable!
 
 It's also common to save the observable.
+
 ```ts
 this.multisub$ = this.dwMultiSubscribeService.subscriptionAsObservable();
 ```
+
 To get a specific variable out of the observable create a pipe containing filter.
+
 ```ts
 this.multisub$.pipe(
   filter((e) => e.device.name == 'System Monitor' && e.variable.name = 'CPU.CPU Usage')
 ).subscribe((e) => console.log(e))
 ```
+
 Another possibility. Create an async pipe in your html template
+
 ```html
 <div *ngIf="multisub$ | async as variable">
   <p>Value: {{variable.data[0]}}</p>
@@ -99,17 +105,37 @@ Another possibility. Create an async pipe in your html template
 This multisubscribe store makes it easy to add, remove, and edit variables from a single stream from devicewise.
 
 # Cross Origin Resource Sharing (CORS)
+
 Cross-Origin Resource Sharing (CORS) is a mechanism that uses additional HTTP headers to tell browsers to give a web application running at one origin, access to selected resources from a different origin.
 
 Run these steps to enable CORS on deviceWISE.
-* Navigate to your deviceWISE install directory
-* Open the file "deviceWISE\Runtime\dwcore\dwcore.properties"
-* Add the line `#http.allow_origin=http://localhost:4200` anywhere in the file (where `http://localhost:4200` is the origin to allow access)
-* Save the file
-* Restart deviceWISE
+
+- Navigate to your deviceWISE install directory
+- Open the file "deviceWISE\Runtime\dwcore\dwcore.properties"
+- Add the line `http.allow_origin=http://localhost:4200` anywhere in the file (where `http://localhost:4200` is the origin to allow access. Use `*` for all origins.)
+- Save the file
+- Restart deviceWISE
+
+## Other deviceWISE HTTP Server Properties
+
+| Name                   | Description                                                                | Example     |
+| :--------------------- | :------------------------------------------------------------------------- | :---------- |
+| http.rootdirectory     | Root directory of web server.                                              |             |
+| http.ssl.cert_file     | Certificate to use for web server.                                         |             |
+| http.ssl.cert_pass     | Certificate password, if necessary.                                        |             |
+| httpsvr.404.redirect   | Redirect here instead of returning 404 error.                              | /index.html |
+| http.allow_origin      | CORS allowed origins.<br>Comma separated or wildcard to allow all origins. | \*          |
+| rewrite.source.#       | Source to trigger rewrite                                                  | /.\*\\.html |
+| rewrite.destination.#  | Destination to write over source                                           | /index.html |
+| tryfiles.source.#      | Source to trigger tryfiles                                                 | /.\*        |
+| tryfiles.destination.# | Destination to write if file isn't found                                   | /index.html |
+
+where # is a number 0-9
 
 # Polyfills
+
 At the bottom of `polyfills.ts` under `APPLICATION IMPORTS` add the following and run the command in the comment.
+
 ```ts
 /**
  * Fetch Readablestream Polyfills
@@ -117,22 +143,24 @@ At the bottom of `polyfills.ts` under `APPLICATION IMPORTS` add the following an
  * Run `npm install --save web-streams-polyfill text-encoding babel-polyfill whatwg-fetch abortcontroller-polyfill`.
  * This is used for subscriptions in IE11.
  */
-import 'web-streams-polyfill';
-import 'text-encoding';
-import 'babel-polyfill';
-import 'whatwg-fetch';
-import 'abortcontroller-polyfill';
-
+import "web-streams-polyfill";
+import "text-encoding";
+import "babel-polyfill";
+import "whatwg-fetch";
+import "abortcontroller-polyfill";
 ```
+
 I can't find a good polyfill for TextEncoder/Decoder. Add this [CDN](https://stomp-js.github.io/guide/stompjs/rx-stomp/ng2-stompjs/pollyfils-for-stompjs-v5.html) to your `index.html`.
+
 ```html
 <script src="https://cdn.jsdelivr.net/npm/text-encoding@0.6.4/lib/encoding.min.js"></script>
 ```
+
 # What to do now?
 
-* Run `ng test devicewise-angular` to run the tests devicewise angular.
-* Have a look at and play around with the `app` to get to know the devicewise service with `ng serve --open`
-* Set up other users in deviceWISE (default credentials are admin/admin)
+- Run `ng test devicewise-angular` to run the tests devicewise angular.
+- Have a look at and play around with the `app` to get to know the devicewise service with `ng serve --open`
+- Set up other users in deviceWISE (default credentials are admin/admin)
 
 # Running the Demo
 
@@ -166,15 +194,15 @@ ng serve --open
 
 Checking out the following resources usually solves most of the problems people seem to have with this devicewise service:
 
-* [📚 DeviceWISE Docs](http://help.devicewise.com/display/M2MOpen/JavaScript+API+Library)
-* [DeviceWISE Javascript Library](https://docs.devicewise.com/Content/Products/GatewayDevelopersGuide/JavaScript-API-Library.htm?Highlight=javascript)
-* [DeviceWISE Postman Collection](https://documenter.getpostman.com/view/4197967/RzZDgvoy)
+- [📚 DeviceWISE Docs](http://help.devicewise.com/display/M2MOpen/JavaScript+API+Library)
+- [DeviceWISE Javascript Library](https://docs.devicewise.com/Content/Products/GatewayDevelopersGuide/JavaScript-API-Library.htm?Highlight=javascript)
+- [DeviceWISE Postman Collection](https://documenter.getpostman.com/view/4197967/RzZDgvoy)
 
 The following general steps are usually very helpful when debugging problems with this service:
 
-* check out if there are any [open](https://github.com/telit/devicewise-angular/issues) or [closed](https://github.com/telit/devicewise-angular/issues?q=is%3Aissue+is%3Aclosed) issues that answer your question
-* ensure you have a valid sessionID cookie.
-* [explain to your local rubber duck why your code should work and why it (probably) does not](https://en.wikipedia.org/wiki/Rubber_duck_debugging)
+- check out if there are any [open](https://github.com/telit/devicewise-angular/issues) or [closed](https://github.com/telit/devicewise-angular/issues?q=is%3Aissue+is%3Aclosed) issues that answer your question
+- ensure you have a valid sessionID cookie.
+- [explain to your local rubber duck why your code should work and why it (probably) does not](https://en.wikipedia.org/wiki/Rubber_duck_debugging)
 
 # Opening issues
 
@@ -186,7 +214,7 @@ We are happy to accept pull requests or test cases for things that do not work. 
 
 However, we will only accept pull requests that pass all tests and include some new ones (as long as it makes sense to add them, of course).
 
-* [Open a new pull request](https://github.com/telit/devicewise-angular/compare)
+- [Open a new pull request](https://github.com/telit/devicewise-angular/compare)
 
 # Author
 

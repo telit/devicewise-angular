@@ -10,7 +10,7 @@ Angular services for communicating with deviceWISE.
 # Installation
 
 ```cli
-npm install devicewise-angular --save
+npm install devicewise-angular ngx-cookie-service fetch-readablestream --save
 ```
 
 Import the devicewise angular module in your `app.module.ts`:
