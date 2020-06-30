@@ -44,6 +44,7 @@ export class DevicewiseApiService {
       map((e) => {
         if (e.success === false) {
           const error = this.dwHandleError(e);
+          console.log('error', error);
           throw error;
         }
         return e;
@@ -52,7 +53,7 @@ export class DevicewiseApiService {
   }
 
   private dwHandleError(e): Error {
-    let errorString;
+    let errorString = '';
     if (e.errorMessages) {
       e.errorMessages.forEach((errorMessage, i) => {
         errorString += `${e.errorMessages[i]} `;
