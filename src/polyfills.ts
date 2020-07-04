@@ -19,14 +19,14 @@
  */
 
 /** IE10 and IE11 requires the following for NgClass support on SVG elements */
-import 'classlist.js';  // Run `npm install --save classlist.js`.
+// import 'classlist.js';  // Run `npm install --save classlist.js`.
 
 /**
  * Web Animations `@angular/platform-browser/animations`
  * Only required if AnimationBuilder is used within the application and using IE/Edge or Safari.
  * Standard animation support in Angular DOES NOT require any polyfills (as of Angular 6.0).
  */
-import 'web-animations-js';  // Run `npm install --save web-animations-js`.
+// import 'web-animations-js';  // Run `npm install --save web-animations-js`.
 
 /**
  * By default, zone.js will patch all possible macroTask and DomEvents
@@ -35,7 +35,7 @@ import 'web-animations-js';  // Run `npm install --save web-animations-js`.
  * will put import in the top of bundle, so user need to create a separate file
  * in this directory (for example: zone-flags.ts), and put the following flags
  * into that file, and then add the following code before importing zone.js.
- * import './zone-flags.ts';
+ * import './zone-flags';
  *
  * The flags allowed in zone-flags.ts are listed here.
  *
@@ -61,15 +61,8 @@ import 'zone.js/dist/zone';  // Included with Angular CLI.
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
-
-/**
- * Fetch Readablestream Polyfills
- * https://github.com/jonnyreeves/fetch-readablestream
- * Run `npm install --save web-streams-polyfill text-encoding babel-polyfill abortcontroller-polyfill`.
- * This is used for subscriptions in IE11.
- */
-import 'web-streams-polyfill';
-import 'text-encoding';
-import 'babel-polyfill';
-import 'whatwg-fetch';
-import 'abortcontroller-polyfill';
+// import 'web-streams-polyfill';
+// import 'text-encoding';
+// import 'babel-polyfill';
+// import 'whatwg-fetch';
+// import 'abortcontroller-polyfill';

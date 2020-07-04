@@ -186,8 +186,34 @@ export interface EventListEvents {
 
 
 export interface DeviceTypeListResponse extends DwResponse {
-  params?: DeviceListParams;
+  params?: DeviceDataTypeParams;
 }
+
+export interface DeviceDataTypeParams {
+  deviceTypes: DeviceDataType[];
+}
+
+export interface DeviceDataType {
+  typeId: number;
+  name: string;
+  nameNlsId: number;
+  options: number;
+  familyName: string;
+  familyNlsId: number;
+  displayOrder: number;
+  propertyDescriptions: DeviceDataTypeProperty[];
+  licensed: boolean;
+}
+
+export interface DeviceDataTypeProperty {
+  key: string;
+  name: string;
+  nameNls: number;
+  descNls: number;
+  required: boolean;
+  type: string;
+}
+
 
 export interface DwDevice {
   name: string;
@@ -255,32 +281,6 @@ export interface DeviceInfoAttribute {
   nameNls: string;
   value: string;
 }
-
-export interface DeviceDataTypeParams {
-  deviceTypes: DeviceDataType[];
-}
-
-export interface DeviceDataType {
-  typeId: number;
-  name: string;
-  nameNlsId: number;
-  options: number;
-  familyName: string;
-  familyNlsId: number;
-  displayOrder: number;
-  propertyDescriptions: DeviceDataTypeProperty[];
-  licensed: boolean;
-}
-
-export interface DeviceDataTypeProperty {
-  key: string;
-  name: string;
-  nameNls: number;
-  descNls: number;
-  required: boolean;
-  type: string;
-}
-
 
 export interface DeviceVariablesResponse extends DwResponse {
   params?: DeviceVariablesParams;

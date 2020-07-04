@@ -1,43 +1,49 @@
-import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
-import { NgxJsonViewerModule } from 'ngx-json-viewer';
-import { AppMaterialModules } from './material.module';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DevicewiseAngularModule } from 'devicewise-angular';
 
-import { AppComponent } from './app.component';
-import { DevicewiseTestComponent, SettingsComponent } from './devicewise-test/devicewise-test.component';
-import { NavBarComponent } from './nav-bar/nav-bar.component';
-import { FooterComponent } from './footer/footer.component';
-import { SideNavComponent } from './side-nav/side-nav.component';
+import { environment } from '../environments/environment';
+import { AppMaterialModules } from './material.module';
+import { AppRoutingModule } from './app-routing.module';
 
-import { SubTriggerPipe } from './devicewise-test/custom-pipes.pipe';
+import { AppComponent } from './app.component';
+import { LoginComponent } from './login/login.component';
+import { MainComponent } from './main/main.component';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { Unauthorized } from './unauthorized';
+import { HomeComponent } from './home/home.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { ProjectsComponent } from './projects/projects.component';
+import { DeviceListComponent } from './device-list/device-list.component';
+import { DeviceCardsComponent } from './device-cards/device-cards.component';
+import { DeviceStatePipe } from './pipes/device-state.pipe';
+import { DeviceComponent } from './device/device.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    DevicewiseTestComponent,
-    NavBarComponent,
-    SubTriggerPipe,
-    SettingsComponent,
-    FooterComponent,
-    SideNavComponent
+    LoginComponent,
+    MainComponent,
+    HomeComponent,
+    PageNotFoundComponent,
+    ProjectsComponent,
+    DeviceListComponent,
+    DeviceCardsComponent,
+    DeviceStatePipe,
+    DeviceComponent,
   ],
-  entryComponents: [SettingsComponent],
   imports: [
-    DevicewiseAngularModule.forRoot(),
     BrowserModule,
-    BrowserAnimationsModule,
-    HttpClientModule,
+    AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    NgxJsonViewerModule,
-    AppMaterialModules
+    BrowserAnimationsModule,
+    AppMaterialModules,
+    DevicewiseAngularModule.forRoot(),
   ],
-  providers: [SubTriggerPipe, DevicewiseTestComponent],
+  providers: [{ provide: HTTP_INTERCEPTORS, useClass: Unauthorized, multi: true }],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

@@ -1,0 +1,117 @@
+<mat-toolbar>
+  <button mat-button disabled>
+    New
+    <mat-icon>add</mat-icon>
+  </button>
+  <button mat-button disabled>
+    Edit
+    <mat-icon>edit</mat-icon>
+  </button>
+  <button mat-button disabled>
+    Delete
+    <mat-icon>delete</mat-icon>
+  </button>
+  <button mat-button [disabled]="selectionStateNotEqual(1)" (click)="startSelectedDevices()">
+    Start
+    <mat-icon>power_settings_new</mat-icon>
+  </button>
+  <button mat-button [disabled]="selectionStateNotEqual(2)" (click)="stopSelectedDevices()">
+    Stop
+    <mat-icon>stop</mat-icon>
+  </button>
+  <button mat-button>
+    Refresh
+    <mat-icon>refresh</mat-icon>
+  </button>
+</mat-toolbar>
+
+<div class="wrapper">
+
+  <mat-form-field>
+    <mat-label>Filter</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Search Devices" #input>
+  </mat-form-field>
+
+  <div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource" matSort>
+
+      <!-- Checkbox Column -->
+      <ng-container matColumnDef="select">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()"
+            [indeterminate]="selection.hasValue() && !isAllSelected()" [aria-label]="checkboxLabel()">
+          </mat-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null"
+            [checked]="selection.isSelected(row)" [aria-label]="checkboxLabel(row)">
+          </mat-checkbox>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+        <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Type </th>
+        <td mat-cell *matCellDef="let row"> {{deviceTypes[row.type]?.name}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="state">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> State </th>
+        <td mat-cell *matCellDef="let row" [ngClass]="'state-' + row.state">
+          {{row.state | deviceState}}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="lastStateChange">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Last State Change </th>
+        <td mat-cell *matCellDef="let row"> {{row.lastStateChange | date:'short'}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="lastModified">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Last Modified </th>
+        <td mat-cell *matCellDef="let row"> {{row.lastModified | date:'short'}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
+        <td mat-cell *matCellDef="let row"> {{row.status}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="exstatus">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Ext. Status </th>
+        <td mat-cell *matCellDef="let row"> {{row.exstatus}} </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selectRow(row)"
+        [ngClass]="{'row-selected': selection.isSelected(row)}"></tr>
+
+      <!-- Row shown when there is no matching data. -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+      </tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+  </div>
+
+  <div style="margin-top:20px;" *ngIf="selection.hasValue()">
+    <mat-tab-group>
+      <mat-tab label="Status">
+        <h1>Status</h1>
+        <span>{{selection.selected[0] | json}}</span>
+      </mat-tab>
+      <mat-tab label="Properties">
+        <h1>Properties</h1>
+      </mat-tab>
+      <mat-tab label="Attributes">
+        <h1>Attributes</h1>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+
+</div>

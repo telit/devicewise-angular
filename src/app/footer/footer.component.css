@@ -1,9 +1,0 @@
-:host {
-  padding: 70px 35px;
-  box-sizing: border-box;
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-}

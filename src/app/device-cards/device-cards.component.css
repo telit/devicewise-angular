@@ -1,0 +1,41 @@
+.card {
+  max-width: 400px;
+}
+
+.device-list {
+  display:flex;
+}
+
+.device-list > .card {
+  margin: 10px;
+}
+
+.state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.state-1 {
+  background:green;
+}
+
+.state-2 {
+  background:red;
+}
+
+.state-3 {
+  background:black;
+}
+
+.state-4 {
+  background:greenyellow;
+}
+
+.state-5 {
+  background:orangered;
+}
+
+.state-6 {
+  background:purple;
+}

@@ -1,0 +1,29 @@
+<mat-toolbar color="primary">
+  <button mat-button routerLink="/">deviceWISE</button>
+  <button mat-button routerLink="/device" [routerLinkActive]="['is-active']">Devices</button>
+  <button mat-button routerLink="/project" [routerLinkActive]="['is-active']">Projects</button>
+  <div class="spacer"></div>
+  <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with share icon">
+    <mat-icon>account_circle</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <div>
+      <button mat-menu-item (click)="logout()">Logout</button>
+    </div>
+  </mat-menu>
+</mat-toolbar>
+
+<router-outlet></router-outlet>
+
+<mat-toolbar class="footer" color="primary">
+  <div class="footer-angular">
+    <img src="https://material.angular.io/assets/img/homepage/angular-white-transparent.svg">
+    <span><a href="https://angular.io">Learn Angular</a></span>
+  </div>
+  <div class="footer-telit">
+    <img src="assets/img/icon_Telit_deviceWISE.png">
+  </div>
+  <div>
+    <p>Telit deviceWISE</p>
+  </div>
+</mat-toolbar>

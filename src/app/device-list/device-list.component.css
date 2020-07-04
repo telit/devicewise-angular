@@ -1,0 +1,51 @@
+:host {
+  max-width:1250px;
+}
+
+.wrapper {
+  display:block;
+  width:100%;
+  padding:0 25px;
+  box-sizing: border-box;
+}
+
+table {
+  width: 100%;
+}
+
+.mat-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+.row-selected {
+  background:#ecefff;
+}
+
+::ng-deep .mat-table tbody > tr {
+  cursor: pointer;
+}
+
+.state-1 {
+  color:green;
+}
+
+.state-2 {
+  color:red;
+}
+
+.state-3 {
+  color:black;
+}
+
+.state-4 {
+  color:greenyellow;
+}
+
+.state-5 {
+  color:orangered;
+}
+
+.state-6 {
+  color:purple;
+}

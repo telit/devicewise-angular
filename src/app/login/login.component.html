@@ -1,0 +1,23 @@
+<div>
+    <img style="margin-top: 40px;"
+        src="assets/img/icon_Telit_deviceWISE.png">
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+        <mat-form-field appearance="outline">
+            <mat-label>Username</mat-label>
+            <input matInput formControlName="username" placeholder="Username">
+            <mat-icon matSuffix>account_box</mat-icon>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>Password</mat-label>
+            <input matInput formControlName="password" placeholder="Password">
+            <mat-icon matSuffix>lock</mat-icon>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>Node</mat-label>
+            <input matInput formControlName="nodeAddress" placeholder="http://localhost:8080">
+            <mat-icon matSuffix>desktop_windows</mat-icon>
+            <mat-hint>deviceWISE Node Address</mat-hint>
+        </mat-form-field>
+        <button mat-raised-button color="primary" type="submit">Login</button>
+    </form>
+</div>

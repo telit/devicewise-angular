@@ -1,0 +1,52 @@
+<h1>Devices</h1>
+<button mat-button (click)="refreshDevices()">
+  Refresh
+  <mat-icon>refresh</mat-icon>
+</button>
+<button mat-button (click)="refreshDevices()">
+  Add Device
+  <mat-icon>add</mat-icon>
+</button>
+<div class="device-list">
+  <ng-container *ngFor="let device of devices">
+    <mat-card class="card">
+      <mat-card-header>
+        <div mat-card-avatar class="state" [ngClass]="'state-' + device.state">
+          <ng-container [ngSwitch]="device.state">
+            <mat-icon *ngSwitchCase="1">power</mat-icon>
+            <mat-icon *ngSwitchCase="2">power_off</mat-icon>
+            <mat-icon *ngSwitchDefault>power_off</mat-icon>
+          </ng-container>
+        </div>
+        <mat-card-title>{{device.name}}</mat-card-title>
+        <mat-card-subtitle>{{deviceTypes[device.type].name}}</mat-card-subtitle>
+      </mat-card-header>
+      <!-- <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu"> -->
+      <mat-card-content>
+        <mat-list role="list">
+          <mat-list-item role="listitem">Options - {{device.options}}</mat-list-item>
+          <mat-list-item role="listitem">Extended Status - {{device.exstatus}}</mat-list-item>
+
+          <mat-list-item role="listitem">Last State Change - {{device.lastStateChange | date:'short'}}</mat-list-item>
+          <mat-list-item role="listitem">Last Modified - {{device.lastModified | date:'short'}}</mat-list-item>
+        </mat-list>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button (click)="startDevice(device.name)">
+          START
+          <!-- <mat-icon>power</mat-icon> -->
+        </button>
+        <button mat-button (click)="stopDevice(device.name)">
+          STOP
+          <!-- <mat-icon>power_off</mat-icon> -->
+        </button>
+        <button mat-button disabled>
+          EDIT
+        </button>
+        <button mat-button disabled>
+          DELETE
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </ng-container>
+</div>

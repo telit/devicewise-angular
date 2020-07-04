@@ -1,0 +1,33 @@
+.spacer {
+  flex:1;
+}
+
+.footer {
+  padding: 8px;
+  height:auto;
+}
+.footer > * {
+  flex: 1;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer-telit img {
+  height: 50px;
+}
+
+.footer-angular a {
+  color:white;
+}
+
+.footer-angular > img {
+  height: 50px;
+}
+
+.footer-angular > span {
+  display: inline-block;
+  line-height: 50px;
+  margin: 0 40px;
+  vertical-align: bottom;
+}
