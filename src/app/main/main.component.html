@@ -1,7 +1,17 @@
 <mat-toolbar color="primary">
   <button mat-button routerLink="/">deviceWISE</button>
-  <button mat-button routerLink="/device" [routerLinkActive]="['is-active']">Devices</button>
-  <button mat-button routerLink="/project" [routerLinkActive]="['is-active']">Projects</button>
+  <button mat-button routerLink="/device" [routerLinkActive]="['is-active']">
+    Devices
+    <mat-icon>devices</mat-icon>
+  </button>
+  <button mat-button routerLink="/project" [routerLinkActive]="['is-active']">
+    Projects
+    <mat-icon>rule_folder</mat-icon>
+  </button>
+  <button mat-button routerLink="/local-db" [routerLinkActive]="['is-active']">
+    Local Database
+    <mat-icon>storage</mat-icon>
+  </button>
   <div class="spacer"></div>
   <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with share icon">
     <mat-icon>account_circle</mat-icon>
