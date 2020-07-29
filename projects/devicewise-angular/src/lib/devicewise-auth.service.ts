@@ -42,7 +42,8 @@ export class DevicewiseAuthService {
             success: sessionInfo.success,
             sessionId: null,
             roles: sessionInfo.params.roles,
-            requirePasswordChange: sessionInfo.params.requirePasswordChange
+            requirePasswordChange: sessionInfo.params.requirePasswordChange,
+            features: sessionInfo.params.features
           });
         } else {
           return of({
