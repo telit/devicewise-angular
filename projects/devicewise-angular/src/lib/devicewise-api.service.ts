@@ -283,6 +283,10 @@ export class DevicewiseApiService {
     return this.dwApiSend('sqlite.execute', { query: query });
   }
 
+  public sqlSystem(query): Observable<DwResponse.SqlResponse> {
+    return this.dwApiSend('system.sqlite.execute', { query: query });
+  }
+
   // System
   public referenceList(type: string, key: string, flag: string): Observable<DwResponse.ReferenceListResponse> {
     return this.dwApiSend('reference.list', { type: type, key: key, flag: flag });
