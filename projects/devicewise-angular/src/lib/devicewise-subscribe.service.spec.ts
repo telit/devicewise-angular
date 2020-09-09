@@ -41,7 +41,6 @@ fdescribe('DevicewiseSubscribeService', () => {
       switchMap((e) => service.unsubscribeAll()),
       switchMap((e) => service.getSubscription(sub))
     ).subscribe((e) => {
-      console.log('GOT SUBSCRIPTION:', JSON.stringify(e));
       sub.subscription.subscribe((d) => console.log('GOT DATA:', JSON.stringify(d)));
       service.getNotifications();
     });
