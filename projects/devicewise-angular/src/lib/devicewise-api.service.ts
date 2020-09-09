@@ -4,6 +4,7 @@ import { Observable, BehaviorSubject, throwError } from 'rxjs';
 import * as DwResponse from './models/dwresponse';
 import { DwType } from './models/dwcommon';
 import { tap, map } from 'rxjs/operators';
+import { DevicewiseMiscService } from './devicewise-misc.service';
 
 const httpOptions = {
   headers: new HttpHeaders({}),
@@ -17,7 +18,10 @@ export class DevicewiseApiService {
   public url = '';
   public url$: BehaviorSubject<string> = new BehaviorSubject<string>(null);
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private dwMisc: DevicewiseMiscService
+  ) { }
 
   setEndpoint(endpoint: string): void {
     this.url = endpoint;
@@ -43,29 +47,12 @@ export class DevicewiseApiService {
     ).pipe(
       map((e) => {
         if (e.success === false) {
-          const error = this.dwHandleError(e);
-          console.log('error', error);
+          const error = this.dwMisc.dwHandleError(e);
           throw error;
         }
         return e;
       })
     );
-  }
-
-  private dwHandleError(e): Error {
-    let errorString = '';
-    if (e.errorMessages) {
-      e.errorMessages.forEach((errorMessage, i) => {
-        errorString += `${e.errorMessages[i]} `;
-        if (e.errorCodes[i]) {
-          errorString += `(${e.errorCodes[0]})`;
-        }
-      });
-    }
-    if (!errorString) {
-      errorString = `Unknown Error ${JSON.stringify(e)}`;
-    }
-    return new Error(errorString);
   }
 
   // Authentication
@@ -79,7 +66,7 @@ export class DevicewiseApiService {
       }, httpOptions).pipe(
         map((e) => {
           if (e.success === false) {
-            const error = this.dwHandleError(e);
+            const error = this.dwMisc.dwHandleError(e);
             throw error;
           }
           this.setEndpoint(endpoint);

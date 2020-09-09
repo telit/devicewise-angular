@@ -1,9 +1,10 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { merge, Observable, ReplaySubject, timer } from 'rxjs';
-import { filter, finalize, share, switchMap, tap, retryWhen, delayWhen, map } from 'rxjs/operators';
+import { filter, finalize, share, switchMap, tap, retryWhen, delayWhen, map, catchError } from 'rxjs/operators';
 import { DevicewiseApiService } from './devicewise-api.service';
 import { DevicewiseMultisubscribeService, MultiSubscribeParams } from './devicewise-multisubscribe.service';
 import { DwVariable } from './models/dwcommon';
+import { DevicewiseMiscService } from './devicewise-misc.service';
 
 interface MultiSubscribePair {
   [key: string]: Observable<MultiSubscribeParams>;
@@ -19,7 +20,11 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
   public requestVariables: DwVariable[] = [];
   public requestVariableSubscriptions: MultiSubscribePair = {};
 
-  constructor(private devicewiseMultisubscribeService: DevicewiseMultisubscribeService, private apiService: DevicewiseApiService) {
+  constructor(
+    private devicewiseMultisubscribeService: DevicewiseMultisubscribeService,
+    private apiService: DevicewiseApiService,
+    private dwMisc: DevicewiseMiscService
+  ) {
     this.apiService.getEndpointasObservable().subscribe((url) => this.url = url);
   }
 
@@ -81,11 +86,14 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
         stream = this.subscriptionAsObservable().pipe(
           filter((v) => variable.device === v.device && variable.variable === v.variable),
           finalize(() => { // When stream done remove from variable list and stream list.
-            console.log('ALL DONE');
             this.removeRequestVariables([variable]);
             delete this.requestVariableSubscriptions[`${variable.device}.${variable.variable}`];
           }),
-          share() // Ensure observable is shared among multiple subscribers.
+          share(), // Ensure observable is shared among multiple subscribers.
+          catchError((err) => {
+            const error = this.dwMisc.dwHandleError(err);
+            throw error;
+          })
         );
         this.requestVariableSubscriptions[`${variable.device}.${variable.variable}`] = stream;
       }
@@ -113,7 +121,7 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
   }
 
   private reSubscribe() {
-    const sub: Observable<MultiSubscribeParams> = this.devicewiseMultisubscribeService.multiSubscribe(this.requestVariables)
+    const sub: Observable<MultiSubscribeParams> = this.devicewiseMultisubscribeService.multiSubscribe(this.requestVariables);
     // .pipe(
     //   tap({
     //     error: (err) => {
