@@ -30,12 +30,12 @@
   },
   "homepage": "https://github.com/telit/devicewise-angular",
   "peerDependencies": {
-    "@angular/common": "^9.0.0",
-    "@angular/core": "^9.0.0",
-    "fetch-readablestream": "^0.2.0",
-    "ngx-cookie-service": "^3.0.3"
+    "@angular/common": "^10.0.0",
+    "@angular/core": "^10.0.0"
   },
   "dependencies": {
+    "ngx-cookie-service": "^10.1.1",
+    "fetch-readablestream": "^0.2.0",
     "tslib": "^2.0.0"
   }
 }
