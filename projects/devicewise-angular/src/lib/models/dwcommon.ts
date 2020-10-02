@@ -21,6 +21,13 @@ export class DwVariable {
   device: string;
   variable: string;
   type: DwType;
+  type_string:    string;
   count: number;
   length: number;
+  casts?: string[];
+  cast_strings:   string[];
+  options?: string[];
+  option_strings: string[];
+  xdim?: string;
+  desc?: string;
 }
