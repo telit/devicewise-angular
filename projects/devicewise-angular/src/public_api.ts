@@ -21,5 +21,5 @@ export {
   DwResponse,
   DwType,
   DwVariable,
-  DwSubscription,
+  DwSubscription
 };

@@ -6,6 +6,7 @@ import { DevicewiseApiService } from './devicewise-api.service';
 import { DevicewiseSubscribeService } from './devicewise-subscribe.service';
 import { DevicewiseMultisubscribeService } from './devicewise-multisubscribe.service';
 import { DevicewiseMultisubscribeStoreService } from './devicewise-multisubscribe-store.service';
+import { DevicewiseMiscService } from './devicewise-misc.service';
 
 @NgModule({
   declarations: [],
@@ -24,7 +25,8 @@ export class DevicewiseAngularModule {
         DevicewiseApiService,
         DevicewiseSubscribeService,
         DevicewiseMultisubscribeService,
-        DevicewiseMultisubscribeStoreService
+        DevicewiseMultisubscribeStoreService,
+        DevicewiseMiscService
       ]
     };
   }

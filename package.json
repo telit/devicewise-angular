@@ -27,6 +27,7 @@
     "abortcontroller-polyfill": "^1.5.0",
     "babel-polyfill": "^6.26.0",
     "classlist.js": "^1.1.20150312",
+    "devicewise-angular": "^4.0.2",
     "fetch-readablestream": "^0.2.0",
     "ng-packagr": "^10.1.2",
     "ngx-cookie-service": "^10.1.1",
