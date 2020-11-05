@@ -9,6 +9,7 @@ export * from './lib/devicewise-api.service';
 export * from './lib/devicewise-subscribe.service';
 export * from './lib/devicewise-multisubscribe-store.service';
 export * from './lib/devicewise-angular.module';
+export * from './lib/devicewise-misc.service';
 
 import * as DwRequest from './lib/models/dwrequest';
 import * as DwResponse from './lib/models/dwresponse';
@@ -20,5 +21,5 @@ export {
   DwResponse,
   DwType,
   DwVariable,
-  DwSubscription
+  DwSubscription,
 };
