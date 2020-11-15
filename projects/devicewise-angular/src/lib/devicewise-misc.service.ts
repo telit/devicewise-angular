@@ -9,7 +9,7 @@ export class DevicewiseMiscService {
 
   public dwHandleError(e): Error {
     let errorString = '';
-    if (e.errorMessages) {
+    if (e && e.errorMessages) {
       e.errorMessages.forEach((errorMessage, i) => {
         errorString += `${e.errorMessages[i]} `;
         if (e.errorCodes[i]) {
@@ -18,7 +18,10 @@ export class DevicewiseMiscService {
       });
     }
     if (!errorString) {
-      errorString = `Unknown Error ${JSON.stringify(e)}`;
+      errorString = `Unknown Error`;
+      if (e) {
+        errorString += ` ${JSON.stringify(e)}`;
+      }
     }
     return new Error(errorString);
   }
