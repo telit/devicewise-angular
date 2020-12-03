@@ -34,7 +34,7 @@
     "@angular/core": "^10.0.0"
   },
   "dependencies": {
-    "ngx-cookie-service": "^10.1.1",
+    "ngx-cookie-service": "^11.0.0",
     "fetch-readablestream": "^0.2.0",
     "tslib": "^2.0.0"
   }
