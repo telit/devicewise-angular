@@ -15,10 +15,10 @@ describe('DevicewiseApiService', () => {
   const username = 'admin';
   const password = 'admin';
   const variables: any[] = [
-    { device: 'OEE', variable: 'Availability', type: DwType.FLOAT4, count: 1, length: -1, testData: [[0], [1], [2], [3], [4]] },
-    { device: 'OEE', variable: 'Quality', type: DwType.FLOAT4, count: 1, length: -1, testData: [[0], [1], [2], [3], [4]] },
-    { device: 'OEE', variable: 'Performance', type: DwType.FLOAT4, count: 1, length: -1, testData: [[0], [1], [2], [3], [4]] },
-    { device: 'OEE', variable: 'OEE', type: DwType.FLOAT4, count: 1, length: -1, testData: [[0], [1], [2], [3], [4]] }
+    { device: 'OEE', variable: 'OEE.Availability', type: DwType.FLOAT4, count: 1, length: -1, testData: [[0], [1], [2], [3], [4]] },
+    { device: 'OEE', variable: 'OEE.Quality', type: DwType.FLOAT4, count: 1, length: -1, testData: [[0], [1], [2], [3], [4]] },
+    { device: 'OEE', variable: 'OEE.Performance', type: DwType.FLOAT4, count: 1, length: -1, testData: [[0], [1], [2], [3], [4]] },
+    { device: 'OEE', variable: 'OEE.OEE', type: DwType.FLOAT4, count: 1, length: -1, testData: [[0], [1], [2], [3], [4]] }
   ];
 
   beforeEach(async(() => {
@@ -172,7 +172,7 @@ describe('DevicewiseApiService', () => {
       expect(deviceTypeListResponse).toEqual(jasmine.objectContaining({
         success: true
       }));
-      expect(deviceTypeListResponse.params.devices.length).toBeGreaterThan(1);
+      expect(deviceTypeListResponse.params.deviceTypes.length).toBeGreaterThan(1);
       done();
     }));
   });

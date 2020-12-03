@@ -14,10 +14,10 @@ fdescribe('DevicewiseSubscribeService', () => {
   const username = 'admin';
   const password = 'admin';
   const variables: any[] = [
-    { device: 'OEE', variable: 'Availability', type: DwType.FLOAT4, count: 1, length: -1, testData: [[0], [1], [2], [3], [4]] },
-    { device: 'OEE', variable: 'Quality', type: DwType.FLOAT4, count: 1, length: -1, testData: [[0], [1], [2], [3], [4]] },
-    { device: 'OEE', variable: 'Performance', type: DwType.FLOAT4, count: 1, length: -1, testData: [[0], [1], [2], [3], [4]] },
-    { device: 'OEE', variable: 'OEE', type: DwType.FLOAT4, count: 1, length: -1, testData: [[0], [1], [2], [3], [4]] }
+    { device: 'OEE', variable: 'OEE.Availability', type: DwType.FLOAT4, count: 1, length: -1, testData: [[0], [1], [2], [3], [4]] },
+    { device: 'OEE', variable: 'OEE.Quality', type: DwType.FLOAT4, count: 1, length: -1, testData: [[0], [1], [2], [3], [4]] },
+    { device: 'OEE', variable: 'OEE.Performance', type: DwType.FLOAT4, count: 1, length: -1, testData: [[0], [1], [2], [3], [4]] },
+    { device: 'OEE', variable: 'OEE.OEE', type: DwType.FLOAT4, count: 1, length: -1, testData: [[0], [1], [2], [3], [4]] }
   ];
 
   beforeEach(async(() => {
@@ -36,13 +36,16 @@ fdescribe('DevicewiseSubscribeService', () => {
   });
 
   it('should be able to subscribe to observable once', (done: DoneFn) => {
-    const sub: DwSubscription = new DwSubscription('OEE', 'Availability', DwType.FLOAT4, 1, -1);
+    const sub: DwSubscription = new DwSubscription(variables[0].device, variables[0].variable, variables[0].type, variables[0].count, variables[0].length);
     authService.easyLogin('http://localhost:8080', 'admin', 'admin').pipe(
       switchMap((e) => service.unsubscribeAll()),
       switchMap((e) => service.getSubscription(sub))
     ).subscribe((e) => {
       sub.subscription.subscribe((d) => console.log('GOT DATA:', JSON.stringify(d)));
       service.getNotifications();
+      service.unsubscribeAll();
+      done();
     });
   });
 });
+

@@ -12,14 +12,14 @@ describe('DevicewiseMultisubscribeStoreService', () => {
   const username = 'admin';
   const password = 'admin';
   const variables: any[] = [
-    { device: 'OEE', variable: 'Availability', type: DwType.FLOAT4, count: 1, length: -1, testData: [[0], [1], [2], [3], [4]] },
-    { device: 'OEE', variable: 'Quality', type: DwType.FLOAT4, count: 1, length: -1, testData: [[0], [1], [2], [3], [4]] },
-    { device: 'OEE', variable: 'Performance', type: DwType.FLOAT4, count: 1, length: -1, testData: [[0], [1], [2], [3], [4]] },
-    { device: 'OEE', variable: 'OEE', type: DwType.FLOAT4, count: 1, length: -1, testData: [[0], [1], [2], [3], [4]] }
+    { device: 'OEE', variable: 'OEE.Availability', type: DwType.FLOAT4, count: 1, length: -1, testData: [[0], [1], [2], [3], [4]] },
+    { device: 'OEE', variable: 'OEE.Quality', type: DwType.FLOAT4, count: 1, length: -1, testData: [[0], [1], [2], [3], [4]] },
+    { device: 'OEE', variable: 'OEE.Performance', type: DwType.FLOAT4, count: 1, length: -1, testData: [[0], [1], [2], [3], [4]] },
+    { device: 'OEE', variable: 'OEE.OEE', type: DwType.FLOAT4, count: 1, length: -1, testData: [[0], [1], [2], [3], [4]] }
   ];
   const variables2: any[] = [
-    { device: 'OEE', variable: 'Performance', type: DwType.FLOAT4, count: 1, length: -1 },
-    { device: 'OEE', variable: 'OEE', type: DwType.FLOAT4, count: 1, length: -1 }
+    { device: 'OEE', variable: 'OEE.Performance', type: DwType.FLOAT4, count: 1, length: -1 },
+    { device: 'OEE', variable: 'OEE.OEE', type: DwType.FLOAT4, count: 1, length: -1 }
   ];
 
   beforeEach(async(() => {
