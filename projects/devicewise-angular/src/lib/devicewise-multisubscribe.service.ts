@@ -59,6 +59,7 @@ export class DevicewiseMultisubscribeService {
    */
   public multiSubscribe(requestVariables: DwVariable[]): Observable<MultiSubscribeParams> {
     let buffer = '';
+    let buffer8: Uint8Array = new Uint8Array();
     let lastCharactersToReadNumber = 0;
 
     return this.fetchObservable(this.url + '/api', {
@@ -74,39 +75,48 @@ export class DevicewiseMultisubscribeService {
       }),
       credentials: 'include'
     }).pipe(
-      tap((data) => buffer += data),
+      tap(({ data, sdata }) => {
+        buffer += sdata;
+        buffer8 = this.concatUint8Arrays(buffer8, data);
+      }),
       map(() => {
         const objs: MultiSubscribeResponse[] = [];
         while (buffer.length > 0) {
           let obj: MultiSubscribeResponse;
-          let charactersToReadNumber = 0;
-          let charactersToReadStringLength = 0;
+          let bytesToRead = 0;
+          let charactersToRead = 0;
+          let bytesToReadStringLength = 0;
 
-          if (isNaN((charactersToReadNumber = parseInt(buffer, 10)))) {
-            charactersToReadNumber = lastCharactersToReadNumber;
-            charactersToReadStringLength = 0;
+          if (isNaN((bytesToRead = parseInt(buffer, 10)))) {
+            bytesToRead = lastCharactersToReadNumber;
+            bytesToReadStringLength = 0;
           } else {
-            lastCharactersToReadNumber = charactersToReadNumber;
-            charactersToReadStringLength = charactersToReadNumber.toString().length;
+            lastCharactersToReadNumber = bytesToRead;
+            bytesToReadStringLength = bytesToRead.toString().length;
           }
 
-          const subString = buffer.substring(charactersToReadStringLength, charactersToReadStringLength + charactersToReadNumber);
+          const subBuffer8 = buffer8.subarray(bytesToReadStringLength, bytesToReadStringLength + bytesToRead);
+          const subString = new TextDecoder('utf-8').decode(subBuffer8);
+          charactersToRead = subString.length;
 
           try {
             obj = JSON.parse(subString);
           } catch {
-            buffer = buffer.substring(charactersToReadStringLength);
+            buffer = buffer.substring(bytesToReadStringLength);
+            buffer8 = buffer8.subarray(bytesToReadStringLength);
             break;
           }
 
           if (obj.success === true) {
             objs.push(obj);
           } else {
-            buffer = buffer.substring(charactersToReadStringLength + charactersToReadNumber);
+            buffer = buffer.substring(bytesToReadStringLength + charactersToRead);
+            buffer8 = buffer8.subarray(bytesToReadStringLength + bytesToRead);
             throw obj;
           }
 
-          buffer = buffer.substring(charactersToReadStringLength + charactersToReadNumber);
+          buffer = buffer.substring(bytesToReadStringLength + charactersToRead);
+          buffer8 = buffer8.subarray(bytesToReadStringLength + bytesToRead);
         }
 
         return objs;
@@ -126,7 +136,7 @@ export class DevicewiseMultisubscribeService {
     );
   }
 
-  private fetchObservable(input: RequestInfo, init?: RequestInit): Observable<string> {
+  private fetchObservable(input: RequestInfo, init?: RequestInit): Observable<{ data: Uint8Array, sdata: string }> {
     let abortController = new AbortController();
 
     return new Observable((observer) => {
@@ -138,12 +148,14 @@ export class DevicewiseMultisubscribeService {
         const reader = response.body.getReader();
         function pump() {
           return reader.read().then(({ value, done }) => {
+            const data: Uint8Array = value;
             if (done) {
               return;
             }
 
-            const resultData: string = new TextDecoder('utf-8').decode(value);
-            observer.next(resultData);
+            console.log('data', data);
+            const sdata: string = new TextDecoder('utf-8').decode(data);
+            observer.next({ data, sdata });
 
             return pump();
           }).catch((err) => {
@@ -161,47 +173,14 @@ export class DevicewiseMultisubscribeService {
         abortController.abort();
         observer.complete();
       };
-
-      fetch(input, { signal: abortController.signal, ...init }).then((response) => {
-        console.log('response', response);
-        const reader = response.body.getReader();
-        const stream = new ReadableStream({
-          start(controller: ReadableStreamDefaultController<any>) {
-            function push() {
-              reader.read().then((result: ReadableStreamReadResult<any>) => {
-                if (result.done) {
-                  controller.close();
-                  return;
-                }
-
-                const resultData: string = new TextDecoder('utf-8').decode(result.value);
-                observer.next(resultData);
-
-                controller.enqueue(result.value);
-                push();
-              }).catch((err) => {
-                console.warn('catch reader.read', err);
-                if (err.code !== 20) { } // Ignore
-                observer.error(err);
-              });
-            }
-            push();
-          }
-        });
-      }).catch((err) => {
-        if (err.code !== 20) {
-          observer.error(err);
-        } else {
-          console.warn('err.code !== 20', err);
-        }
-      });
-
-      return () => {
-        abortController.abort();
-        observer.complete();
-      };
-
     });
+  }
+
+  private concatUint8Arrays(a: Uint8Array, b: Uint8Array) { // a, b TypedArray of same type
+    const c: Uint8Array = new Uint8Array(a.length + b.length);
+    c.set(a, 0);
+    c.set(b, a.length);
+    return c;
   }
 
 }
