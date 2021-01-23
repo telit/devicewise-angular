@@ -153,7 +153,6 @@ export class DevicewiseMultisubscribeService {
               return;
             }
 
-            console.log('data', data);
             const sdata: string = new TextDecoder('utf-8').decode(data);
             observer.next({ data, sdata });
 
