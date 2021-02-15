@@ -20,10 +20,10 @@ export enum DwType {
 export class DwVariable {
   device: string;
   variable: string;
-  type: DwType;
+  type?: DwType;
   typeString?: string;
-  count: number;
-  length: number;
+  count?: number;
+  length?: number;
   casts?: string[];
   castStrings?: string[];
   options?: string[];

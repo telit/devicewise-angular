@@ -19,7 +19,7 @@ import {
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatPaginator } from '@angular/material/paginator';
-import { MultiSubscribeParams } from 'projects/devicewise-angular/src/lib/devicewise-multisubscribe.service';
+import { MultiSubscribeResponseParams } from 'projects/devicewise-angular/src/lib/devicewise-multisubscribe.service';
 
 @Component({
   selector: 'app-devicewise-test',

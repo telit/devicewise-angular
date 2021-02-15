@@ -2,20 +2,20 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { merge, Observable, ReplaySubject, timer } from 'rxjs';
 import { filter, finalize, share, switchMap, tap, retryWhen, delayWhen, map, catchError } from 'rxjs/operators';
 import { DevicewiseApiService } from './devicewise-api.service';
-import { DevicewiseMultisubscribeService, MultiSubscribeParams } from './devicewise-multisubscribe.service';
+import { DevicewiseMultisubscribeService, MultiSubscribeResponseParams } from './devicewise-multisubscribe.service';
 import { DwVariable } from './models/dwcommon';
 import { DevicewiseMiscService } from './devicewise-misc.service';
 
 interface MultiSubscribePair {
-  [key: string]: Observable<MultiSubscribeParams>;
+  [key: string]: Observable<MultiSubscribeResponseParams>;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class DevicewiseMultisubscribeStoreService implements OnDestroy {
-  private multiSub$: ReplaySubject<MultiSubscribeParams> = new ReplaySubject<MultiSubscribeParams>(1);
-  private mutliSubRequest$: ReplaySubject<Observable<MultiSubscribeParams>> = new ReplaySubject<Observable<MultiSubscribeParams>>(1);
+  private multiSub$: ReplaySubject<MultiSubscribeResponseParams> = new ReplaySubject<MultiSubscribeResponseParams>(1);
+  private mutliSubRequest$: ReplaySubject<Observable<MultiSubscribeResponseParams>> = new ReplaySubject<Observable<MultiSubscribeResponseParams>>(1);
   public url = '';
   public requestVariables: DwVariable[] = [];
   public requestVariableSubscriptions: MultiSubscribePair = {};
@@ -45,7 +45,7 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
    * @returns observable of multisubscribe store stream.
    * @method subscriptionAsObservable
    */
-  public subscriptionAsObservable(): Observable<MultiSubscribeParams> {
+  public subscriptionAsObservable(): Observable<MultiSubscribeResponseParams> {
     return this.mutliSubRequest$.pipe(
       switchMap((val) => val)
     );
@@ -67,9 +67,9 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
    * @param variables requestVariables Variables to add.
    * @method addRequestVariables
    */
-  public addRequestVariables(variables: DwVariable[]): Observable<MultiSubscribeParams> {
+  public addRequestVariables(variables: DwVariable[]): Observable<MultiSubscribeResponseParams> {
     let foundVar = 0;
-    const streams: Observable<MultiSubscribeParams>[] = [];
+    const streams: Observable<MultiSubscribeResponseParams>[] = [];
 
     if (!variables) {
       return;
@@ -121,7 +121,7 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
   }
 
   private reSubscribe() {
-    const sub: Observable<MultiSubscribeParams> = this.devicewiseMultisubscribeService.multiSubscribe(this.requestVariables);
+    const sub: Observable<MultiSubscribeResponseParams> = this.devicewiseMultisubscribeService.multiSubscribe(this.requestVariables);
     // .pipe(
     //   tap({
     //     error: (err) => {

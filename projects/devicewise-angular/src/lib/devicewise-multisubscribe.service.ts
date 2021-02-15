@@ -7,22 +7,22 @@ import fetchStream from 'fetch-readablestream';
 
 export interface MultiSubscribeResponse {
   success: boolean;
-  params: MultiSubscribeParams;
+  params: MultiSubscribeResponseParams;
   errorCodes?: number[];
   errorMessages?: string[];
 }
 
-export interface MultiSubscribeParams {
+export interface MultiSubscribeResponseParams {
   device: string;
   variable: string;
-  data: number[];
+  data: any[];
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class DevicewiseMultisubscribeService {
-  public multiSubscribeShared: Observable<MultiSubscribeParams>;
+  public multiSubscribeShared: Observable<MultiSubscribeResponseParams>;
   private url = '';
 
   constructor(private apiService: DevicewiseApiService) {
@@ -57,7 +57,7 @@ export class DevicewiseMultisubscribeService {
    * @method map
    * @owner Observable
    */
-  public multiSubscribe(requestVariables: DwVariable[]): Observable<MultiSubscribeParams> {
+  public multiSubscribe(requestVariables: DwVariable[]): Observable<MultiSubscribeResponseParams> {
     let buffer = '';
     let buffer8: Uint8Array = new Uint8Array();
     let lastCharactersToReadNumber = 0;
