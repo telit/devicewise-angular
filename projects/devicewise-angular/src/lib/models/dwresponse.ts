@@ -215,7 +215,7 @@ export interface DeviceDataTypeProperty {
 
 export interface DwDevice {
   name: string;
-  type: Number;
+  type: number;
   state: number;
   lastStateChange: number;
   lastModified: number;
@@ -239,7 +239,7 @@ export interface DeviceInfoParameters {
   name: string;
   options: number;
   state: number;
-  type: DwType;
+  type: number;
   typeName: string;
   deviceProperties?: DeviceInfoProperty[];
   variableInfo?: DeviceInfoVariable[];

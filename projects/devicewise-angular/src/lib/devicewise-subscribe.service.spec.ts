@@ -7,7 +7,7 @@ import { DevicewiseAuthService } from './devicewise-auth.service';
 import { switchMap } from 'rxjs/operators';
 import { DwSubscription } from './models/dwsubscription';
 
-fdescribe('DevicewiseSubscribeService', () => {
+describe('DevicewiseSubscribeService', () => {
   let service: DevicewiseSubscribeService;
   let authService: DevicewiseAuthService;
   const endpoint = 'http://localhost:8080';
