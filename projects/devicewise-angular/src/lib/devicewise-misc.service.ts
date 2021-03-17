@@ -18,9 +18,13 @@ export class DevicewiseMiscService {
       });
     }
     if (!errorString) {
-      errorString = `Unknown Error`;
-      if (e) {
-        errorString += ` ${JSON.stringify(e)}`;
+      if (e instanceof Error) {
+        errorString += e.toString();
+        errorString = errorString.replace('TypeError: ', '');
+      } else if (typeof e === 'object') {
+        errorString += JSON.stringify(e);
+      } else if (typeof e === 'string') {
+        errorString += e;
       }
     }
     return new Error(errorString);
