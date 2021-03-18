@@ -1,10 +1,10 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { merge, Observable, ReplaySubject, timer } from 'rxjs';
-import { filter, finalize, share, switchMap, tap, retryWhen, delayWhen, map, catchError } from 'rxjs/operators';
+import { merge, Observable, ReplaySubject, Subject } from 'rxjs';
+import { catchError, debounceTime, filter, finalize, share, switchMap } from 'rxjs/operators';
 import { DevicewiseApiService } from './devicewise-api.service';
+import { DevicewiseMiscService } from './devicewise-misc.service';
 import { DevicewiseMultisubscribeService, MultiSubscribeResponseParams } from './devicewise-multisubscribe.service';
 import { DwVariable } from './models/dwcommon';
-import { DevicewiseMiscService } from './devicewise-misc.service';
 
 interface MultiSubscribePair {
   [key: string]: Observable<MultiSubscribeResponseParams>;
@@ -19,6 +19,7 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
   public url = '';
   public requestVariables: DwVariable[] = [];
   public requestVariableSubscriptions: MultiSubscribePair = {};
+  private subscriptionRequestQueue: Subject<null> = new Subject<null>();
 
   constructor(
     private devicewiseMultisubscribeService: DevicewiseMultisubscribeService,
@@ -26,6 +27,10 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
     private dwMisc: DevicewiseMiscService
   ) {
     this.apiService.getEndpointasObservable().subscribe((url) => this.url = url);
+
+    this.subscriptionRequestQueue.asObservable().pipe(
+      debounceTime(250)
+    ).subscribe((i) => this.reSubscribe());
   }
 
   /**
@@ -100,7 +105,7 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
       streams.push(stream);
     });
 
-    this.reSubscribe();
+    this.subscriptionRequestQueue.next(null);
     return merge(...streams);
   }
 
@@ -117,7 +122,7 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
       );
       this.requestVariables.splice(foundIndex, 1);
     });
-    this.reSubscribe();
+    this.subscriptionRequestQueue.next(null);
   }
 
   private reSubscribe() {
