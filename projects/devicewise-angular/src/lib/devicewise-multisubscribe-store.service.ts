@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { merge, Observable, ReplaySubject, Subject } from 'rxjs';
+import { merge, Observable, Subject, Subscription } from 'rxjs';
 import { catchError, debounceTime, filter, finalize, share, switchMap } from 'rxjs/operators';
 import { DevicewiseApiService } from './devicewise-api.service';
 import { DevicewiseMiscService } from './devicewise-misc.service';
@@ -14,12 +14,13 @@ interface MultiSubscribePair {
   providedIn: 'root'
 })
 export class DevicewiseMultisubscribeStoreService implements OnDestroy {
-  private multiSub$: ReplaySubject<MultiSubscribeResponseParams> = new ReplaySubject<MultiSubscribeResponseParams>(1);
-  private mutliSubRequest$: ReplaySubject<Observable<MultiSubscribeResponseParams>> = new ReplaySubject<Observable<MultiSubscribeResponseParams>>(1);
+  private multiSub$: Subject<MultiSubscribeResponseParams> = new Subject<MultiSubscribeResponseParams>();
+  private mutliSubRequest$: Subject<Observable<MultiSubscribeResponseParams>> = new Subject<Observable<MultiSubscribeResponseParams>>();
   public url = '';
   public requestVariables: DwVariable[] = [];
   public requestVariableSubscriptions: MultiSubscribePair = {};
-  private subscriptionRequestQueue: Subject<null> = new Subject<null>();
+  private subscriptionRequestQueue$: Subject<null> = new Subject<null>();
+  private subscriptionRequestQueueSub: Subscription;
 
   constructor(
     private devicewiseMultisubscribeService: DevicewiseMultisubscribeService,
@@ -28,8 +29,8 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
   ) {
     this.apiService.getEndpointasObservable().subscribe((url) => this.url = url);
 
-    this.subscriptionRequestQueue.asObservable().pipe(
-      debounceTime(250)
+    this.subscriptionRequestQueueSub = this.subscriptionRequestQueue$.asObservable().pipe(
+      debounceTime(20),
     ).subscribe((i) => this.reSubscribe());
   }
 
@@ -105,7 +106,7 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
       streams.push(stream);
     });
 
-    this.subscriptionRequestQueue.next(null);
+    this.subscriptionRequestQueue$.next(null);
     return merge(...streams);
   }
 
@@ -122,7 +123,7 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
       );
       this.requestVariables.splice(foundIndex, 1);
     });
-    this.subscriptionRequestQueue.next(null);
+    this.subscriptionRequestQueue$.next(null);
   }
 
   private reSubscribe() {
@@ -145,10 +146,11 @@ export class DevicewiseMultisubscribeStoreService implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.multiSub$.unsubscribe();
     this.multiSub$.complete();
-    this.multiSub$.unsubscribe();
     this.mutliSubRequest$.complete();
-    this.multiSub$.unsubscribe();
+    this.subscriptionRequestQueueSub.unsubscribe();
+    this.subscriptionRequestQueue$.complete();
   }
 
 }

@@ -1,9 +1,9 @@
-import { map, tap, share, concatAll, retryWhen, switchMap } from 'rxjs/operators';
-import { Observable, throwError, of } from 'rxjs';
-import { DevicewiseApiService } from './devicewise-api.service';
 import { Injectable } from '@angular/core';
-import { DwVariable } from './models/dwcommon';
 import fetchStream from 'fetch-readablestream';
+import { Observable, of, throwError } from 'rxjs';
+import { concatAll, map, retryWhen, share, switchMap, tap } from 'rxjs/operators';
+import { DevicewiseApiService } from './devicewise-api.service';
+import { DwVariable } from './models/dwcommon';
 
 export interface MultiSubscribeResponse {
   success: boolean;
