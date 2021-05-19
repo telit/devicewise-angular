@@ -49,6 +49,7 @@ jobs:
         id: check
         uses: EndBug/version-check@v1
         with:
+          diff-search: true
           file-name: ./projects/devicewise-angular/package.json
           token: ${{ secrets.GITHUB_TOKEN }}
 
