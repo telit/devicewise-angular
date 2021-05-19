@@ -13,6 +13,7 @@ jobs:
         uses: actions/cache@v2
         env:
           cache-name: cache-node-modules
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
         with:
           path: ~/.npm
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
@@ -40,3 +41,7 @@ jobs:
 
       - name: 🧹 Lint deviceWISE Angular Demo
         run: npm run lint devicewise-angular
+
+      - name: 🧹 Lint deviceWISE Angular Demo
+        if: ${{ always() }}
+        run: npm run publish
