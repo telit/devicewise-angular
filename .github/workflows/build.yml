@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Cache node modules
+      - name: 📑 Cache node modules
         uses: actions/cache@v2
         env:
           cache-name: cache-node-modules
@@ -21,13 +21,22 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
 
-      - name: Setup Node.js ${{ matrix.node-version }}
+      - name: 🟢 Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Install node modules
+      - name: 🟢 Install node modules
         run: npm install
 
-      - name: Build deviceWISE Angular
+      - name: 🔨 Build deviceWISE Angular
         run: npm run build devicewise-angular
+
+      - name: 🧹 Lint deviceWISE Angular
+        run: npm run lint devicewise-angular
+
+      - name: 🔨 Build deviceWISE Angular Demo
+        run: npm run build
+
+      - name: 🧹 Lint deviceWISE Angular Demo
+        run: npm run lint devicewise-angular
