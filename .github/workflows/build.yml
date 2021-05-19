@@ -50,9 +50,12 @@ jobs:
         uses: EndBug/version-check@v1
         with:
           file-name: ./projects/devicewise-angular/package.json
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 🔺 NPM Publish
         if: steps.check.outputs.changed == 'true'
         run: npm run publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+
+  
