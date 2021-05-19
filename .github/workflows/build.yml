@@ -21,7 +21,7 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
 
-      - name: 🟢 Setup Node.js ${{ matrix.node-version }}
+      - name: 🟩 Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
@@ -52,7 +52,7 @@ jobs:
           file-name: ./projects/devicewise-angular/package.json
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 🔺 NPM Setup
+      - name: 🟥 NPM Setup
         if: steps.check.outputs.changed == 'true'
         run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/repo/.npmrc;
         env:
