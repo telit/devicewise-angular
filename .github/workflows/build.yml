@@ -45,11 +45,6 @@ jobs:
         continue-on-error: true
         run: npm run lint devicewise-angular
 
-      - name: 🧹 Lint deviceWISE Angular Demo
-        continue-on-error: true
-        if: ${{ always() }}
-        run: npm run publish
-
       - name: ⌚ Check if version has been updated
         id: check
         uses: EndBug/version-check@v1
