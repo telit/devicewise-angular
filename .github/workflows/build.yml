@@ -30,7 +30,7 @@ jobs:
         run: npm install
 
       - name: 🔨 Build deviceWISE Angular
-        run: npm run build devicewise-angular
+        run: npm run build devicewise-angular --configuration production
 
       - name: 🧹 Lint deviceWISE Angular
         continue-on-error: true
@@ -38,7 +38,7 @@ jobs:
 
       - name: 🔨 Build deviceWISE Angular Demo
         continue-on-error: true
-        run: npm run build
+        run: npm run build --configuration production
 
       - name: 🧹 Lint deviceWISE Angular Demo
         continue-on-error: true
@@ -53,12 +53,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 🟥 NPM Setup
-        if: steps.check.outputs.changed == 'true'
-        run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
-        env:
-          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
-
-      - name: 🟥 NPM Setup2
         if: steps.check.outputs.changed == 'true'
         working-directory: ./dist/devicewise-angular
         run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
