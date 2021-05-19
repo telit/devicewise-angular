@@ -54,11 +54,11 @@ jobs:
 
       - name: 🟥 NPM Setup
         if: steps.check.outputs.changed == 'true'
-        run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/repo/.npmrc;
+        run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
         env:
           NPM_TOKEN: ${{secrets.NPM_TOKEN}}
 
-      - name: 🔺 NPM Publish
+      - name: 🔴 NPM Publish
         if: steps.check.outputs.changed == 'true'
         run: npm run publish
         env:
