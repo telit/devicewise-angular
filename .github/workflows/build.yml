@@ -48,6 +48,8 @@ jobs:
       - name: ⌚ Check if version has been updated
         id: check
         uses: EndBug/version-check@v1
+        with:
+          file-name: ./projects/devicewise-angular/package.json
 
       - name: 🔺 NPM Publish
         if: steps.check.outputs.changed == 'true'
