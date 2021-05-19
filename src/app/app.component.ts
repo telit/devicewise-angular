@@ -1,5 +1,5 @@
-import { Component, OnDestroy, ViewChild, ChangeDetectorRef, OnInit } from '@angular/core';
 import { MediaMatcher } from '@angular/cdk/layout';
+import { ChangeDetectorRef, Component, OnDestroy, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -7,7 +7,7 @@ import { MediaMatcher } from '@angular/cdk/layout';
   styleUrls: ['./app.component.css']
 })
 
-export class AppComponent implements OnDestroy, OnInit {
+export class AppComponent implements OnDestroy {
   mobileQuery: MediaQueryList;
   @ViewChild('snav', {static:true}) sidenav: any;
 
@@ -17,9 +17,6 @@ export class AppComponent implements OnDestroy, OnInit {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
-  }
-
-  ngOnInit(): void {
   }
 
   onToggle(snavOpened: boolean) {
