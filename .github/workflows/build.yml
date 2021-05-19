@@ -45,3 +45,11 @@ jobs:
       - name: 🧹 Lint deviceWISE Angular Demo
         if: ${{ always() }}
         run: npm run publish
+
+      - name: ⌚ Check if version has been updated
+        id: check
+        uses: EndBug/version-check@v1
+
+      - name: 🔺 NPM Publish
+        if: steps.check.outputs.changed == 'true'
+        run: npm run publish
