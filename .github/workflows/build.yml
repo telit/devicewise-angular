@@ -34,15 +34,19 @@ jobs:
         run: npm run build devicewise-angular
 
       - name: 🧹 Lint deviceWISE Angular
+        continue-on-error: true
         run: npm run lint devicewise-angular
 
       - name: 🔨 Build deviceWISE Angular Demo
+        continue-on-error: true
         run: npm run build
 
       - name: 🧹 Lint deviceWISE Angular Demo
+        continue-on-error: true
         run: npm run lint devicewise-angular
 
       - name: 🧹 Lint deviceWISE Angular Demo
+        continue-on-error: true
         if: ${{ always() }}
         run: npm run publish
 
