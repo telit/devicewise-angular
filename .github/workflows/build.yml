@@ -30,7 +30,7 @@ jobs:
         run: npm install
 
       - name: 🔨 Build deviceWISE Angular
-        run: npm run build devicewise-angular --configuration production
+        run: npm run build:prod devicewise-angular
 
       - name: 🧹 Lint deviceWISE Angular
         continue-on-error: true
@@ -38,7 +38,7 @@ jobs:
 
       - name: 🔨 Build deviceWISE Angular Demo
         continue-on-error: true
-        run: npm run build --configuration production
+        run: npm run build:prod devicewise-angular
 
       - name: 🧹 Lint deviceWISE Angular Demo
         continue-on-error: true
