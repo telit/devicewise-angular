@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { tap, map, flatMap, catchError } from 'rxjs/operators';
 import { CookieService } from 'ngx-cookie-service';
+import { Observable, of } from 'rxjs';
+import { catchError, flatMap, tap } from 'rxjs/operators';
 import { DevicewiseApiService } from './devicewise-api.service';
 import * as DwResponse from './models/dwresponse';
 
@@ -80,6 +80,14 @@ export class DevicewiseAuthService {
         }
       })
     );
+  }
+
+  public getSessionId(): string {
+    return this.cookieService.get('sessionId');
+  }
+
+  public getRole(): string {
+    return this.cookieService.get('roles');
   }
 
 }
