@@ -25,6 +25,8 @@ export class DevicewiseMiscService {
         errorString += JSON.stringify(e);
       } else if (typeof e === 'string') {
         errorString += e;
+      } else {
+        errorString += 'Unknown'
       }
     }
     return new Error(errorString);
