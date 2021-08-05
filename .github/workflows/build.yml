@@ -27,7 +27,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: 🟢 Install node modules
-        run: npm install
+        run: npm ci
 
       - name: 🔨 Build deviceWISE Angular
         run: npm run build:prod devicewise-angular
