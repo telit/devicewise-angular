@@ -159,12 +159,14 @@ export class DevicewiseMultisubscribeService {
             return pump();
           }).catch((err) => {
             if (err.code !== 20) { } // Ignore
+            else {console.log('Multisubscribe Error', err);}
             observer.error(err);
           });
         }
         pump();
       }).catch((err) => {
         if (err.code !== 20) { } // Ignore
+        else {console.log('Multisubscribe Error2', err);}
         observer.error(err);
       });
 
