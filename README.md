@@ -1,7 +1,7 @@
-[![CI](https://github.com/telit/devicewise-angular/actions/workflows/build.yml/badge.svg)](https://github.com/telit/devicewise-angular/actions/workflows/build.yml)
 [![npm version](https://badgen.net/npm/v/devicewise-angular?icon=npm)](https://www.npmjs.com/package/devicewise-angular)
 [![npm downloads](https://badgen.net/npm/dy/devicewise-angular?icon=npm)](https://www.npmtrends.com/devicewise-angular)
 [![Known Vulnerabilities](https://snyk.io/test/github/astone2014/devicewise-angular/badge.svg?targetFile=projects/devicewise-angular/package.json)](https://snyk.io/test/github/astone2014/devicewise-angular?targetFile=projects/devicewise-angular/package.json)
+[![CI](https://github.com/telit/devicewise-angular/actions/workflows/build.yml/badge.svg)](https://github.com/telit/devicewise-angular/actions/workflows/build.yml)
 
 # DeviceWISE Angular API Service
 
