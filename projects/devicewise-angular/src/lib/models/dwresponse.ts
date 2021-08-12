@@ -244,6 +244,7 @@ export interface DeviceInfoParameters {
   deviceProperties?: DeviceInfoProperty[];
   variableInfo?: DeviceInfoVariable[];
   variableInfo2?: DwVariable[];
+  structures2: DeviceInfoStructure2[];
   structures?: DeviceInfoStructure[];
   attributes?: DeviceInfoAttribute[];
   commands?: DeviceInfoVariable[];
@@ -274,6 +275,13 @@ export interface DeviceInfoStructure {
   options: number;
   structId: number;
   vinfo: DeviceInfoVariable[];
+}
+export interface DeviceInfoStructure2 {
+  length: number;
+  name: string;
+  options: number;
+  structId: number;
+  vinfo: DwVariable[];
 }
 export interface DeviceInfoAttribute {
   name: string;
