@@ -1,4 +1,4 @@
-import { DwVariable } from './dwcommon';
+import { DwSubscribeVariable as DwDeviceVariable, DwVariable } from './dwcommon';
 
 // Authentication
 
@@ -25,13 +25,13 @@ export interface WriteRequest extends DwRequest {
   params: WriteParams;
 }
 
-export  interface WriteParams extends DwVariable {
+export  interface WriteParams extends DwDeviceVariable {
   data: string;
 }
 
 
 export interface SubscribeRequest extends DwRequest {
-  params:  DwVariable;
+  params:  DwDeviceVariable;
 }
 
 

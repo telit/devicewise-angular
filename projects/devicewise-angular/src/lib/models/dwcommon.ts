@@ -18,16 +18,26 @@ export enum DwType {
 // 'INT1' | 'INT2' | 'INT4' | 'INT8' | 'UINT1' | 'UINT2' | 'UINT4' | 'UINT8' | 'FLOAT4' | 'FLOAT8' | 'BOOL' | 'STRING' | 'TIMESTAMP' | 'BINARY' | 'UNKNOWN'
 
 export class DwVariable {
-  device: string;
   variable: string;
   type?: DwType;
   typeString?: string;
   count?: number;
+  xdim?: number;
+  ydim?: number;
+  zdim?: number;
+  xstart?: number;
+  ystart?: number;
+  zstart?: number;
   length?: number;
-  casts?: string[];
+  casts?: number;
   castStrings?: string[];
+  bitno?: number;
+  offset?: number;
+  desc?: string;
   options?: string[];
   optionStrings?: string[];
-  xdim?: string;
-  desc?: string;
+}
+
+export class DwSubscribeVariable extends DwVariable {
+  device: string;
 }
