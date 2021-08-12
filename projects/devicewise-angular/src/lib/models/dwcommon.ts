@@ -21,6 +21,7 @@ export class DwVariable {
   variable: string;
   type?: DwType;
   typeString?: string;
+  structId?: number;
   count?: number;
   xdim?: number;
   ydim?: number;
