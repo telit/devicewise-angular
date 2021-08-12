@@ -1,5 +1,5 @@
-import { DwVariable } from './dwcommon';
 import { DwType } from '../../public_api';
+import { DwVariable } from './dwcommon';
 
 export interface DwResponse {
   success: boolean;
@@ -243,6 +243,7 @@ export interface DeviceInfoParameters {
   typeName: string;
   deviceProperties?: DeviceInfoProperty[];
   variableInfo?: DeviceInfoVariable[];
+  variableInfo2?: DwVariable[];
   structures?: DeviceInfoStructure[];
   attributes?: DeviceInfoAttribute[];
   commands?: DeviceInfoVariable[];
