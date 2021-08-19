@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, BehaviorSubject, throwError } from 'rxjs';
-import * as DwResponse from './models/dwresponse';
-import { DwType } from './models/dwcommon';
-import { tap, map } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 import { DevicewiseMiscService } from './devicewise-misc.service';
+import { DwType } from './models/dwcommon';
+import * as DwResponse from './models/dwresponse';
 
 const httpOptions = {
   headers: new HttpHeaders({}),
@@ -80,6 +80,14 @@ export class DevicewiseApiService {
   }
 
   public sessionInfo(): Observable<DwResponse.SessionInfo> {
+    return this.dwApiSend('session.info').pipe(
+      tap((e) => {
+        this.setEndpoint(this.url);
+      })
+    );
+  }
+
+  public systemInfo(): Observable<DwResponse.SystemInfo> {
     return this.dwApiSend('session.info').pipe(
       tap((e) => {
         this.setEndpoint(this.url);

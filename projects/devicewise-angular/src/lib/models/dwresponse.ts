@@ -20,11 +20,45 @@ export interface LogoutResponse extends DwResponse {
 export interface SessionInfo extends DwResponse {
   params?: SessionInfoParams;
 }
-
 export interface SessionInfoParams {
   roles?: [string];
   requirePasswordChange?: boolean;
   features?: {[key: string]: number};
+}
+
+export interface SystemInfo extends DwResponse {
+  params?: SystemInfoParams;
+}
+export interface SystemInfoParams {
+  product: SystemInfoParamsProduct;
+  general: SystemInfoParamsGeneral;
+  build: SystemInfoParamsBuild;
+  boot: SystemInfoParamsBoot;
+  location?: SystemInfoParamsProduct;
+}
+export interface SystemInfoParamsProduct {
+  version: string;
+  type: string;
+  platform: string;
+}
+export interface SystemInfoParamsGeneral {
+  name: string;
+  description: string;
+  uptime: number;
+  version: string;
+}
+export interface SystemInfoParamsBuild {
+  build: string;
+  number: number;
+}
+export interface SystemInfoParamsBoot {
+  time: number;
+  message: string;
+  reason: string;
+}
+export interface SystemInfoParamsProduct {
+  lat: number;
+  lon: number;
 }
 
 // Variable
