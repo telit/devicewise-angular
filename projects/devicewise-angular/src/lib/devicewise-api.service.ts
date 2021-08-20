@@ -88,7 +88,7 @@ export class DevicewiseApiService {
   }
 
   public systemInfo(): Observable<DwResponse.SystemInfo> {
-    return this.dwApiSend('session.info').pipe(
+    return this.dwApiSend('system.info').pipe(
       tap((e) => {
         this.setEndpoint(this.url);
       })
