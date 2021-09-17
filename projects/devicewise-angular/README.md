@@ -7,6 +7,8 @@
 
 Angular services for communicating with deviceWISE.
 
+<p align="center"><img alt="logo" src="https://repository-images.githubusercontent.com/163105352/e80fc580-bd81-11ea-98b7-eb7685f5443e"></p>
+
 # Installation
 
 ```cli
