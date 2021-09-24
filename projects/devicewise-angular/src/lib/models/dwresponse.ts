@@ -26,6 +26,13 @@ export interface SessionInfoParams {
   features?: {[key: string]: number};
 }
 
+export interface SystemVariables extends DwResponse {
+  params?: SystemVariablesParams
+}
+export interface SystemVariablesParams {
+  variables: { [key: string]: string};
+}
+
 export interface SystemInfo extends DwResponse {
   params?: SystemInfoParams;
 }

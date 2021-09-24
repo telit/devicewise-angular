@@ -81,18 +81,16 @@ export class DevicewiseApiService {
 
   public sessionInfo(): Observable<DwResponse.SessionInfo> {
     return this.dwApiSend('session.info').pipe(
-      tap((e) => {
-        this.setEndpoint(this.url);
-      })
+      tap((e) => this.setEndpoint(this.url))
     );
   }
 
   public systemInfo(): Observable<DwResponse.SystemInfo> {
-    return this.dwApiSend('system.info').pipe(
-      tap((e) => {
-        this.setEndpoint(this.url);
-      })
-    );
+    return this.dwApiSend('system.info');
+  }
+
+  public systemVariables(): Observable<DwResponse.SystemVariables> {
+    return this.dwApiSend('system.sysvar.list');
   }
 
   // Variable
