@@ -106,6 +106,7 @@ jobs:
 
       - name: 🔴 NPM publish
         run: npm publish
+        continue-on-error: true
 
       - name: 🔓 GitHub Auth
         run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
@@ -119,3 +120,4 @@ jobs:
           npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        continue-on-error: true
