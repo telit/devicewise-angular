@@ -1,7 +1,7 @@
 {
   "name": "@telit/devicewise-angular",
   "description": "Angular2+ library to communicate with deviceWISE.",
-  "version": "5.3.2",
+  "version": "5.3.3",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build_lib": "ng build devicewise-angular --configuration production",
