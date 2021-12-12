@@ -63,3 +63,13 @@ jobs:
         if: steps.check.outputs.changed == 'true'
         working-directory: ./dist/devicewise-angular
         run: npm publish
+
+      - name: 😺 GitHub publish
+        if: steps.check.outputs.changed == 'true'
+        working-directory: ./dist/devicewise-angular
+        with:
+          registry-url: https://npm.pkg.github.com/
+          scope: "@austenstone"
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
