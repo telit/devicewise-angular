@@ -21,10 +21,10 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
 
-      - name: 🟩 Setup Node.js ${{ matrix.node-version }}
+      - name: 🟩 Setup Node.js 16.x
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 16.x
 
       - name: 🟢 Install node modules
         run: npm ci
@@ -50,15 +50,15 @@ jobs:
           name: dist
           path: dist/devicewise-angular
 
-  publish:
+  publish_npm:
     needs: build
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🟩 Setup Node.js ${{ matrix.node-version }}
+      - name: 🟩 Setup Node.js 16.x
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 16.x
 
       - name: ⬇️ Download devicewise-angular artifacts
         uses: actions/download-artifact@v2
@@ -74,10 +74,25 @@ jobs:
         run: npm publish
         continue-on-error: true
 
+  publish_github:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🟩 Setup Node.js 16.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+          registry-url: https://npm.pkg.github.com/
+          scope: "@telit"
+
+      - name: ⬇️ Download devicewise-angular artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: dist
+
       - name: 🔓 GitHub Auth
         run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
-        env:
-          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
 
       - name: 😺 GitHub publish
         run: |
