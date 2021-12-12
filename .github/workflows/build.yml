@@ -54,22 +54,28 @@ jobs:
 
       - name: 🟥 NPM setup
         if: steps.check.outputs.changed == 'true'
-        working-directory: ./dist/devicewise-angular
+        working-directory: dist/devicewise-angular
         run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
         env:
           NPM_TOKEN: ${{secrets.NPM_TOKEN}}
 
       - name: 🔴 NPM publish
         if: steps.check.outputs.changed == 'true'
-        working-directory: ./dist/devicewise-angular
+        working-directory: dist/devicewise-angular
         run: npm publish
 
       - name: 😺 GitHub publish
         if: steps.check.outputs.changed == 'true'
-        working-directory: ./dist/devicewise-angular
+        working-directory: dist/devicewise-angular
         run: |
           echo "@telit:registry=https://npm.pkg.github.com
           //npm.pkg.github.com/:_authToken=${{secrets.GITHUB_TOKEN}}" >> .npmrc
           npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist-without-markdown
+          path: dist/devicewise-angular
