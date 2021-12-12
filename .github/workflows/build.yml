@@ -81,6 +81,7 @@ jobs:
           path: dist/devicewise-angular
 
   publish:
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
