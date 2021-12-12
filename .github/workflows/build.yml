@@ -69,7 +69,7 @@ jobs:
         working-directory: ./dist/devicewise-angular
         run: |
           echo "@telit:registry=https://npm.pkg.github.com
-          //npm.pkg.github.com/:_authToken=${{secrets.GITHUB_TOKEN}}"
+          //npm.pkg.github.com/:_authToken=${{secrets.GITHUB_TOKEN}}" >> .npmrc
           npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
