@@ -74,8 +74,24 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
-      - name: Archive production artifacts
+      - name: 💾 Archive devicewise-angular artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: dist-without-markdown
+          name: dist
           path: dist/devicewise-angular
+
+
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🟩 Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: 🔴 NPM publish
+        uses: actions/download-artifact@v2
+        with:
+          name: my-artifact
+        run: npm publish
