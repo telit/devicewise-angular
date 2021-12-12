@@ -100,7 +100,6 @@ jobs:
           ls -al
 
       - name: 🔓 NPM Auth
-        if: steps.check.outputs.changed == 'true'
         working-directory: dist/devicewise-angular
         run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
         env:
@@ -108,3 +107,16 @@ jobs:
 
       - name: 🔴 NPM publish
         run: npm publish
+
+      - name: 🔓 GitHub Auth
+        run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+        env:
+          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
+
+      - name: 😺 GitHub publish
+        run: |
+          echo "@telit:registry=https://npm.pkg.github.com
+          //npm.pkg.github.com/:_authToken=${{secrets.GITHUB_TOKEN}}" >> .npmrc
+          npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
