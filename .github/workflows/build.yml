@@ -90,5 +90,14 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Download devicewise-angular artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: dist
+
+      - name: 🧪 Test
+        run: |
+          ls -al
+
       - name: 🔴 NPM publish
         run: npm publish
