@@ -1,5 +1,5 @@
 {
-  "name": "@telit/devicewise-angular",
+  "name": "devicewise-angular",
   "description": "Angular2+ library to communicate with deviceWISE.",
   "version": "5.3.3",
   "scripts": {
