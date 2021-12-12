@@ -67,9 +67,9 @@ jobs:
       - name: 😺 GitHub publish
         if: steps.check.outputs.changed == 'true'
         working-directory: ./dist/devicewise-angular
-        run: npm publish
+        run: |
+          echo "@telit:registry=https://npm.pkg.github.com
+          //npm.pkg.github.com/:_authToken=${{secrets.GITHUB_TOKEN}}"
+          npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-        with:
-          registry-url: https://npm.pkg.github.com/
-          scope: "@austenstone"
