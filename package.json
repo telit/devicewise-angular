@@ -30,7 +30,7 @@
     "devicewise-angular": "^4.0.2",
     "fetch-readablestream": "^0.2.0",
     "ng-packagr": "^12.0.0",
-    "ngx-cookie-service": "^12.0.0",
+    "ngx-cookie-service": "^12.0.3",
     "ngx-json-viewer": "^2.4.0",
     "rxjs": "~6.6.3",
     "text-encoding": "^0.7.0",

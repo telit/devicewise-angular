@@ -36,13 +36,13 @@ jobs:
         continue-on-error: true
         run: npm run lint devicewise-angular
 
-      - name: 🔨 Build deviceWISE Angular Demo
-        continue-on-error: true
-        run: npm run build:prod
+      # - name: 🔨 Build deviceWISE Angular Demo
+      #   continue-on-error: true
+      #   run: npm run build:prod
 
-      - name: 🧹 Lint deviceWISE Angular Demo
-        continue-on-error: true
-        run: npm run lint
+      # - name: 🧹 Lint deviceWISE Angular Demo
+      #   continue-on-error: true
+      #   run: npm run lint
 
       - name: ⌚ Check if version has been updated
         id: check

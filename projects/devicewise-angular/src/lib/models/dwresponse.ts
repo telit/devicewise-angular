@@ -1,5 +1,5 @@
-import { DwVariable } from './dwcommon';
 import { DwType } from '../../public_api';
+import { DwVariable } from './dwcommon';
 
 export interface DwResponse {
   success: boolean;
@@ -20,11 +20,52 @@ export interface LogoutResponse extends DwResponse {
 export interface SessionInfo extends DwResponse {
   params?: SessionInfoParams;
 }
-
 export interface SessionInfoParams {
   roles?: [string];
   requirePasswordChange?: boolean;
   features?: {[key: string]: number};
+}
+
+export interface SystemVariables extends DwResponse {
+  params?: SystemVariablesParams
+}
+export interface SystemVariablesParams {
+  variables: { [key: string]: string};
+}
+
+export interface SystemInfo extends DwResponse {
+  params?: SystemInfoParams;
+}
+export interface SystemInfoParams {
+  product: SystemInfoParamsProduct;
+  general: SystemInfoParamsGeneral;
+  build: SystemInfoParamsBuild;
+  boot: SystemInfoParamsBoot;
+  location?: SystemInfoParamsProduct;
+}
+export interface SystemInfoParamsProduct {
+  version: string;
+  type: string;
+  platform: string;
+}
+export interface SystemInfoParamsGeneral {
+  name: string;
+  description: string;
+  uptime: number;
+  version: string;
+}
+export interface SystemInfoParamsBuild {
+  build: string;
+  number: number;
+}
+export interface SystemInfoParamsBoot {
+  time: number;
+  message: string;
+  reason: string;
+}
+export interface SystemInfoParamsProduct {
+  lat: number;
+  lon: number;
 }
 
 // Variable
@@ -243,6 +284,8 @@ export interface DeviceInfoParameters {
   typeName: string;
   deviceProperties?: DeviceInfoProperty[];
   variableInfo?: DeviceInfoVariable[];
+  variableInfo2?: DwVariable[];
+  structures2: DeviceInfoStructure2[];
   structures?: DeviceInfoStructure[];
   attributes?: DeviceInfoAttribute[];
   commands?: DeviceInfoVariable[];
@@ -273,6 +316,13 @@ export interface DeviceInfoStructure {
   options: number;
   structId: number;
   vinfo: DeviceInfoVariable[];
+}
+export interface DeviceInfoStructure2 {
+  length: number;
+  name: string;
+  options: number;
+  structId: number;
+  vinfo: DwVariable[];
 }
 export interface DeviceInfoAttribute {
   name: string;

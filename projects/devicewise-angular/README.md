@@ -7,6 +7,8 @@
 
 Angular services for communicating with deviceWISE.
 
+<p align="center"><img alt="logo" src="https://repository-images.githubusercontent.com/163105352/e80fc580-bd81-11ea-98b7-eb7685f5443e"></p>
+
 # Installation
 
 ```cli
@@ -194,9 +196,9 @@ ng serve --open
 
 Checking out the following resources usually solves most of the problems people seem to have with this devicewise service:
 
-- [📚 DeviceWISE Docs](http://help.devicewise.com/display/M2MOpen/JavaScript+API+Library)
-- [DeviceWISE Javascript Library](https://docs.devicewise.com/Content/Products/GatewayDevelopersGuide/JavaScript-API-Library.htm?Highlight=javascript)
-- [DeviceWISE Postman Collection](https://documenter.getpostman.com/view/4197967/RzZDgvoy)
+- [📚 DeviceWISE Docs](https://docs.devicewise.com/Content/home.htm)
+- [📖 DeviceWISE Javascript Library](https://docs.devicewise.com/Content/Products/GatewayDevelopersGuide/AdvancedTopics/JavaScript-API-Library.htm)
+- [👩‍🚀 DeviceWISE Postman Collection](https://www.postman.com/devicewisefactory/workspace/devicewise-s-public-workspace/documentation/4197967-a4bf8e61-12bf-4629-8e2c-28f11a256b9d)
 
 The following general steps are usually very helpful when debugging problems with this service:
 
