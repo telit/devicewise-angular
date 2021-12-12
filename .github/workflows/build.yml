@@ -99,5 +99,12 @@ jobs:
         run: |
           ls -al
 
+      - name: 🔓 NPM Auth
+        if: steps.check.outputs.changed == 'true'
+        working-directory: dist/devicewise-angular
+        run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+        env:
+          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
+
       - name: 🔴 NPM publish
         run: npm publish
