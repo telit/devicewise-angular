@@ -80,7 +80,6 @@ jobs:
           name: dist
           path: dist/devicewise-angular
 
-
   publish:
     runs-on: ubuntu-latest
 
@@ -89,9 +88,4 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-
-        uses: actions/download-artifact@v2
-        with:
-          name: my-artifact
-
         run: npm publish
