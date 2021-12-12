@@ -100,7 +100,6 @@ jobs:
           ls -al
 
       - name: 🔓 NPM Auth
-        working-directory: dist/devicewise-angular
         run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
         env:
           NPM_TOKEN: ${{secrets.NPM_TOKEN}}
