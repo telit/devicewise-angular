@@ -1,4 +1,5 @@
 export enum DwType {
+  AUTOMATIC = -1,
   UNKNOWN = 0,
   INT1 = 1,
   INT2 = 2,
