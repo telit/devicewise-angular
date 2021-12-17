@@ -89,7 +89,7 @@ jobs:
         continue-on-error: true
 
   publish_github:
-    needs: build
+    needs: ["build", "test"]
     runs-on: ubuntu-latest
 
     steps:
