@@ -9,22 +9,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: 📑 Cache node modules
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-
       - name: 🟩 Setup Node.js 16.x
         uses: actions/setup-node@v1
         with:
           node-version: 16.x
+          cache: "npm"
 
       - name: 🟢 Install node modules
         run: npm ci
