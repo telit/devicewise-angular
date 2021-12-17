@@ -63,7 +63,7 @@ jobs:
 
       - name: Test 🧪
         continue-on-error: true
-        run: npm run test:prod
+        run: npm run test:prod devicewise-angular
 
   publish_npm:
     needs: ["build", "test"]
