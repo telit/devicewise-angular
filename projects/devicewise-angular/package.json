@@ -4,6 +4,7 @@
   "version": "5.3.6",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "test:prod": "ng test --browsers=ChromeHeadless --watch=false",
     "build_lib": "ng build devicewise-angular --configuration production",
     "copy-license": "cp ./LICENSE ./../../dist/devicewise-angular",
     "copy-readme": "cp ./README.md ./../../dist/devicewise-angular",

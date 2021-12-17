@@ -61,9 +61,9 @@ jobs:
       - name: 🧹 Lint
         run: npm run lint devicewise-angular
 
-      - name: 🧹 Test
+      - name: Test 🧪
         continue-on-error: true
-        run: npm test
+        run: npm run test:prod
 
   publish_npm:
     needs: ["build", "test"]
