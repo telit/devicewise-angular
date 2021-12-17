@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Type of version change."
+        description: "Semver type of new version"
         required: true
         type: choice
         options:
