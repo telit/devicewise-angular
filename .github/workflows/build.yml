@@ -1,4 +1,4 @@
-name: deviceWISE Angular CI
+name: Build and Publish
 
 on: [push]
 
@@ -18,18 +18,18 @@ jobs:
       - name: 🟢 Install node modules
         run: npm ci
 
-      - name: 🔨 Build deviceWISE Angular
+      - name: 🔨 Build
         run: npm run build:prod devicewise-angular
 
-      - name: 🧹 Lint deviceWISE Angular
+      - name: 🧹 Lint
         continue-on-error: true
         run: npm run lint devicewise-angular
 
-      # - name: 🔨 Build deviceWISE Angular Demo
+      # - name: 🔨 Build Demo
       #   continue-on-error: true
       #   run: npm run build:prod
 
-      # - name: 🧹 Lint deviceWISE Angular Demo
+      # - name: 🧹 Lint Demo
       #   continue-on-error: true
       #   run: npm run lint
 
@@ -38,6 +38,31 @@ jobs:
         with:
           name: dist
           path: dist/devicewise-angular
+
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: 🟩 Setup Node.js 14.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+          cache: "npm"
+
+      - name: 🟢 Install node modules
+        run: npm ci
+
+      - name: 🔨 Build
+        run: npm run build:prod devicewise-angular
+
+      - name: 🧹 Lint
+        run: npm run lint devicewise-angular
+
+      - name: 🧹 Test
+        continue-on-error: true
+        run: npm test
 
   publish_npm:
     needs: build
@@ -77,7 +102,7 @@ jobs:
         with:
           name: dist
 
-      - name: Update package.json name to @telit/devicewise-angular
+      - name: Update package.json name 📝
         uses: jossef/action-set-json-field@v1
         with:
           file: package.json
