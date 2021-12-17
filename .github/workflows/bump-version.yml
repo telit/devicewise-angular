@@ -30,9 +30,6 @@ jobs:
       - name: Install npm packages
         run: npm ci
 
-      - name: ENV 🌍
-        run: env
-
       - name: Setup Git
         run: |
           git config user.name 'Myles Borins'

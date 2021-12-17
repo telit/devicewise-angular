@@ -83,4 +83,6 @@ jobs:
           echo "//npm.pkg.github.com/:_authToken=${NPM_TOKEN}" >> .npmrc
           cat .npmrc
           npm publish
+        env:
+          NPM_TOKEN: ${{secrets.GITHUB_TOKEN}}
         continue-on-error: true
