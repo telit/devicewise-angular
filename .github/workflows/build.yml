@@ -77,17 +77,10 @@ jobs:
         with:
           name: dist
 
-      - name: 🔓 GitHub Auth
-        run: echo "@telit:registry=https://npm.pkg.github.com
-          //npm.pkg.github.com/:_authToken=${{secrets.GITHUB_TOKEN}}" >> .npmrc
-
-      - name: 🔓 GitHub Auth 2
-        run: cat .npmrc
-
       - name: 😺 GitHub publish
         run: |
-          npm config set //npm.pkg.github.com/:_authToken ${NPM_TOKEN}
+          echo "@telit:registry=https://npm.pkg.github.com" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NPM_TOKEN}" >> .npmrc
+          cat .npmrc
           npm publish
-        env:
-          NPM_TOKEN: ${{secrets.GITHUB_TOKEN}}
         continue-on-error: true
