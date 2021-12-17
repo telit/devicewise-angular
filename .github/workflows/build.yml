@@ -40,6 +40,7 @@ jobs:
           path: dist/devicewise-angular
 
   test:
+    needs: "build"
     runs-on: ubuntu-latest
 
     steps:
@@ -65,7 +66,7 @@ jobs:
         run: npm test
 
   publish_npm:
-    needs: build
+    needs: ["build", "test"]
     runs-on: ubuntu-latest
 
     steps:
