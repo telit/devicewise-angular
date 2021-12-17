@@ -77,6 +77,13 @@ jobs:
         with:
           name: dist
 
+      - name: Update package.json name to @telit/devicewise-angular
+        uses: jossef/action-set-json-field@v1
+        with:
+          file: package.json
+          field: name
+          value: "@telit/devicewise-angular"
+
       - name: 😺 GitHub publish
         run: |
           echo "@telit:registry=https://npm.pkg.github.com" >> .npmrc
