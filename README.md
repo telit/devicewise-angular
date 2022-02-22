@@ -27,6 +27,7 @@ import { DevicewiseAngularModule } from 'devicewise-angular';
     DevicewiseAngularModule.forRoot()
 ```
 
+
 Then, import and inject the devicewise angular service into a component:
 
 ```ts
