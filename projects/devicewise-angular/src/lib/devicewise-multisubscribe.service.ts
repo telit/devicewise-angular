@@ -15,6 +15,7 @@ export interface MultiSubscribeResponse {
 export interface MultiSubscribeResponseParams {
   device: string;
   variable: string;
+  status:string;
   data: any[];
 }
 
