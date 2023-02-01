@@ -17,27 +17,26 @@ import { SideNavComponent } from './side-nav/side-nav.component';
 import { SubTriggerPipe } from './devicewise-test/custom-pipes.pipe';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    DevicewiseTestComponent,
-    NavBarComponent,
-    SubTriggerPipe,
-    SettingsComponent,
-    FooterComponent,
-    SideNavComponent
-  ],
-  entryComponents: [SettingsComponent],
-  imports: [
-    DevicewiseAngularModule.forRoot(),
-    BrowserModule,
-    BrowserAnimationsModule,
-    HttpClientModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgxJsonViewerModule,
-    AppMaterialModules
-  ],
-  providers: [SubTriggerPipe, DevicewiseTestComponent],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        DevicewiseTestComponent,
+        NavBarComponent,
+        SubTriggerPipe,
+        SettingsComponent,
+        FooterComponent,
+        SideNavComponent
+    ],
+    imports: [
+        DevicewiseAngularModule.forRoot(),
+        BrowserModule,
+        BrowserAnimationsModule,
+        HttpClientModule,
+        FormsModule,
+        ReactiveFormsModule,
+        NgxJsonViewerModule,
+        AppMaterialModules
+    ],
+    providers: [SubTriggerPipe, DevicewiseTestComponent],
+    bootstrap: [AppComponent]
 })
 export class AppModule {}

@@ -184,7 +184,6 @@
       }
     }
   },
-  "defaultProject": "devicewise",
   "cli": {
     "analytics": "db44a6f0-891e-468f-817d-5119906c1fd2"
   }
